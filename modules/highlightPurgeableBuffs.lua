@@ -117,8 +117,8 @@ function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         return true -- retail
     elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-        return true -- wrath
+        return false -- wrath
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-        return true -- vanilla
+        return false -- vanilla
     end
 end
