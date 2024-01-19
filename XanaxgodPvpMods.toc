@@ -1,0 +1,22 @@
+## Interface: 100205
+## Title: |cdf1fd288Xanaxgod PvP Mods|r
+## Author: Xanaxgod
+## IconTexture: Interface\Addons\XanaxgodPvpMods\media\icon
+## Notes: Contains various mods/tweaks/improvements for PvP gameplay.
+## Version: v1.0
+## SavedVariables: XPMDB
+
+
+libs\libs.xml
+
+
+core.lua
+
+modules\disableBlizzardArenaFrames.lua
+modules\shadowSightHelper.lua
+modules\disableLUAErrorPopup.lua
+modules\disableBlizzardButtonEffects.lua
+modules\changeFrameOpacity.lua
+modules\snowfallKeyPress.lua
+modules\changeCastBarSize.lua
+modules\highlightPurgeableBuffs.lua
