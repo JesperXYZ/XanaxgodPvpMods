@@ -30,31 +30,10 @@ function Module:GetOptions(myOptionsTable, db)
         end
     end
 
-    local get = function(info)
-        return self.db[info[#info]];
-    end
-    local set = function(info, value)
-        local setting = info[#info];
-        self.db[setting] = value;
-
-        if setting == 'enableInArenaOnly' then
-            self:RefreshUI();
-        end
-
-    end
     local counter = CreateCounter(5);
 
     local DisableLUAErrorPopupImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableLUAErrorPopup:383:500:2:-1|t"
 
-    myOptionsTable.args.enableInArenaOnly = {
-        order = counter(),
-        type = 'toggle',
-        name = 'Disable module when not in a raid/dungeon/arena/battleground',
-        desc = 'Disables the module when you are not in a raid/dungeon/arena/battleground',
-        width = 'full',
-        get = get,
-        set = set,
-    };
     myOptionsTable.args.empty7513 = {
         order = counter(),
         type = 'description',
@@ -72,26 +51,19 @@ function Module:GetOptions(myOptionsTable, db)
 end
 
 function Module:SetupUI()
-    if self.db.enableInArenaOnly and not self:IsPlayerInPvPZone() then
 
-        self:EnableLuaErrorsPopup()
-
-    else
-
-        local function SuppressLuaErrorsPopup()
-            StaticPopupDialogs["TOO_MANY_LUA_ERRORS"].OnShow = function(self)
-                self:Hide()
-            end
-            StaticPopupDialogs.TOO_MANY_LUA_ERRORS.OnShow = function(self)
-                self:Hide()
-            end
+    local function SuppressLuaErrorsPopup()
+        StaticPopupDialogs["TOO_MANY_LUA_ERRORS"].OnShow = function(self)
+            self:Hide()
         end
-
-        SuppressLuaErrorsPopup()
-
+        StaticPopupDialogs.TOO_MANY_LUA_ERRORS.OnShow = function(self)
+            self:Hide()
+        end
     end
-end
 
+    SuppressLuaErrorsPopup()
+
+end
 
 function Module:EnableLuaErrorsPopup()
     StaticPopupDialogs["TOO_MANY_LUA_ERRORS"].OnShow = nil;

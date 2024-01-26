@@ -42,7 +42,7 @@ function Module:GetOptions(myOptionsTable, db)
 
     local counter = CreateCounter(5);
 
-    local DisableBlizzardArenaFramesImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableBlizzardArenaFrames:170:440:29:-15|t"
+    local DisableBlizzardArenaFramesImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableBlizzardArenaFrames:165:440:29:-15|t"
 
     myOptionsTable.args.art3 = {
         order = counter(),

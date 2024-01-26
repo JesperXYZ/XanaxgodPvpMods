@@ -42,7 +42,7 @@ function Module:GetOptions(myOptionsTable, db)
         end
     end
 
-    local HighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\HighlightPurgeableBuffs:150:240:132:-15|t"
+    local HighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\HighlightPurgeableBuffs:145:234:132:-15|t"
 
     myOptionsTable.args.enableForEveryone = {
         order = counter(),
@@ -59,11 +59,54 @@ function Module:GetOptions(myOptionsTable, db)
         name = '' .. HighlightPurgeableBuffsImage,
         width = 'full',
     };
+    myOptionsTable.args.empty3152 = {
+        order = counter(),
+        type = 'description',
+        name = ' ',
+        width = 'full',
+    };
+    myOptionsTable.args.empty31522 = {
+        order = counter(),
+        type = 'description',
+        name = ' ',
+        width = 'full',
+    };
+    myOptionsTable.args.empty315222 = {
+        order = counter(),
+        type = 'description',
+        name = ' ',
+        width = 'full',
+    };
+    myOptionsTable.args.IMPORTANT = {
+        order = counter(),
+        type = 'description',
+        name = 'IMPORTANT: As of the 26th of January 2024 this module is no longer compatible with JaxClassicFrames. To enable this function for JaxClassicFrames do the following.',
+        width = 'full',
+    };
+    myOptionsTable.args.IMPORTANT3 = {
+        order = counter(),
+        type = 'description',
+        name = ' 1.  Go to \\Interface\\Addons\\JaxClassicFrames\\JcfTargetFrame\\JcfTargetFrame.lua',
+        width = 'full',
+    };
+    myOptionsTable.args.IMPORTANT4 = {
+        order = counter(),
+        type = 'description',
+        name = ' 2.  Go to line 528 (Version 2.1.4) (Ctrl-F search for "local frameStealable")',
+        width = 'full',
+    };
+    myOptionsTable.args.IMPORTANT5 = {
+        order = counter(),
+        type = 'description',
+        name = ' 3.  Replace the " canStealOrPurge " variable with " debuffType=="Magic" " ',
+        width = 'full',
+    };
 
     return myOptionsTable;
 end
 
 function Module:SetupUI()
+
     if self:IsEnabled() and not self.db.enableForEveryone then
 
         local function UpdateAurasOnlyHostileTarget(self)

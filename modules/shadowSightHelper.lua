@@ -265,9 +265,11 @@ function Module:SetupUI()
     end
 
     if rangeFrame == nil then
-
-        rangeFrame = CreateFrame('Frame','RangeFrame', TargetFrame)
-
+        if IsAddOnLoaded("JaxClassicFrames") then
+            rangeFrame = CreateFrame('Frame','RangeFrame', JcfTargetFrame)
+        else
+            rangeFrame = CreateFrame('Frame','RangeFrame', TargetFrame)
+        end
         rangeFrame:SetFrameStrata("BACKGROUND")
         rangeFrame:SetWidth(128)
         rangeFrame:SetHeight(64)
@@ -287,7 +289,6 @@ function Module:SetupUI()
 
         rangeFrame:Hide()
     end
-
 end
 
 function Module:Adjustments()

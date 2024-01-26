@@ -48,7 +48,7 @@ function Module:GetOptions(myOptionsTable, db)
 
     local counter = CreateCounter(5);
 
-    local ChangeCastBarSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeCastBarSize:170:480:3:-15|t"
+    local ChangeCastBarSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeCastBarSize:120:480:5:-15|t"
 
     myOptionsTable.args.targetCastBarSize = {
         type = 'range',
