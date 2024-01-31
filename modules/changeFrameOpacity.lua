@@ -14,10 +14,12 @@ function Module:OnEnable()
     self:RegisterEvent("GROUP_ROSTER_UPDATE", "CheckConditions");
 
     self:CheckConditions()
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:OnDisable()
     self:CheckConditions()
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:GetDescription()

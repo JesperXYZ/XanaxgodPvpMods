@@ -1,7 +1,7 @@
 local _, XPM = ...;
 local Main = XPM.Main;
 
-local Module = Main:NewModule('DisableLUAErrorPopup', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule('MuteArenaDialog', 'AceHook-3.0', 'AceEvent-3.0');
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -14,11 +14,11 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module disables the "your AddOns are experiencing a large number of errors..." popup that is so frequently occurring in Dragonflight.';
+    return 'This module mutes NPC dialog upon entering an arena and subsequently unmutes it upon leaving. This only affects the audio, not the text bubble.';
 end
 
 function Module:GetName()
-    return 'Disable LUA Error Popup';
+    return 'Mute Arena Dialog';
 end
 
 function Module:GetOptions(myOptionsTable, db)
@@ -32,7 +32,7 @@ function Module:GetOptions(myOptionsTable, db)
 
     local counter = CreateCounter(5);
 
-    local DisableLUAErrorPopupImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableLUAErrorPopup:383:500:2:-1|t"
+    local MuteArenaDialogImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\MuteArenaDialog:282:494:3:-1|t"
 
     myOptionsTable.args.empty7513 = {
         order = counter(),
@@ -40,10 +40,10 @@ function Module:GetOptions(myOptionsTable, db)
         name = ' ',
         width = 'full',
     };
-    myOptionsTable.args.art1 = {
+    myOptionsTable.args.art98 = {
         order = counter(),
         type = 'description',
-        name = '' .. DisableLUAErrorPopupImage,
+        name = '' .. MuteArenaDialogImage,
         width = 'full',
     };
 
@@ -51,23 +51,19 @@ function Module:GetOptions(myOptionsTable, db)
 end
 
 function Module:SetupUI()
+    if self:IsEnabled() then
 
-    local function SuppressLuaErrorsPopup()
-        StaticPopupDialogs["TOO_MANY_LUA_ERRORS"].OnShow = function(self)
-            self:Hide()
-        end
-        StaticPopupDialogs.TOO_MANY_LUA_ERRORS.OnShow = function(self)
-            self:Hide()
-        end
+        self:RegisterEvent("GROUP_ROSTER_UPDATE", "MuteDialog");
+        self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "MuteDialog");
     end
-
-    SuppressLuaErrorsPopup()
-
 end
 
-function Module:EnableLuaErrorsPopup()
-    StaticPopupDialogs["TOO_MANY_LUA_ERRORS"].OnShow = nil;
-    StaticPopupDialogs.TOO_MANY_LUA_ERRORS.OnShow = nil;
+function Module:MuteDialog()
+    if self:IsPlayerInPvPZone() then
+        SetCVar("Sound_EnableDialog", 0)
+    else
+        SetCVar("Sound_EnableDialog", 1)
+    end
 end
 
 function Module:RefreshUI()
@@ -78,17 +74,13 @@ function Module:RefreshUI()
 end
 
 function Module:CheckConditions()
-    if self:IsEnabled() then
-        self:SetupUI()
-    else
-        self:EnableLuaErrorsPopup();
-    end
+    self:SetupUI()
 end
 
 function Module:IsPlayerInPvPZone()
     local zoneType = select(2, IsInInstance());
-    -- Check if the player is in a PvP instance. Check if the player is in a raid or 5-man instance
-    if zoneType == "arena" or zoneType == "pvp" or zoneType == "party" or zoneType == "raid" then
+    -- Check if the player is in a PvP instance.
+    if zoneType == "arena" or zoneType == "pvp" then
         return true;
     else
         return false
@@ -99,8 +91,8 @@ function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         return true -- retail
     elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-        return true -- wrath
+        return false -- wrath
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-        return true -- vanilla
+        return false -- vanilla
     end
 end

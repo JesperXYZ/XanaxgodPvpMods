@@ -30,6 +30,8 @@ function XanaxgodPvpMods:InitializeDefaults()
             DisableLUAErrorPopup = true,
             DisableBlizzardButtonEffects = false,
             DisableBlizzardArenaFrames = false,
+            MuteArenaDialog = false,
+            ChangeNameplateSize = false,
         },
         moduleDb = {},
     };
@@ -59,8 +61,8 @@ function XanaxgodPvpMods:InitializeConfig()
                         name = 'For requests and bug fixes, go harass via Twitter/Twitch at twitter.com/xanaxgod1337 or twitch.tv/xanaxgod1337.',
                     },
                 },
-            }
-        }
+            },
+        },
     };
 
     local function GetColoredModuleName(moduleName)
@@ -142,12 +144,56 @@ function XanaxgodPvpMods:InitializeConfig()
         },
     };
 
+    -- Define tables to store module names for different states
+    local enabledModules = {}
+    local disabledModules = {}
+    local unavailableModules = {}
+
     for moduleName, module in self:IterateModules() do
+        local isModuleAvailable = module and module:IsAvailableForCurrentVersion();
+        local isModuleEnabled = module and module:IsEnabled();
+
+        -- Categorize modules based on their state
+        if not isModuleAvailable then
+            table.insert(unavailableModules, moduleName);
+        elseif not isModuleEnabled then
+            table.insert(disabledModules, moduleName);
+        else
+            table.insert(enabledModules, moduleName);
+        end
+    end
+
+    -- Sort the tables alphabetically
+    table.sort(enabledModules)
+    table.sort(disabledModules)
+    table.sort(unavailableModules)
+
+    --self.options.args.modules.args = {} -- Clear the existing modules args table
+
+    -- Helper function to add module to options table
+    function XanaxgodPvpMods:AddModuleToOptionsTable(moduleName, orderFunction)
+        local module = self:GetModule(moduleName);
+
         local defaultsCopy = CopyTable(myOptionsTable);
         self.db.moduleDb[moduleName] = self.db.moduleDb[moduleName] or {};
         local moduleOptions = module.GetOptions and module:GetOptions(defaultsCopy, self.db.moduleDb[moduleName]) or defaultsCopy;
-        moduleOptions.order = increment();
+        moduleOptions.order = orderFunction();
         self.options.args.modules.args[moduleName] = moduleOptions;
+    end
+
+    -- Add enabled modules to options table
+    for _, moduleName in ipairs(enabledModules) do
+        XanaxgodPvpMods:AddModuleToOptionsTable(moduleName, increment);
+    end
+
+    -- Add disabled modules to options table
+    for _, moduleName in ipairs(disabledModules) do
+        XanaxgodPvpMods:AddModuleToOptionsTable(moduleName, increment);
+    end
+
+    -- Add unavailable modules to options table
+    for _, moduleName in ipairs(unavailableModules) do
+        XanaxgodPvpMods:AddModuleToOptionsTable(moduleName, increment);
     end
 
     self.configCategory = '|cdf1fd288Xanaxgod PvP Mods|r';
@@ -163,6 +209,8 @@ function XanaxgodPvpMods:InitializeConfig()
     self:RegisterChatCommand('xanaxgodpvpmods', function() OpenConfig(); end);
 end
 
+
+
 function XanaxgodPvpMods:SetModuleState(moduleName, enabled)
     if enabled then
         self:EnableModule(moduleName);
@@ -170,4 +218,53 @@ function XanaxgodPvpMods:SetModuleState(moduleName, enabled)
         self:DisableModule(moduleName);
     end
     self.db.modules[moduleName] = enabled;
+end
+
+function XanaxgodPvpMods:ReinitializeOptionsMenu()
+    local count = 1;
+    local function increment() count = count + 1; return count end;
+
+    local enabledModules = {}
+    local disabledModules = {}
+    local unavailableModules = {}
+
+    for moduleName, module in self:IterateModules() do
+        local isModuleAvailable = module and module:IsAvailableForCurrentVersion();
+        local isModuleEnabled = module and module:IsEnabled();
+
+        -- Categorize modules based on their state
+        if not isModuleAvailable then
+            table.insert(unavailableModules, moduleName);
+        elseif not isModuleEnabled then
+            table.insert(disabledModules, moduleName);
+        else
+            table.insert(enabledModules, moduleName);
+        end
+    end
+
+    -- Sort the tables alphabetically
+    table.sort(enabledModules)
+    table.sort(disabledModules)
+    table.sort(unavailableModules)
+
+    -- Clear the existing modules args table
+    --self.options.args.modules.args = {}
+
+    -- Add enabled modules to options table
+    for _, moduleName in ipairs(enabledModules) do
+        self:AddModuleToOptionsTable(moduleName, increment);
+    end
+
+    -- Add disabled modules to options table
+    for _, moduleName in ipairs(disabledModules) do
+        self:AddModuleToOptionsTable(moduleName, increment);
+    end
+
+    -- Add unavailable modules to options table
+    for _, moduleName in ipairs(unavailableModules) do
+        self:AddModuleToOptionsTable(moduleName, increment);
+    end
+
+    -- Refresh the configuration options
+    LibStub('AceConfigRegistry-3.0'):NotifyChange(self.configCategory);
 end

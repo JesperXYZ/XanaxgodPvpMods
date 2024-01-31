@@ -5,10 +5,12 @@ local Module = Main:NewModule('DisableBlizzardButtonEffects', 'AceHook-3.0', 'Ac
 
 function Module:OnEnable()
     self:CheckConditions()
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:OnDisable()
     self:CheckConditions()
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:GetDescription()

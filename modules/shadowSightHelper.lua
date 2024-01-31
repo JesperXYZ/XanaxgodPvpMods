@@ -7,12 +7,14 @@ local rc = LibStub("LibRangeCheck-3.0")
 
 function Module:OnEnable()
     self:CheckConditions()
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:OnDisable()
     if not rangeFrame == nil then
         rangeFrame:Hide()
     end
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:GetDescription()

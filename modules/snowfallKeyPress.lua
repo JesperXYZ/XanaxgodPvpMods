@@ -5,10 +5,12 @@ local Module = Main:NewModule('SnowfallKeyPress', 'AceHook-3.0', 'AceEvent-3.0')
 
 function Module:OnEnable()
     self:CheckConditions()
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:OnDisable()
     self:CheckConditions()
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:GetDescription()

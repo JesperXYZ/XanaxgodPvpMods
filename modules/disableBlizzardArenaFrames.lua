@@ -13,12 +13,14 @@ function Module:OnEnable()
     self:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS", "CheckConditions");
 
     self:CheckConditions()
-
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:OnDisable()
     CompactArenaFrame:SetAlpha(1)
     CompactArenaFrame:SetScale(1)
+
+    Main:ReinitializeOptionsMenu()
 end
 
 function Module:GetDescription()
@@ -31,9 +33,7 @@ end
 
 function Module:GetOptions(myOptionsTable, db)
     self.db = db;
-    local defaults = {
-        enableInArenaOnly = false,
-    }
+    local defaults = {}
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
             self.db[key] = value;
