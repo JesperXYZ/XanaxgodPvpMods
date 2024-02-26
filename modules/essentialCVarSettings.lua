@@ -25,6 +25,7 @@ function Module:GetOptions(myOptionsTable, db)
     self.db = db;
     local defaults = {
         softTargetInteractToggle = true,
+        spellQueueWindowRange = tonumber(GetCVar("SpellQueueWindow")),
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
