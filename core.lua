@@ -32,6 +32,7 @@ function XanaxgodPvpMods:InitializeDefaults()
             DisableBlizzardArenaFrames = false,
             MuteArenaDialog = false,
             ChangeNameplateSize = false,
+            EssentialCVarSettings = true,
         },
         moduleDb = {},
     };
@@ -92,7 +93,7 @@ function XanaxgodPvpMods:InitializeConfig()
             local moduleName = info[#info];
             local module = self:GetModule(moduleName);
             if module and not module:IsAvailableForCurrentVersion() then
-                return 'This module is not available for your current game version';
+                return 'This module is unavailable either due to incompatibility with your current game version or because of AddOn compatibility issues';
             end
             if module and not module:IsEnabled() then
                 return 'This module is disabled';

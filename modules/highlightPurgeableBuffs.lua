@@ -44,7 +44,7 @@ function Module:GetOptions(myOptionsTable, db)
         end
     end
 
-    local HighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\HighlightPurgeableBuffs:145:234:132:-15|t"
+    local HighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\HighlightPurgeableBuffs:176:342:92:-7|t"
 
     myOptionsTable.args.enableForEveryone = {
         order = counter(),
@@ -67,22 +67,10 @@ function Module:GetOptions(myOptionsTable, db)
         name = ' ',
         width = 'full',
     };
-    myOptionsTable.args.empty31522 = {
-        order = counter(),
-        type = 'description',
-        name = ' ',
-        width = 'full',
-    };
-    myOptionsTable.args.empty315222 = {
-        order = counter(),
-        type = 'description',
-        name = ' ',
-        width = 'full',
-    };
     myOptionsTable.args.IMPORTANT = {
         order = counter(),
         type = 'description',
-        name = 'IMPORTANT: As of the 26th of January 2024 this module is no longer compatible with JaxClassicFrames. To enable this function for JaxClassicFrames do the following.',
+        name = 'This module is no longer compatible with JaxClassicFrames. To enable this function for JaxClassicFrames do the following.',
         width = 'full',
     };
     myOptionsTable.args.IMPORTANT3 = {
@@ -160,7 +148,11 @@ end
 
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        return true -- retail
+        if IsAddOnLoaded("JaxClassicFrames") then
+            return false
+        else
+            return true -- retail
+        end
     elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
         return false -- wrath
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then

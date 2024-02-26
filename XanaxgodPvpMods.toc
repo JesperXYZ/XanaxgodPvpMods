@@ -20,3 +20,4 @@ modules\changeCastBarSize.lua
 modules\highlightPurgeableBuffs.lua
 modules\muteArenaDialog.lua
 modules\changeNameplateSize.lua
+modules\essentialCVarSettings.lua

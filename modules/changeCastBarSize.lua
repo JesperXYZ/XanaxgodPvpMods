@@ -50,7 +50,7 @@ function Module:GetOptions(myOptionsTable, db)
 
     local counter = CreateCounter(5);
 
-    local ChangeCastBarSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeCastBarSize:120:480:5:-15|t"
+    local ChangeCastBarSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeCastBarSize:147:480:5:-15|t"
 
     myOptionsTable.args.targetCastBarSize = {
         type = 'range',
@@ -113,7 +113,11 @@ end
 
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        return true -- retail
+        if IsAddOnLoaded("JaxClassicFrames") then
+            return false
+        else
+            return true -- retail
+        end
     elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
         return true -- wrath
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then

@@ -190,17 +190,17 @@ function Module:ShowEyeDuration()
     if self:IsPlayerInPvPZone() then
         if not rangeFrame:IsShown() then
             for i=1,15 do
-                local D = UnitDebuff("player",i);
+                local D,_,_,_,_,x = UnitDebuff("player",i);
                 if D == "Shadow Sight" then
-
+                    local expireTime = x-GetTime()
                     local a = 0
                     repeat
                         C_Timer.After(a, function() self:UpdateRange() end)
                         a = a + 0.1
-                    until a>14.5
+                    until a>expireTime
                     rangeFrame:Show()
 
-                    C_Timer.After(14.7, function() rangeFrame:Hide() end)
+                    C_Timer.After(expireTime, function() rangeFrame:Hide() end)
                 end
             end
         end
@@ -348,7 +348,7 @@ end
 function Module:IsPlayerInPvPZone()
     local zoneType = select(2, IsInInstance());
     -- Check if the player is in a PvP instance. Check if the player is in a raid or 5-man instance
-    if zoneType == "arena" or zoneType == "pvp" or zoneType == "party" or zoneType == "raid" then
+    if zoneType == "arena" or zoneType == "pvp" then
         return true;
     else
         return false
