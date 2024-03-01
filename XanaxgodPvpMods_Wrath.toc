@@ -3,7 +3,7 @@
 ## Author: Xanaxgod
 ## IconTexture: Interface\Addons\XanaxgodPvpMods\media\icon
 ## Notes: Contains various mods/tweaks/improvements for PvP gameplay.
-## Version: v1.2
+## Version: v1.3
 ## SavedVariables: XPMDB
 
 libs\libs.xml
