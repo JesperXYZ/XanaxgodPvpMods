@@ -85,6 +85,7 @@ function XanaxgodPvpMods:InitializeConfig()
 
     local myOptionsTable = {
         type = 'group',
+        childGroups = 'tab',
         name = function(info)
             local moduleName = info[#info];
             return GetColoredModuleName(moduleName);

@@ -75,7 +75,7 @@ function Module:GetOptions(myOptionsTable, db)
     end
     local counter = CreateCounter(5);
 
-    local ShadowSightHelperImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ShadowSightHelper:204:504:1:-1|t"
+    local ShadowSightHelperImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ShadowSightHelper:202:499:1:-1|t"
 
     myOptionsTable.args.empty711 = {
         order = counter(),

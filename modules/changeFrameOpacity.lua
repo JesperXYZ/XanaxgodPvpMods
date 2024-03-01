@@ -4,11 +4,6 @@ local Main = XPM.Main;
 local Module = Main:NewModule('ChangeFrameOpacity', 'AceHook-3.0', 'AceEvent-3.0');
 
 function Module:OnEnable()
-    if self.db.enableInArenaOnly then
-        self:RegisterEvent("PLAYER_ENTERING_WORLD", "GetShownChatFrames");
-        self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "GetShownChatFrames");
-    end
-
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "CheckConditions");
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "CheckConditions");
     self:RegisterEvent("GROUP_ROSTER_UPDATE", "CheckConditions");
@@ -33,12 +28,25 @@ end
 function Module:GetOptions(myOptionsTable, db)
     self.db = db;
     local defaults = {
-        enableInArenaOnly = false,
-        alpha = 0.6,
-        bagsBarAlpha = 0.5,
-        microButtonAlpha = 0.5,
-        queueStatusButtonAlpha = 0.5,
-        entireChatFrameAlpha = 0.6,
+        minimapAlpha  = 0.7,
+        minimapClusterAlpha  = 0.7,
+        bagsBarAlpha = 0.6,
+        microButtonAlpha = 0.6,
+        queueStatusButtonAlpha = 0.6,
+        entireChatFrameAlpha = 0.8,
+        minimapAlpha2  = 0.6,
+        minimapClusterAlpha2  = 0.5,
+        bagsBarAlpha2 = 0.4,
+        microButtonAlpha2 = 0.4,
+        queueStatusButtonAlpha2 = 0.4,
+        entireChatFrameAlpha2 = 0.5,
+        partyLabel = true,
+        realmName = true,
+        entireName = false,
+        partyLabel2 = true,
+        realmName2 = true,
+        entireName2 = false,
+
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
@@ -53,7 +61,10 @@ function Module:GetOptions(myOptionsTable, db)
         local setting = info[#info];
         self.db[setting] = value;
 
-        if setting == 'alpha' then
+        if setting == 'minimapAlpha' then
+            self:RefreshUI()
+        end
+        if setting == 'minimapClusterAlpha' then
             self:RefreshUI()
         end
         if setting == 'bagsBarAlpha' then
@@ -65,128 +76,378 @@ function Module:GetOptions(myOptionsTable, db)
         if setting == 'entireChatFrameAlpha' then
             self:RefreshUI()
         end
-        if setting == 'enableInArenaOnly' then
-            self:RefreshUI()
-        end
         if setting == 'queueStatusButtonAlpha' then
             self:RefreshUI()
         end
+        if setting == 'minimapAlpha2' then
+            self:RefreshUI()
+        end
+        if setting == 'minimapClusterAlpha2' then
+            self:RefreshUI()
+        end
+        if setting == 'bagsBarAlpha2' then
+            self:RefreshUI()
+        end
+        if setting == 'microButtonAlpha2' then
+            self:RefreshUI()
+        end
+        if setting == 'entireChatFrameAlpha2' then
+            self:RefreshUI()
+        end
+        if setting == 'queueStatusButtonAlpha2' then
+            self:RefreshUI()
+        end
+        if setting == 'partyLabel' then
+            self:RefreshUI()
+        end
+        if setting == 'realmName' then
+            if self.db.realmName then
+                self.db.entireName = false;
+            end
+            self:RefreshUI()
+        end
+        if setting == 'entireName' then
+            if self.db.entireName then
+                self.db.realmName = false;
+            end
+            self:RefreshUI()
+        end
+        if setting == 'partyLabel2' then
+            self:RefreshUI()
+        end
+        if setting == 'realmName2' then
+            if self.db.realmName2 then
+                self.db.entireName2 = false;
+            end
+            self:RefreshUI()
+        end
+        if setting == 'entireName2' then
+            if self.db.entireName2 then
+                self.db.realmName2 = false;
+            end
+            self:RefreshUI()
+        end
+
     end
     local counter = CreateCounter(5);
 
-    local ChangeFrameOpacityImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeFrameOpacity:243:494:2:-8|t"
+    local ChangeFrameOpacityImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeFrameOpacity:160:321:82:0|t"
+    --local ChangeFrameOpacityImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeFrameOpacity:235:474:2:0|t"
 
-    myOptionsTable.args.enableInArenaOnly = {
+    myOptionsTable.args.outsideInstance = {
         order = counter(),
-        type = 'toggle',
-        name = 'Disable module when not in a raid/dungeon/arena/battleground',
-        desc = 'Disables the module when you are not in a raid/dungeon/arena/battleground',
-        width = 'full',
-        get = get,
-        set = set,
+        name = "Outside Instance",
+        type = "group",
+        args = {
+            changeFrameOpacityGroup = {
+                order = counter(),
+                name = "Change Frame Opacity",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    minimapAlpha  = {
+                        type = 'range',
+                        name = 'Minimap',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    minimapClusterAlpha  = {
+                        type = 'range',
+                        name = 'MinimapCluster',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    queueStatusButtonAlpha = {
+                        type = 'range',
+                        name = 'LFG Eye Button',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    entireChatFrameAlpha = {
+                        type = 'range',
+                        name = 'Entire Chat Frame',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    bagsBarAlpha = {
+                        type = 'range',
+                        name = 'BagsBar',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    microButtonAlpha = {
+                        type = 'range',
+                        name = 'MicroMenu',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+
+                }
+
+            };
+
+            hideCompactPartyFrameElementsGroup = {
+                order = counter(),
+                name = "Hide CompactPartyFrame Elements",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    partyLabel = {
+                        type = 'toggle',
+                        name = '"Party" Label',
+                        desc = 'This hides the CompactPartyFrameTitle above the PartyFrame',
+                        order = counter(),
+                        width = 0.66,
+                        get = get,
+                        set = set,
+                    },
+                    realmName = {
+                        type = 'toggle',
+                        name = 'Realm Name',
+                        desc = 'This hides the realm names of your party members in the PartyFrame',
+                        order = counter(),
+                        width = 0.63,
+                        get = get,
+                        set = set,
+                    },
+                    entireName = {
+                        type = 'toggle',
+                        name = 'Entire Name',
+                        desc = 'This hides the full names of your party members in the PartyFrame',
+                        order = counter(),
+                        width = 0.63,
+                        get = get,
+                        set = set,
+                    },
+                }
+            },
+
+            art4 = {
+                order = counter(),
+                type = 'description',
+                name = '' .. ChangeFrameOpacityImage,
+                width = 'full',
+            };
+        },
     };
-    myOptionsTable.args.empty3 = {
+    myOptionsTable.args.insideInstance = {
         order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
-    myOptionsTable.args.alpha = {
-        type = 'range',
-        name = 'Minimap Opacity',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 1,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.queueStatusButtonAlpha = {
-        type = 'range',
-        name = 'LFG Eye Button Opacity',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 1,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.empty5 = {
-        order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
-    myOptionsTable.args.bagsBarAlpha = {
-        type = 'range',
-        name = 'BagsBar Opacity',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 1,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.microButtonAlpha = {
-        type = 'range',
-        name = 'MicroMenu Opacity',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 1,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.empty9 = {
-        order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
-    myOptionsTable.args.entireChatFrameAlpha = {
-        type = 'range',
-        name = 'Entire Chat Frame Opacity',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 1,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.art4 = {
-        order = counter(),
-        type = 'description',
-        name = '' .. ChangeFrameOpacityImage,
-        width = 'full',
+        name = "Inside Raid/Dungeon/Arena/Battleground",
+        type = "group",
+        args = {
+            changeFrameOpacityGroup2 = {
+            order = counter(),
+            name = "Change Frame Opacity",
+            type = "group",
+            inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+            args = {
+                minimapAlpha2  = {
+                    type = 'range',
+                    name = 'Minimap',
+                    order = counter(),
+                    get = get,
+                    set = set,
+                    min = 0,
+                    max = 1,
+                    step = 0.1,
+                    width = 0.7,
+                };
+                minimapClusterAlpha2  = {
+                    type = 'range',
+                    name = 'MinimapCluster',
+                    order = counter(),
+                    get = get,
+                    set = set,
+                    min = 0,
+                    max = 1,
+                    step = 0.1,
+                    width = 0.7,
+                };
+                queueStatusButtonAlpha2 = {
+                    type = 'range',
+                    name = 'LFG Eye Button',
+                    order = counter(),
+                    get = get,
+                    set = set,
+                    min = 0,
+                    max = 1,
+                    step = 0.1,
+                    width = 0.7,
+                };
+                entireChatFrameAlpha2 = {
+                    type = 'range',
+                    name = 'Entire Chat Frame',
+                    order = counter(),
+                    get = get,
+                    set = set,
+                    min = 0,
+                    max = 1,
+                    step = 0.1,
+                    width = 0.7,
+                };
+                bagsBarAlpha2 = {
+                    type = 'range',
+                    name = 'BagsBar',
+                    order = counter(),
+                    get = get,
+                    set = set,
+                    min = 0,
+                    max = 1,
+                    step = 0.1,
+                    width = 0.7,
+                };
+                microButtonAlpha2 = {
+                    type = 'range',
+                    name = 'MicroMenu',
+                    order = counter(),
+                    get = get,
+                    set = set,
+                    min = 0,
+                    max = 1,
+                    step = 0.1,
+                    width = 0.7,
+                };
+
+            }
+
+        };
+
+            hideCompactPartyFrameElementsGroup2 = {
+                order = counter(),
+                name = "Hide CompactPartyFrame Elements",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    partyLabel2 = {
+                        type = 'toggle',
+                        name = '"Party" Label',
+                        desc = 'This hides the CompactPartyFrameTitle above the PartyFrame',
+                        order = counter(),
+                        width = 0.66,
+                        get = get,
+                        set = set,
+                    },
+                    realmName2 = {
+                        type = 'toggle',
+                        name = 'Realm Name',
+                        desc = 'This hides the realm names of your party members in the PartyFrame',
+                        order = counter(),
+                        width = 0.63,
+                        get = get,
+                        set = set,
+                    },
+                    entireName2 = {
+                        type = 'toggle',
+                        name = 'Entire Name',
+                        desc = 'This hides the full names of your party members in the PartyFrame',
+                        order = counter(),
+                        width = 0.63,
+                        get = get,
+                        set = set,
+                    },
+                }
+            },
+
+            art4 = {
+                order = counter(),
+                type = 'description',
+                name = '' .. ChangeFrameOpacityImage,
+                width = 'full',
+            };
+
+        },
     };
 
     return myOptionsTable;
 end
 
-function Module:UpdateMinimapOpacity(resetAlpha)
-    local alpha = resetAlpha and 1 or self.db.alpha;
+function Module:UpdateMinimapOpacity()
+    local alpha;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            alpha = self.db.minimapAlpha2;
+        else
+            alpha = self.db.minimapAlpha;
+        end
+    else
+        alpha = 1;
+    end
 
     Minimap:SetAlpha(alpha);
-    MinimapCluster:SetAlpha(alpha);
 
     if not UnitAffectingCombat('player') then
         if alpha == 0 then
             Minimap:Hide();
-            MinimapCluster:Hide();
         else
             Minimap:Show();
+        end
+    end
+end
+
+function Module:UpdateMinimapClusterOpacity()
+    local alpha;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            alpha = self.db.minimapClusterAlpha2;
+        else
+            alpha = self.db.minimapClusterAlpha;
+        end
+    else
+        alpha = 1;
+    end
+
+    MinimapCluster:SetAlpha(alpha);
+
+    if not UnitAffectingCombat('player') then
+        if alpha == 0 then
+            MinimapCluster:Hide();
+        else
             MinimapCluster:Show();
         end
     end
 end
 
-function Module:UpdateBagsBarOpacity(resetAlpha)
-    local alpha = resetAlpha and 1 or self.db.bagsBarAlpha;
+function Module:UpdateBagsBarOpacity()
+    local alpha;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            alpha = self.db.bagsBarAlpha2;
+        else
+            alpha = self.db.bagsBarAlpha;
+        end
+    else
+        alpha = 1;
+    end
 
     BagsBar:SetAlpha(alpha) -- Set opacity
 
@@ -200,8 +461,17 @@ function Module:UpdateBagsBarOpacity(resetAlpha)
 
 end
 
-function Module:UpdateMicroButtonOpacity(resetAlpha)
-    local alpha = resetAlpha and 1 or self.db.microButtonAlpha;
+function Module:UpdateMicroButtonOpacity()
+    local alpha;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            alpha = self.db.microButtonAlpha2;
+        else
+            alpha = self.db.microButtonAlpha;
+        end
+    else
+        alpha = 1;
+    end
 
     MicroMenu:SetAlpha(alpha) -- Set opacity
 
@@ -214,20 +484,33 @@ function Module:UpdateMicroButtonOpacity(resetAlpha)
     end
 end
 
-function Module:UpdateQueueStatusButtonOpacity(resetAlpha)
-    local alpha = resetAlpha and 1 or self.db.queueStatusButtonAlpha;
+function Module:UpdateQueueStatusButtonOpacity()
+    local alpha;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            alpha = self.db.queueStatusButtonAlpha2;
+        else
+            alpha = self.db.queueStatusButtonAlpha;
+        end
+    else
+        alpha = 1;
+    end
 
     QueueStatusButton:SetAlpha(alpha) -- Set opacity
 
-    --if alpha == 0 and QueueStatusButton:IsShown() then
-        --QueueStatusButton:Hide();
-    --else
-        --QueueStatusButton:Show();
-    --end
 end
 
-function Module:UpdateEntireChatFrameOpacity(resetAlpha)
-    local alpha = resetAlpha and 1 or self.db.entireChatFrameAlpha;
+function Module:UpdateEntireChatFrameOpacity()
+    local alpha;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            alpha = self.db.entireChatFrameAlpha2;
+        else
+            alpha = self.db.entireChatFrameAlpha;
+        end
+    else
+        alpha = 1;
+    end
 
     ChatFrame1:SetAlpha(alpha)
     ChatFrame2:SetAlpha(alpha)
@@ -303,13 +586,13 @@ function Module:ShowFrame(frame)
     end
 end
 
-function Module:GetShownChatFrames()
-    ShownChatWindows = 0;
-    ShownChatTabs = 0;
+function Module:GetShownChatFrames() --no usage
+    --ShownChatWindows = 0;
+    --ShownChatTabs = 0;
     local a = 1;
     repeat
         if _G['ChatFrame'..a]:IsShown() then
-            if ShownChatWindows == 0 then
+            if ShownChatWindows == 0 or nil then
                 ShownChatWindows = a
             else
                 ShownChatWindows = ShownChatWindows and a
@@ -320,20 +603,129 @@ function Module:GetShownChatFrames()
     until( a > NUM_CHAT_WINDOWS )
 end
 
-function Module:SetupUI()
-    if self.db.enableInArenaOnly and not self:IsPlayerInPvPZone() then
-        self:UpdateMinimapOpacity(true);
-        self:UpdateBagsBarOpacity(true);
-        self:UpdateMicroButtonOpacity(true);
-        self:UpdateQueueStatusButtonOpacity(true);
-        self:UpdateEntireChatFrameOpacity(true);
+function Module:HidePartyLabel()
+    local enabled;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.partyLabel2;
+        else
+            enabled = self.db.partyLabel;
+        end
     else
-        self:UpdateMinimapOpacity();
-        self:UpdateBagsBarOpacity();
-        self:UpdateMicroButtonOpacity();
-        self:UpdateQueueStatusButtonOpacity();
-        self:UpdateEntireChatFrameOpacity();
+        enabled = false;
     end
+
+    if GetNumGroupMembers()>0 then
+        if enabled then
+            CompactPartyFrameTitle:SetAlpha(0)
+            CompactPartyFrameTitle:Hide()
+        else
+            CompactPartyFrameTitle:SetAlpha(1)
+            CompactPartyFrameTitle:Show()
+        end
+    end
+end
+
+function Module:HideRealmName()
+
+    local enabled;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.realmName2;
+        else
+            enabled = self.db.realmName;
+        end
+    else
+        enabled = false;
+    end
+
+    if GetNumGroupMembers()>0 then
+        if enabled then
+
+            if self:IsHooked('CompactUnitFrame_UpdateName') then
+                return
+                --self:UnHook('CompactUnitFrame_UpdateName')
+            end
+
+            self:SecureHook('CompactUnitFrame_UpdateName', function()
+                Module:HideRealmNameHelperFunction()
+            end);
+
+            function Module:HideRealmNameHelperFunction()
+                local num = 1;
+                local partyCount = GetNumGroupMembers();
+                repeat
+                    local partyFrameName = _G["CompactPartyFrameMember"..num.."Name"]
+
+                    local croppedName = partyFrameName:GetText();
+
+                    if croppedName then
+                        partyFrameName:SetText(croppedName:match("[^-]+"));
+                    end
+
+                    partyFrameName:Show();
+
+                    num = num + 1;
+                until (num>partyCount)
+            end
+
+            Module:HideRealmNameHelperFunction()
+        end
+    end
+end
+
+function Module:HideEntireName()
+
+    local enabled;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.entireName2;
+        else
+            enabled = self.db.entireName;
+        end
+    else
+        enabled = false;
+    end
+
+    if GetNumGroupMembers()>0 then
+        if enabled then
+
+            if self:IsHooked('CompactUnitFrame_UpdateName') then
+                return
+                --self:UnHook('CompactUnitFrame_UpdateName')
+            end
+
+            self:SecureHook('CompactUnitFrame_UpdateName', function()
+                Module:HideEntireNameHelperFunction()
+            end);
+
+            function Module:HideEntireNameHelperFunction()
+                local num = 1;
+                local partyCount = GetNumGroupMembers();
+                repeat
+                    local partyFrameName = _G["CompactPartyFrameMember"..num.."Name"]
+
+                    partyFrameName:Hide();
+
+                    num = num + 1;
+                until (num>partyCount)
+            end
+
+            Module:HideEntireNameHelperFunction();
+        end
+    end
+end
+
+function Module:SetupUI()
+    self:UpdateMinimapOpacity();
+    self:UpdateMinimapClusterOpacity();
+    self:UpdateBagsBarOpacity();
+    self:UpdateMicroButtonOpacity();
+    self:UpdateQueueStatusButtonOpacity();
+    self:UpdateEntireChatFrameOpacity();
+    self:HidePartyLabel();
+    self:HideRealmName();
+    self:HideEntireName();
 end
 
 function Module:RefreshUI()
@@ -344,18 +736,10 @@ function Module:RefreshUI()
 end
 
 function Module:CheckConditions()
-    if self:IsEnabled() then
-        if not UnitAffectingCombat('player') then
-            self:SetupUI()
-        else
-            C_Timer.After(2, function() self:SetupUI() end)
-        end
-    elseif not UnitAffectingCombat('player') then
-        self:UpdateMinimapOpacity(true);
-        self:UpdateBagsBarOpacity(true);
-        self:UpdateMicroButtonOpacity(true);
-        self:UpdateQueueStatusButtonOpacity(true);
-        self:UpdateEntireChatFrameOpacity(true);
+    if not UnitAffectingCombat('player') then
+        self:SetupUI()
+    else
+        C_Timer.After(5, function() self:CheckConditions() end)
     end
 
 end
