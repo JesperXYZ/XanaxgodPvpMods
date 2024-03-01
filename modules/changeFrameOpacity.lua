@@ -639,7 +639,7 @@ function Module:HideRealmName()
         enabled = false;
     end
 
-    if GetNumGroupMembers()>0 then
+    if GetNumGroupMembers()>0 and GetNumGroupMembers()<6 then
         if enabled then
 
             if self:IsHooked('CompactUnitFrame_UpdateName') then
@@ -656,14 +656,19 @@ function Module:HideRealmName()
                 local partyCount = GetNumGroupMembers();
                 repeat
                     local partyFrameName = _G["CompactPartyFrameMember"..num.."Name"]
+                    local croppedName
 
-                    local croppedName = partyFrameName:GetText();
+                    if partyFrameName then
+                        croppedName = partyFrameName:GetText();
+                    end
 
                     if croppedName then
                         partyFrameName:SetText(croppedName:match("[^-]+"));
                     end
 
-                    partyFrameName:Show();
+                    if partyFrameName then
+                        partyFrameName:Show();
+                    end
 
                     num = num + 1;
                 until (num>partyCount)
@@ -687,7 +692,7 @@ function Module:HideEntireName()
         enabled = false;
     end
 
-    if GetNumGroupMembers()>0 then
+    if GetNumGroupMembers()>0 and GetNumGroupMembers()<6 then
         if enabled then
 
             if self:IsHooked('CompactUnitFrame_UpdateName') then
@@ -705,7 +710,9 @@ function Module:HideEntireName()
                 repeat
                     local partyFrameName = _G["CompactPartyFrameMember"..num.."Name"]
 
-                    partyFrameName:Hide();
+                    if partyFrameName then
+                        partyFrameName:Hide();
+                    end
 
                     num = num + 1;
                 until (num>partyCount)
