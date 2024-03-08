@@ -89,11 +89,14 @@ function Module:SetupUI()
         if self:IsEnabled() then
 
             TargetFrameSpellBar:SetScale(self.db.targetCastBarSize)
-            FocusFrameSpellBar:SetScale(self.db.focusCastBarSize)
+            if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+                FocusFrameSpellBar:SetScale(self.db.focusCastBarSize)
+            end
         else
             TargetFrameSpellBar:SetScale(1)
-            FocusFrameSpellBar:SetScale(1)
-
+            if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+                FocusFrameSpellBar:SetScale(1)
+            end
         end
     else
         C_Timer.After(10, function() self:SetupUI() end)

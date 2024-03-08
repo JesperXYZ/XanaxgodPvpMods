@@ -3,7 +3,7 @@
 ## Author: Xanaxgod
 ## IconTexture: Interface\Addons\XanaxgodPvpMods\media\icon
 ## Notes: Contains various mods/tweaks/improvements for PvP gameplay.
-## Version: v1.3
+## Version: v1.4
 ## SavedVariables: XPMDB
 
 libs\libs.xml
@@ -21,3 +21,4 @@ modules\highlightPurgeableBuffs.lua
 modules\muteArenaDialog.lua
 modules\changeNameplateSize.lua
 modules\essentialCVarSettings.lua
+modules\combatTracker.lua

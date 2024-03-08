@@ -33,6 +33,7 @@ function XanaxgodPvpMods:InitializeDefaults()
             MuteArenaDialog = false,
             ChangeNameplateSize = false,
             EssentialCVarSettings = true,
+            CombatTracker = false,
         },
         moduleDb = {},
     };
@@ -43,17 +44,25 @@ function XanaxgodPvpMods:InitializeDefaults()
 end
 
 function XanaxgodPvpMods:InitializeConfig()
+
+    local icon = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\icon:14:14|t"
+    local icon2 = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\icon:16:16:-2:-1|t"
+    local text = "|cdf1fd288Xanaxgod PvP Mods|r"
+    local space = " "
+    local addonDisplayName = icon .. space .. text;
+    local addonDisplayName2 = icon2 .. text;
+
     local count = 1;
     local function increment() count = count + 1; return count end;
     self.options = {
         type = 'group',
-        name = '|cdf1fd288Xanaxgod PvP Mods|r',
+        name = addonDisplayName,
         childGroups = 'tab',
         args = {
             modules = {
                 order = increment(),
                 type = 'group',
-                name = 'Modules',
+                name = 'PvP Mods',
                 childGroups = 'tree',
                 args = {
                     desc = {
@@ -94,7 +103,7 @@ function XanaxgodPvpMods:InitializeConfig()
             local moduleName = info[#info];
             local module = self:GetModule(moduleName);
             if module and not module:IsAvailableForCurrentVersion() then
-                return 'This module is unavailable either due to incompatibility with your current game version or because of AddOn compatibility issues';
+                return 'This module is unavailable (incompatible with game version or other AddOns)';
             end
             if module and not module:IsEnabled() then
                 return 'This module is disabled';
@@ -170,8 +179,6 @@ function XanaxgodPvpMods:InitializeConfig()
     table.sort(disabledModules)
     table.sort(unavailableModules)
 
-    --self.options.args.modules.args = {} -- Clear the existing modules args table
-
     -- Helper function to add module to options table
     function XanaxgodPvpMods:AddModuleToOptionsTable(moduleName, orderFunction)
         local module = self:GetModule(moduleName);
@@ -198,7 +205,7 @@ function XanaxgodPvpMods:InitializeConfig()
         XanaxgodPvpMods:AddModuleToOptionsTable(moduleName, increment);
     end
 
-    self.configCategory = '|cdf1fd288Xanaxgod PvP Mods|r';
+    self.configCategory = addonDisplayName2;
 
     local function OpenConfig()
         Settings.OpenToCategory(self.configCategory);
@@ -248,9 +255,6 @@ function XanaxgodPvpMods:ReinitializeOptionsMenu()
     table.sort(enabledModules)
     table.sort(disabledModules)
     table.sort(unavailableModules)
-
-    -- Clear the existing modules args table
-    --self.options.args.modules.args = {}
 
     -- Add enabled modules to options table
     for _, moduleName in ipairs(enabledModules) do
