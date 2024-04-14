@@ -1,7 +1,7 @@
 local _, XPM = ...;
 local Main = XPM.Main;
 
-local Module = Main:NewModule('HighlightPurgeableBuffs', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule('UnitFrameHighlightPurgeableBuffs', 'AceHook-3.0', 'AceEvent-3.0');
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -18,7 +18,7 @@ function Module:GetDescription()
 end
 
 function Module:GetName()
-    return 'Highlight Purgeable Buffs';
+    return 'Unit Frame Highlight Purgeable Buffs';
 end
 
 function Module:GetOptions(myOptionsTable, db)
@@ -44,7 +44,7 @@ function Module:GetOptions(myOptionsTable, db)
         end
     end
 
-    local HighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\HighlightPurgeableBuffs:176:342:92:-7|t"
+    local UnitFrameHighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameHighlightPurgeableBuffs:176:342:92:-7|t"
 
     myOptionsTable.args.enableForEveryone = {
         order = counter(),
@@ -58,7 +58,7 @@ function Module:GetOptions(myOptionsTable, db)
     myOptionsTable.args.art3 = {
         order = counter(),
         type = 'description',
-        name = '' .. HighlightPurgeableBuffsImage,
+        name = '' .. UnitFrameHighlightPurgeableBuffsImage,
         width = 'full',
     };
     myOptionsTable.args.empty3152 = {

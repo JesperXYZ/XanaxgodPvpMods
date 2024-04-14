@@ -3,7 +3,7 @@
 ## Author: Xanaxgod
 ## IconTexture: Interface\Addons\XanaxgodPvpMods\media\icon
 ## Notes: Contains various mods/tweaks/improvements for PvP gameplay.
-## Version: v1.4
+## Version: v1.5
 ## SavedVariables: XPMDB
 
 libs\libs.xml
@@ -11,14 +11,18 @@ libs\libs.xml
 core.lua
 
 modules\disableBlizzardArenaFrames.lua
-modules\shadowSightHelper.lua
 modules\disableLUAErrorPopup.lua
 modules\disableBlizzardButtonEffects.lua
 modules\changeFrameOpacity.lua
 modules\snowfallKeyPress.lua
-modules\changeCastBarSize.lua
-modules\highlightPurgeableBuffs.lua
 modules\muteArenaDialog.lua
 modules\changeNameplateSize.lua
 modules\essentialCVarSettings.lua
-modules\combatTracker.lua
+
+modules\unitFrameCastBarSize.lua
+modules\unitFrameCastBarColors.lua
+modules\unitFrameStatusText.lua
+modules\unitFrameDarkness.lua
+modules\unitFrameCombatTracker.lua
+modules\unitFrameHighlightPurgeableBuffs.lua
+modules\unitFrameShadowSightHelper.lua

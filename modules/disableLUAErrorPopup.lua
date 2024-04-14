@@ -85,16 +85,6 @@ function Module:CheckConditions()
     end
 end
 
-function Module:IsPlayerInPvPZone()
-    local zoneType = select(2, IsInInstance());
-    -- Check if the player is in a PvP instance. Check if the player is in a raid or 5-man instance
-    if zoneType == "arena" or zoneType == "pvp" or zoneType == "party" or zoneType == "raid" then
-        return true;
-    else
-        return false
-    end
-end
-
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         return true -- retail

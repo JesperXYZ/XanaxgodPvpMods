@@ -1,7 +1,7 @@
 local _, XPM = ...;
 local Main = XPM.Main;
 
-local Module = Main:NewModule('ShadowSightHelper', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule('UnitFrameShadowSightHelper', 'AceHook-3.0', 'AceEvent-3.0');
 
 local rc = LibStub("LibRangeCheck-3.0")
 
@@ -22,13 +22,12 @@ function Module:GetDescription()
 end
 
 function Module:GetName()
-    return 'Shadow Sight Helper';
+    return 'Unit Frame Shadow Sight Helper';
 end
 
 function Module:GetOptions(myOptionsTable, db)
     self.db = db;
     local defaults = {
-        enableEverywhere = false,
         iconOpacity = 1,
         iconSize = 1.3,
         fontSize = 1.7,
@@ -50,9 +49,6 @@ function Module:GetOptions(myOptionsTable, db)
         local setting = info[#info];
         self.db[setting] = value;
 
-        if setting == 'enableEverywhere' then
-            self:RefreshUI()
-        end
         if setting == 'iconOpacity' then
             self:RefreshUI()
         end
@@ -75,111 +71,95 @@ function Module:GetOptions(myOptionsTable, db)
     end
     local counter = CreateCounter(5);
 
-    local ShadowSightHelperImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ShadowSightHelper:202:499:1:-1|t"
-
-    myOptionsTable.args.empty711 = {
-        order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
+    local UnitFrameShadowSightHelperImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameShadowSightHelper:202:499:1:-1|t"
     myOptionsTable.args.enableEverywhere = {
+        type = 'execute',
+        name = 'Toggle Test Mode',
+        desc = '',
+        width = 0.9,
+        func = function()
+            self:ShowEverywhere()
+        end,
         order = counter(),
-        type = 'toggle',
-        name = 'Always show the range-frame',
-        desc = 'Enables the range-frame at all times',
-        width = 'full',
-        get = get,
-        set = set,
     };
-    myOptionsTable.args.empty395 = {
+    myOptionsTable.args.iconGroup = {
         order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
-    myOptionsTable.args.iconSize = {
-        type = 'range',
-        name = 'Icon Size',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 3,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.iconOpacity = {
-        type = 'range',
-        name = 'Icon Opacity',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 1,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.empty331 = {
-        order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
-    myOptionsTable.args.fontSize = {
-        type = 'range',
-        name = 'Font Size',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 3,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.fontOpacity = {
-        type = 'range',
-        name = 'Font Opacity',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 1,
-        step = 0.1,
-        width = 1.2,
-    };
-    myOptionsTable.args.empty337 = {
-        order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
-    myOptionsTable.args.xPosition = {
-        type = 'range',
-        name = 'x-Position',
-        order = counter(),
-        get = get,
-        set = set,
-        min = -500,
-        max = 500,
-        step = 5,
-        width = 1.2,
-    };
-    myOptionsTable.args.yPosition = {
-        type = 'range',
-        name = 'y-Position',
-        order = counter(),
-        get = get,
-        set = set,
-        min = -500,
-        max = 500,
-        step = 5,
-        width = 1.2,
+        name = "Shadow Sight Frame Settings",
+        type = "group",
+        inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+        args = {
+            iconSize = {
+                type = 'range',
+                name = 'Icon Size',
+                order = counter(),
+                get = get,
+                set = set,
+                min = 0,
+                max = 3,
+                step = 0.1,
+                width = 1.05,
+            };
+            iconOpacity = {
+                type = 'range',
+                name = 'Icon Opacity',
+                order = counter(),
+                get = get,
+                set = set,
+                min = 0,
+                max = 1,
+                step = 0.1,
+                width = 1.05,
+            };
+            fontSize = {
+                type = 'range',
+                name = 'Font Size',
+                order = counter(),
+                get = get,
+                set = set,
+                min = 0,
+                max = 3,
+                step = 0.1,
+                width = 1.05,
+            };
+            fontOpacity = {
+                type = 'range',
+                name = 'Font Opacity',
+                order = counter(),
+                get = get,
+                set = set,
+                min = 0,
+                max = 1,
+                step = 0.1,
+                width = 1.05,
+            };
+            xPosition = {
+                type = 'range',
+                name = 'x-Position',
+                order = counter(),
+                get = get,
+                set = set,
+                min = -500,
+                max = 500,
+                step = 5,
+                width = 1.05,
+            };
+            yPosition = {
+                type = 'range',
+                name = 'y-Position',
+                order = counter(),
+                get = get,
+                set = set,
+                min = -500,
+                max = 500,
+                step = 5,
+                width = 1.05,
+            };
+        }
     };
     myOptionsTable.args.art7 = {
         order = counter(),
         type = 'description',
-        name = '' .. ShadowSightHelperImage,
+        name = '' .. UnitFrameShadowSightHelperImage,
         width = 'full',
     };
 
@@ -208,7 +188,7 @@ function Module:ShowEyeDuration()
 end
 
 function Module:ShowEverywhere()
-    if self:IsEnabled() and self.db.enableEverywhere then
+    if self:IsEnabled() then
 
         local a = 0
         repeat
@@ -216,6 +196,24 @@ function Module:ShowEverywhere()
             a = a + 0.1
         until a>60*10
 
+        self:SetupUI()
+        self:Adjustments()
+        --self:ShowEverywhere()
+        if not rangeFrame:IsShown() then
+            rangeFrame:Show()
+        else
+            rangeFrame:Hide()
+        end
+        if hasBeenShownEverywhere ~= true then
+            C_Timer.After(60*10*1, function() self:ShowEverywhere() end)
+            C_Timer.After(60*10*2, function() self:ShowEverywhere() end)
+            C_Timer.After(60*10*3, function() self:ShowEverywhere() end)
+            C_Timer.After(60*10*4, function() self:ShowEverywhere() end)
+            C_Timer.After(60*10*5, function() self:ShowEverywhere() end)
+            C_Timer.After(60*10*6, function() self:ShowEverywhere() end)
+
+            hasBeenShownEverywhere = true
+        end
 
     else
         rangeFrame:Hide()
@@ -313,31 +311,13 @@ function Module:RefreshUI()
 end
 
 function Module:CheckConditions()
-    if self:IsEnabled() and not self.db.enableEverywhere then
+    if self:IsEnabled() then
 
         self:SetupUI()
         self:Adjustments()
         self:RegisterEvent("PLAYER_TARGET_CHANGED", "ShowEyeDuration");
         rangeFrame:Hide()
 
-    elseif self:IsEnabled() and self.db.enableEverywhere then
-
-        self:SetupUI()
-        self:Adjustments()
-        self:ShowEverywhere()
-        if not rangeFrame:IsShown() then
-            rangeFrame:Show()
-        end
-        if hasBeenShownEverywhere ~= true then
-            C_Timer.After(60*10*1, function() self:ShowEverywhere() end)
-            C_Timer.After(60*10*2, function() self:ShowEverywhere() end)
-            C_Timer.After(60*10*3, function() self:ShowEverywhere() end)
-            C_Timer.After(60*10*4, function() self:ShowEverywhere() end)
-            C_Timer.After(60*10*5, function() self:ShowEverywhere() end)
-            C_Timer.After(60*10*6, function() self:ShowEverywhere() end)
-
-            hasBeenShownEverywhere = true
-        end
     else
 
         rangeFrameText:SetFormattedText('')

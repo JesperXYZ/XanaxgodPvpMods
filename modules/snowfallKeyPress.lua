@@ -58,34 +58,37 @@ function Module:GetOptions(myOptionsTable, db)
         name = '',
         width = 'full',
     };
-    myOptionsTable.args.size = {
-        type = 'range',
-        name = 'Glow Size',
+    myOptionsTable.args.snowfallKeyPressGroup = {
         order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 2,
-        step = 0.1,
-        width = 'full',
-    };
-    myOptionsTable.args.empty22 = {
-        order = counter(),
-        type = 'description',
-        name = '',
-        width = 'full',
-    };
-    myOptionsTable.args.girth = {
-        type = 'range',
-        name = 'Glow Girth',
-        order = counter(),
-        get = get,
-        set = set,
-        min = 0,
-        max = 5,
-        step = 1,
-        width = 'full',
-    };
+        name = "Snowfall Key Press Settings",
+        type = "group",
+        inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+        args = {
+            size = {
+                type = 'range',
+                name = 'Glow Size',
+                order = counter(),
+                get = get,
+                set = set,
+                min = 0,
+                max = 2,
+                step = 0.1,
+                width = 1.1,
+            };
+            girth = {
+                type = 'range',
+                name = 'Glow Girth',
+                order = counter(),
+                get = get,
+                set = set,
+                min = 0,
+                max = 5,
+                step = 1,
+                width = 1.1,
+            };
+        }
+    }
+
     myOptionsTable.args.art2 = {
         order = counter(),
         type = 'description',

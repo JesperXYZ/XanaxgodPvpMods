@@ -1,7 +1,7 @@
 local _, XPM = ...;
 local Main = XPM.Main;
 
-local Module = Main:NewModule('CombatTracker', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule('UnitFrameCombatTracker', 'AceHook-3.0', 'AceEvent-3.0');
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -18,14 +18,14 @@ function Module:GetDescription()
 end
 
 function Module:GetName()
-    return 'Combat Tracker';
+    return 'Unit Frame Combat Tracker';
 end
 
 function Module:GetOptions(myOptionsTable, db)
     self.db = db;
     local defaults = {
-        classConditionsAll = true,
-        classConditionsRmp = false,
+        classConditionsAll = false,
+        classConditionsRmp = true,
         classConditionsRogue = false,
 
         outOfCombatTrackerToggle = true,
@@ -125,7 +125,7 @@ function Module:GetOptions(myOptionsTable, db)
     end
     local counter = CreateCounter(5);
 
-    local CombatTrackerImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\CombatTracker:119:474:1:-10|t"
+    local UnitFrameCombatTrackerImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameCombatTracker:119:474:1:-10|t"
 
     myOptionsTable.args.classConditionsGroup = {
         order = counter(),
@@ -234,7 +234,7 @@ function Module:GetOptions(myOptionsTable, db)
             art321123 = {
                 order = counter(),
                 type = 'description',
-                name = '' .. CombatTrackerImage,
+                name = '' .. UnitFrameCombatTrackerImage,
                 width = 'full',
             },
         }
@@ -305,7 +305,7 @@ function Module:GetOptions(myOptionsTable, db)
             art321123 = {
                 order = counter(),
                 type = 'description',
-                name = '' .. CombatTrackerImage,
+                name = '' .. UnitFrameCombatTrackerImage,
                 width = 'full',
             },
         }
@@ -499,14 +499,26 @@ function Module:Hooks()
         end);
     end
 
-    if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+    if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
         self:SecureHook('TargetFrame_OnUpdate', function()
             if self.db.outOfCombatTrackerToggle then
                 self:TargetOutOfCombat();
             end
             if self.db.inCombatTrackerToggle then
                 self:TargetInCombat();
+            end
+        end);
+    end
 
+    if WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+        self:SecureHook('TargetFrame_OnUpdate', function()
+            if self.db.outOfCombatTrackerToggle then
+                self:TargetOutOfCombat();
+                self:FocusOutOfCombat();
+            end
+            if self.db.inCombatTrackerToggle then
+                self:TargetInCombat();
+                self:FocusInCombat();
             end
         end);
     end
@@ -572,16 +584,6 @@ function Module:CheckConditions()
             outOfCombatFocusFrame:Hide();
         end
 
-    end
-end
-
-function Module:IsPlayerInPvPZone()
-    local zoneType = select(2, IsInInstance());
-    -- Check if the player is in a PvP instance. Check if the player is in a raid or 5-man instance
-    if zoneType == "arena" or zoneType == "pvp" then
-        return true;
-    else
-        return false
     end
 end
 

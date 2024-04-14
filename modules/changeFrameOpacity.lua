@@ -266,81 +266,81 @@ function Module:GetOptions(myOptionsTable, db)
         type = "group",
         args = {
             changeFrameOpacityGroup2 = {
-            order = counter(),
-            name = "Change Frame Opacity",
-            type = "group",
-            inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-            args = {
-                minimapAlpha2  = {
-                    type = 'range',
-                    name = 'Minimap',
-                    order = counter(),
-                    get = get,
-                    set = set,
-                    min = 0,
-                    max = 1,
-                    step = 0.1,
-                    width = 0.7,
-                };
-                minimapClusterAlpha2  = {
-                    type = 'range',
-                    name = 'MinimapCluster',
-                    order = counter(),
-                    get = get,
-                    set = set,
-                    min = 0,
-                    max = 1,
-                    step = 0.1,
-                    width = 0.7,
-                };
-                queueStatusButtonAlpha2 = {
-                    type = 'range',
-                    name = 'LFG Eye Button',
-                    order = counter(),
-                    get = get,
-                    set = set,
-                    min = 0,
-                    max = 1,
-                    step = 0.1,
-                    width = 0.7,
-                };
-                entireChatFrameAlpha2 = {
-                    type = 'range',
-                    name = 'Entire Chat Frame',
-                    order = counter(),
-                    get = get,
-                    set = set,
-                    min = 0,
-                    max = 1,
-                    step = 0.1,
-                    width = 0.7,
-                };
-                bagsBarAlpha2 = {
-                    type = 'range',
-                    name = 'BagsBar',
-                    order = counter(),
-                    get = get,
-                    set = set,
-                    min = 0,
-                    max = 1,
-                    step = 0.1,
-                    width = 0.7,
-                };
-                microButtonAlpha2 = {
-                    type = 'range',
-                    name = 'MicroMenu',
-                    order = counter(),
-                    get = get,
-                    set = set,
-                    min = 0,
-                    max = 1,
-                    step = 0.1,
-                    width = 0.7,
-                };
+                order = counter(),
+                name = "Change Frame Opacity",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    minimapAlpha2  = {
+                        type = 'range',
+                        name = 'Minimap',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    minimapClusterAlpha2  = {
+                        type = 'range',
+                        name = 'MinimapCluster',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    queueStatusButtonAlpha2 = {
+                        type = 'range',
+                        name = 'LFG Eye Button',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    entireChatFrameAlpha2 = {
+                        type = 'range',
+                        name = 'Entire Chat Frame',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    bagsBarAlpha2 = {
+                        type = 'range',
+                        name = 'BagsBar',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
+                    microButtonAlpha2 = {
+                        type = 'range',
+                        name = 'MicroMenu',
+                        order = counter(),
+                        get = get,
+                        set = set,
+                        min = 0,
+                        max = 1,
+                        step = 0.1,
+                        width = 0.7,
+                    };
 
-            }
+                }
 
-        };
+            };
 
             hideCompactPartyFrameElementsGroup2 = {
                 order = counter(),
@@ -569,7 +569,7 @@ function Module:HideFrame(frame)
         frame:Hide();
         for i = 1, NUM_CHAT_WINDOWS do
             --if not i == 3 then
-                _G["ChatFrame" .. i .. "Tab"]:Hide()
+            _G["ChatFrame" .. i .. "Tab"]:Hide()
             --end
         end
     end

@@ -25,7 +25,7 @@ function Module:GetOptions(myOptionsTable, db)
     self.db = db;
     local defaults = {
         softTargetInteractToggle = true,
-        nameplateOpacityToggle = false,
+        nameplateOpacityToggle = true,
         spellQueueWindowRange = tonumber(GetCVar("SpellQueueWindow")),
     }
     for key, value in pairs(defaults) do
