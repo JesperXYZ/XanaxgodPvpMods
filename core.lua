@@ -1,7 +1,7 @@
 local name, XPM = ...;
 
 local XanaxgodPvpMods = LibStub('AceAddon-3.0'):NewAddon(name, 'AceConsole-3.0', 'AceHook-3.0', 'AceEvent-3.0');
-if not XanaxgodPvpMods then return; end
+if not (XanaxgodPvpMods) then return; end
 XPM.Main = XanaxgodPvpMods;
 
 function XanaxgodPvpMods:OnInitialize()
@@ -11,7 +11,7 @@ function XanaxgodPvpMods:OnInitialize()
     self:InitializeDefaults();
 
     for moduleName, module in self:IterateModules() do
-        if self.db.modules[moduleName] == false then
+        if (self.db.modules[moduleName] == false) then
             module:Disable();
         end
     end
@@ -22,20 +22,24 @@ end
 function XanaxgodPvpMods:InitializeDefaults()
     local defaults = {
         modules = {
-            ShadowSightHelper = true,
             ChangeFrameOpacity = false,
-            ChangeCastBarSize = false,
-            HighlightPurgeableBuffs = true,
             SnowfallKeyPress = true,
             DisableLUAErrorPopup = true,
             DisableBlizzardButtonEffects = false,
             DisableBlizzardArenaFrames = false,
             MuteArenaDialog = false,
             ChangeNameplateSize = false,
-            EssentialCVarSettings = true,
-            CombatTracker = false,
+            EssentialCVarSettings = false,
+
+            UnitFrameCastBarSize = false,
+            UnitFrameCastBarColors = false,
+            UnitFrameStatusText = false,
+            UnitFrameDarkness = false,
+            UnitFrameCombatTracker = true,
+            UnitFrameHighlightPurgeableBuffs = false,
+            UnitFrameShadowSightHelper = true
         },
-        moduleDb = {},
+        moduleDb = {}
     };
 
     for key, value in pairs(defaults) do
@@ -45,10 +49,10 @@ end
 
 function XanaxgodPvpMods:InitializeConfig()
 
-    local icon = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\icon:14:14|t"
-    local icon2 = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\icon:16:16:-2:-1|t"
-    local text = "|cdf1fd288Xanaxgod PvP Mods|r"
-    local space = " "
+    local icon = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\icon:14:14|t";
+    local icon2 = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\icon:16:16:-2:-1|t";
+    local text = "|cdf1fd288Xanaxgod PvP Mods|r";
+    local space = " ";
     local addonDisplayName = icon .. space .. text;
     local addonDisplayName2 = icon2 .. text;
 
@@ -68,11 +72,11 @@ function XanaxgodPvpMods:InitializeConfig()
                     desc = {
                         order = increment(),
                         type = 'description',
-                        name = 'For requests and bug fixes, go harass via Twitter/Twitch at twitter.com/xanaxgod1337 or twitch.tv/xanaxgod1337.',
-                    },
-                },
-            },
-        },
+                        name = 'For requests and bug fixes, go harass via Twitter/Twitch at twitter.com/xanaxgod1337 or twitch.tv/xanaxgod1337.'
+                    }
+                }
+            }
+        }
     };
 
     local function GetColoredModuleName(moduleName)
@@ -80,12 +84,12 @@ function XanaxgodPvpMods:InitializeConfig()
         local realName = module.GetName and module:GetName() or moduleName;
 
         local isModuleAvailable = module and module:IsAvailableForCurrentVersion();
-        if not isModuleAvailable then
+        if not (isModuleAvailable) then
             return '|cff808080' .. realName .. '|r'; -- |cff808080 is the grey color code
         end
 
         local isModuleEnabled = module and module:IsEnabled();
-        if not isModuleEnabled then
+        if not (isModuleEnabled) then
             return '|cffff0000' .. realName .. '|r'; -- |cffff0000 is the red color code
         end
 
@@ -102,10 +106,10 @@ function XanaxgodPvpMods:InitializeConfig()
         desc = function(info)
             local moduleName = info[#info];
             local module = self:GetModule(moduleName);
-            if module and not module:IsAvailableForCurrentVersion() then
+            if (module and not module:IsAvailableForCurrentVersion()) then
                 return 'This module is unavailable (incompatible with game version or other AddOns)';
             end
-            if module and not module:IsEnabled() then
+            if (module and not module:IsEnabled()) then
                 return 'This module is disabled';
             end
             return 'This module is enabled';
@@ -117,7 +121,7 @@ function XanaxgodPvpMods:InitializeConfig()
                 name = function(info)
                     local moduleName = info[#info - 1];
                     return GetColoredModuleName(moduleName);
-                end,
+                end
             },
             description = {
                 order = 2,
@@ -125,18 +129,18 @@ function XanaxgodPvpMods:InitializeConfig()
                 name = function(info)
                     local module = self:GetModule(info[#info - 1]);
                     return module.GetDescription and module:GetDescription() or '';
-                end,
+                end
             },
             enable = {
                 order = 3,
                 name = 'Enable module',
                 desc = 'Enables this module',
                 type = 'toggle',
-                width = 'full',
+                width = 1.5,
                 get = function(info)
                     local moduleName = info[#info - 1];
                     local module = self:GetModule(moduleName);
-                    if module and not module:IsAvailableForCurrentVersion() then
+                    if (module and not module:IsAvailableForCurrentVersion()) then
                         self:SetModuleState(moduleName, false);
                     else
                         return module:IsEnabled();
@@ -145,29 +149,29 @@ function XanaxgodPvpMods:InitializeConfig()
                 set = function(info, enabled)
                     local moduleName = info[#info - 1];
                     local module = self:GetModule(moduleName);
-                    if module and not module:IsAvailableForCurrentVersion() then
+                    if (module and not module:IsAvailableForCurrentVersion()) then
                         self:SetModuleState(moduleName, false);
                     else
                         self:SetModuleState(moduleName, enabled);
                     end
-                end,
-            },
-        },
+                end
+            }
+        }
     };
 
     -- Define tables to store module names for different states
-    local enabledModules = {}
-    local disabledModules = {}
-    local unavailableModules = {}
+    local enabledModules = {};
+    local disabledModules = {};
+    local unavailableModules = {};
 
     for moduleName, module in self:IterateModules() do
         local isModuleAvailable = module and module:IsAvailableForCurrentVersion();
         local isModuleEnabled = module and module:IsEnabled();
 
         -- Categorize modules based on their state
-        if not isModuleAvailable then
+        if not (isModuleAvailable) then
             table.insert(unavailableModules, moduleName);
-        elseif not isModuleEnabled then
+        elseif not (isModuleEnabled) then
             table.insert(disabledModules, moduleName);
         else
             table.insert(enabledModules, moduleName);
@@ -175,9 +179,9 @@ function XanaxgodPvpMods:InitializeConfig()
     end
 
     -- Sort the tables alphabetically
-    table.sort(enabledModules)
-    table.sort(disabledModules)
-    table.sort(unavailableModules)
+    table.sort(enabledModules);
+    table.sort(disabledModules);
+    table.sort(unavailableModules);
 
     -- Helper function to add module to options table
     function XanaxgodPvpMods:AddModuleToOptionsTable(moduleName, orderFunction)
@@ -221,7 +225,7 @@ end
 
 
 function XanaxgodPvpMods:SetModuleState(moduleName, enabled)
-    if enabled then
+    if (enabled) then
         self:EnableModule(moduleName);
     else
         self:DisableModule(moduleName);
@@ -233,18 +237,18 @@ function XanaxgodPvpMods:ReinitializeOptionsMenu()
     local count = 1;
     local function increment() count = count + 1; return count end;
 
-    local enabledModules = {}
-    local disabledModules = {}
-    local unavailableModules = {}
+    local enabledModules = {};
+    local disabledModules = {};
+    local unavailableModules = {};
 
     for moduleName, module in self:IterateModules() do
         local isModuleAvailable = module and module:IsAvailableForCurrentVersion();
         local isModuleEnabled = module and module:IsEnabled();
 
         -- Categorize modules based on their state
-        if not isModuleAvailable then
+        if not (isModuleAvailable) then
             table.insert(unavailableModules, moduleName);
-        elseif not isModuleEnabled then
+        elseif not (isModuleEnabled) then
             table.insert(disabledModules, moduleName);
         else
             table.insert(enabledModules, moduleName);
@@ -252,9 +256,9 @@ function XanaxgodPvpMods:ReinitializeOptionsMenu()
     end
 
     -- Sort the tables alphabetically
-    table.sort(enabledModules)
-    table.sort(disabledModules)
-    table.sort(unavailableModules)
+    table.sort(enabledModules);
+    table.sort(disabledModules);
+    table.sort(unavailableModules);
 
     -- Add enabled modules to options table
     for _, moduleName in ipairs(enabledModules) do
