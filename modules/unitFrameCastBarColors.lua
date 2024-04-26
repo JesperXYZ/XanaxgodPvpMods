@@ -14,7 +14,7 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module remakes the coloring of your unit frame cast bars and makes fake casts easier to spot. If you play with high ping the timing of the colors may be off.';
+    return 'This module remakes the coloring of your unit frame cast bars and makes fake casts easier to spot (you should reload after altering this module).';
 end
 
 function Module:GetName()
@@ -23,7 +23,33 @@ end
 
 function Module:GetOptions(myOptionsTable, db)
     self.db = db;
-    local defaults = {}
+    local defaults = {
+        customCastBarColorsToggle = false,
+        successColor = {
+            r = 0,
+            g = 1,
+            b = 0,
+            a = 1
+        },
+        normalColor = {
+            r = 1,
+            g = 0.7,
+            b = 0,
+            a = 1
+        },
+        interruptedColor = {
+            r = 1,
+            g = 0,
+            b = 0,
+            a = 1
+        },
+        notInterruptibleColor = {
+            r = 0.3,
+            g = 0.3,
+            b = 0.3,
+            a = 1
+        }
+    }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
             self.db[key] = value;
@@ -37,13 +63,31 @@ function Module:GetOptions(myOptionsTable, db)
         local setting = info[#info];
         self.db[setting] = value;
 
+        if setting == 'customCastBarColorsToggle' then
+            self:RefreshUI()
+        end
+    end
+    local getColor = function(info)
+        local color = self.db[info[#info]];
+        return color.r, color.g, color.b, color.a;
+    end
+    local setColor = function(info, r, g, b, a)
+        local color = self.db[info[#info]];
+        color.r, color.g, color.b, color.a = r, g, b, a;
     end
 
     local counter = CreateCounter(5);
 
-    --local UnitFrameCastBarSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameCastBarSize:147:480:5:-15|t"
-    --local UnitFrameCastBarSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameCastBarSize:152:490:5:-1|t"
+    local UnitFrameCastBarColors1Image = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameCastBarColors1:78:499:0:-1|t"
+    local UnitFrameCastBarColors2Image = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameCastBarColors2:78:499:0:-1|t"
 
+
+    myOptionsTable.args.spaceDesc = {
+        order = counter(),
+        type = 'description',
+        name = '  ',
+        width = 0.6,
+    };
     myOptionsTable.args.reloadExecute = {
         type = 'execute',
         name = '/reload',
@@ -54,15 +98,126 @@ function Module:GetOptions(myOptionsTable, db)
         end,
         order = counter(),
     };
-
-    --[[
+    myOptionsTable.args.colorSettingsGroup = {
+        order = counter(),
+        name = "Custom Cast Bar Colors",
+        type = "group",
+        inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+        args = {
+            customCastBarColorsToggle = {
+                type = 'toggle',
+                name = 'Enable',
+                order = counter(),
+                width = 0.525,
+                get = get,
+                set = set,
+            },
+            reset = {
+                type = 'execute',
+                name = 'Reset to Default',
+                width = 0.8,
+                func = function()
+                    self.db.successColor = defaults.successColor;
+                    self.db.normalColor = defaults.normalColor;
+                    self.db.interruptedColor = defaults.interruptedColor;
+                    self.db.notInterruptibleColor = defaults.notInterruptibleColor;
+                    Module:RefreshUI()
+                end,
+                order = counter(),
+            },
+            spaceDesc = {
+                order = counter(),
+                type = 'description',
+                name = '  ',
+                width = 0.175,
+            },
+            successColor = {
+                type = 'color',
+                name = 'Success/channel cast bar color',
+                hasAlpha = true,
+                width = 0.75,
+                order = counter(),
+                get = getColor,
+                set = setColor,
+            },
+            normalColor = {
+                type = 'color',
+                name = 'Normal cast bar color',
+                hasAlpha = true,
+                width = 0.75,
+                order = counter(),
+                get = getColor,
+                set = setColor,
+            },
+            interruptedColor = {
+                type = 'color',
+                name = 'Interrupted cast bar color',
+                hasAlpha = true,
+                width = 0.75,
+                order = counter(),
+                get = getColor,
+                set = setColor,
+            },
+            notInterruptibleColor = {
+                type = 'color',
+                name = 'Not interruptible cast bar color',
+                hasAlpha = true,
+                width = 0.75,
+                order = counter(),
+                get = getColor,
+                set = setColor,
+            },
+        }
+    }
+    myOptionsTable.args.empty51235 = {
+        order = counter(),
+        type = 'description',
+        name = ' ',
+        width = 'full',
+    };
+    myOptionsTable.args.empty512351 = {
+        order = counter(),
+        type = 'description',
+        name = ' ',
+        width = 'full',
+    };
+    myOptionsTable.args.pic1Desc = {
+        order = counter(),
+        type = 'description',
+        name = 'Default blizzard frames (module disabled vs module enabled).',
+        width = 'full',
+    };
     myOptionsTable.args.art51233 = {
         order = counter(),
         type = 'description',
-        name = '' .. UnitFrameCastBarSizeImage,
+        name = '' .. UnitFrameCastBarColors1Image,
         width = 'full',
     };
-    ]]--
+    myOptionsTable.args.empty512325 = {
+        order = counter(),
+        type = 'description',
+        name = ' ',
+        width = 'full',
+    };
+    myOptionsTable.args.empty512335 = {
+        order = counter(),
+        type = 'description',
+        name = ' ',
+        width = 'full',
+    };
+    myOptionsTable.args.pic2Desc = {
+        order = counter(),
+        type = 'description',
+        name = 'Jax Classic Frames (module disabled vs module enabled).',
+        width = 'full',
+    };
+    myOptionsTable.args.art512334 = {
+        order = counter(),
+        type = 'description',
+        name = '' .. UnitFrameCastBarColors2Image,
+        width = 'full',
+    };
+
 
     return myOptionsTable;
 end
@@ -74,6 +229,51 @@ function Module:SetupCastBarColors()
         local isFocusCasting = false
         local targetCastEndTime = 1
         local focusCastEndTime = 1
+
+        local green
+        local yellow
+        local red
+        local grey
+
+        if self.db.customCastBarColorsToggle then
+            green = self.db.successColor
+            yellow = self.db.normalColor
+            red = self.db.interruptedColor
+            grey = self.db.notInterruptibleColor
+        else
+            local defaults = {
+                successColor = {
+                    r = 0,
+                    g = 1,
+                    b = 0,
+                    a = 1
+                },
+                normalColor = {
+                    r = 1,
+                    g = 0.7,
+                    b = 0,
+                    a = 1
+                },
+                interruptedColor = {
+                    r = 1,
+                    g = 0,
+                    b = 0,
+                    a = 1
+                },
+                notInterruptibleColor = {
+                    r = 0.3,
+                    g = 0.3,
+                    b = 0.3,
+                    a = 1
+                }
+            }
+
+            green = defaults.successColor;
+            yellow = defaults.normalColor;
+            red = defaults.interruptedColor;
+            grey = defaults.notInterruptibleColor;
+        end
+
 
         function Module:CheckCastStatus(castType)
 
@@ -310,13 +510,13 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
 
-                    JcfTargetFrameSpellBar:SetStatusBarColor(0.35, 0.35, 0.35, 1) --Grey
+                    JcfTargetFrameSpellBar:SetStatusBarColor(grey.r, grey.g, grey.b, grey.a) --Grey
 
                 end
 
                 if unitTarget == 'focus' then
 
-                    JcfFocusFrameSpellBar:SetStatusBarColor(0.35, 0.35, 0.35, 1) --Grey
+                    JcfFocusFrameSpellBar:SetStatusBarColor(grey.r, grey.g, grey.b, grey.a) --Grey
 
                 end
             end
@@ -325,9 +525,9 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
                     JcfTargetFrameSpellBar:SetValue(select(2, TargetFrameSpellBar:GetMinMaxValues())-0.01)
-                    JcfTargetFrameSpellBar:SetStatusBarColor(1, 0, 0, 1) --Red
+                    JcfTargetFrameSpellBar:SetStatusBarColor(red.r, red.g, red.b, red.a) --Red
 
-                    JcfTargetFrameSpellBar.Flash:SetVertexColor(1, 0, 0, 1)
+                    JcfTargetFrameSpellBar.Flash:SetVertexColor(red.r, red.g, red.b, red.a)
 
                     successfulCastBufferTarget = true
 
@@ -336,9 +536,9 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'focus' then
                     JcfFocusFrameSpellBar:SetValue(select(2, FocusFrameSpellBar:GetMinMaxValues())-0.01)
-                    JcfFocusFrameSpellBar:SetStatusBarColor(1, 0, 0, 1) --Red
+                    JcfFocusFrameSpellBar:SetStatusBarColor(red.r, red.g, red.b, red.a) --Red
 
-                    JcfFocusFrameSpellBar.Flash:SetVertexColor(1, 0, 0, 1)
+                    JcfFocusFrameSpellBar.Flash:SetVertexColor(red.r, red.g, red.b, red.a)
 
                     successfulCastBufferFocus = true
 
@@ -350,13 +550,13 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
 
-                    JcfTargetFrameSpellBar:SetStatusBarColor(1, 0.8, 0, 1) --Yellow
+                    JcfTargetFrameSpellBar:SetStatusBarColor(yellow.r, yellow.g, yellow.b, yellow.a) --Yellow
 
                 end
 
                 if unitTarget == 'focus' then
 
-                    JcfFocusFrameSpellBar:SetStatusBarColor(1, 0.8, 0, 1) --Yellow
+                    JcfFocusFrameSpellBar:SetStatusBarColor(yellow.r, yellow.g, yellow.b, yellow.a) --Yellow
 
                 end
             end
@@ -365,13 +565,13 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
 
-                    JcfTargetFrameSpellBar:SetStatusBarColor(0, 1, 0, 1) --Green
+                    JcfTargetFrameSpellBar:SetStatusBarColor(green.r, green.g, green.b, green.a) --Green
 
                 end
 
                 if unitTarget == 'focus' then
 
-                    JcfFocusFrameSpellBar:SetStatusBarColor(0, 1, 0, 1) --Green
+                    JcfFocusFrameSpellBar:SetStatusBarColor(green.r, green.g, green.b, green.a) --Green
 
                 end
             end
@@ -666,7 +866,7 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
 
-                    TargetFrameSpellBar:SetStatusBarColor(0.75, 0.75, 0.75, 0.04) --Grey
+                    TargetFrameSpellBar:SetStatusBarColor(grey.r, grey.g, grey.b, grey.a) --Grey
 
                     self:SetTargetBarType()
 
@@ -674,7 +874,7 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'focus' then
 
-                    FocusFrameSpellBar:SetStatusBarColor(0.75, 0.75, 0.75, 0.04) --Grey
+                    FocusFrameSpellBar:SetStatusBarColor(grey.r, grey.g, grey.b, grey.a) --Grey
 
                     self:SetFocusBarType()
 
@@ -685,7 +885,7 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
                     TargetFrameSpellBar:SetValue(select(2, TargetFrameSpellBar:GetMinMaxValues())-0.01)
-                    TargetFrameSpellBar:SetStatusBarColor(1, 0, 0, 1) --Red
+                    TargetFrameSpellBar:SetStatusBarColor(red.r, red.g, red.b, red.a) --Red
 
                     self:SetTargetBarType()
 
@@ -696,7 +896,7 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'focus' then
                     FocusFrameSpellBar:SetValue(select(2, FocusFrameSpellBar:GetMinMaxValues())-0.01)
-                    FocusFrameSpellBar:SetStatusBarColor(1, 0, 0, 1) --Red
+                    FocusFrameSpellBar:SetStatusBarColor(red.r, red.g, red.b, red.a) --Red
 
                     self:SetFocusBarType()
 
@@ -710,14 +910,14 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
 
-                    TargetFrameSpellBar:SetStatusBarColor(1, 1, 0, 1) --Yellow
+                    TargetFrameSpellBar:SetStatusBarColor(yellow.r, yellow.g, yellow.b, yellow.a) --Yellow
 
                     self:SetTargetBarType()
                 end
 
                 if unitTarget == 'focus' then
 
-                    FocusFrameSpellBar:SetStatusBarColor(1, 1, 0, 1) --Yellow
+                    FocusFrameSpellBar:SetStatusBarColor(yellow.r, yellow.g, yellow.b, yellow.a) --Yellow
 
                     self:SetFocusBarType()
                 end
@@ -727,14 +927,14 @@ function Module:SetupCastBarColors()
 
                 if unitTarget == 'target' then
 
-                    TargetFrameSpellBar:SetStatusBarColor(0, 1, 0, 1) --Green
+                    TargetFrameSpellBar:SetStatusBarColor(green.r, green.g, green.b, green.a) --Green
 
                     self:SetTargetBarType()
                 end
 
                 if unitTarget == 'focus' then
 
-                    FocusFrameSpellBar:SetStatusBarColor(0, 1, 0, 1) --Green
+                    FocusFrameSpellBar:SetStatusBarColor(green.r, green.g, green.b, green.a) --Green
 
                     self:SetFocusBarType()
                 end
@@ -771,7 +971,7 @@ function Module:SetupCastBarColors()
                 local barTypeInfo = TargetFrameSpellBar:GetTypeInfo(TargetFrameSpellBar.barType);
                 if barTypeInfo then
                     TargetFrameSpellBar:SetStatusBarTexture(barTypeInfo.full);
-                    print(barTypeInfo.full) --ui-castingbar-full-standard
+                    --print(barTypeInfo.full) --ui-castingbar-full-standard
                 end
             end
 
@@ -782,7 +982,7 @@ function Module:SetupCastBarColors()
                 local barTypeInfo = FocusFrameSpellBar:GetTypeInfo(FocusFrameSpellBar.barType);
                 if barTypeInfo then
                     FocusFrameSpellBar:SetStatusBarTexture(barTypeInfo.full);
-                    print(barTypeInfo.full) --ui-castingbar-full-standard
+                    --print(barTypeInfo.full) --ui-castingbar-full-standard
                 end
             end
 

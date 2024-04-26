@@ -24,6 +24,7 @@ end
 function Module:GetOptions(myOptionsTable, db)
     self.db = db;
     local defaults = {
+        worldPreloadToggle = true,
         softTargetInteractToggle = true,
         nameplateOpacityToggle = true,
         spellQueueWindowRange = tonumber(GetCVar("SpellQueueWindow")),
@@ -52,10 +53,49 @@ function Module:GetOptions(myOptionsTable, db)
         if setting == 'nameplateOpacityToggle' then
             self:RefreshUI()
         end
+        if setting == 'worldPreloadToggle' then
+            self:RefreshUI()
+        end
     end
 
     local counter = CreateCounter(5);
 
+    myOptionsTable.args.spellQueueWindow = {
+        order = counter(),
+        name = "SpellQueueWindow",
+        type = "group",
+        inline = true,
+        args = {
+            spellQueueWindowDesc = {
+                order = counter(),
+                type = 'description',
+                name = 'This CVar determines the duration of queuing consecutive spell casts in milliseconds. Raising this value may reduce gaps/delays between abilities.',
+                width = 'full',
+            },
+            spellQueueWindowRange = {
+                type = 'range',
+                name = 'SpellQueueWindow Value',
+                order = counter(),
+                get = getSpellQueueWindow,
+                set = set,
+                min = 1,
+                max = 400,
+                step = 1,
+                width = 1.4,
+            },
+            spellQueueWindowReset = {
+                type = 'execute',
+                name = 'Reset to Default',
+                desc = 'SetCVar("SpellQueueWindow", 400)',
+                width = 0.75,
+                func = function()
+                    self.db.spellQueueWindowRange = 400;
+                    self:ResetToDefault('spellQueueWindow')
+                end,
+                order = counter(),
+            },
+        }
+    }
     myOptionsTable.args.softTargetInteract = {
         order = counter(),
         name = "SoftTarget CVars",
@@ -71,9 +111,9 @@ function Module:GetOptions(myOptionsTable, db)
             softTargetInteractToggle = {
                 type = 'toggle',
                 name = 'Auto set value',
-                desc = 'Automatically sets the CVar values to 0 upon logging in (some CVars are character specific)',
+                desc = 'Automatically sets the CVar values to 0 upon logging in (some CVars are character specific or reset randomly)',
                 order = counter(),
-                width = 0.7,
+                width = 0.65,
                 get = get,
                 set = set,
             },
@@ -81,7 +121,7 @@ function Module:GetOptions(myOptionsTable, db)
                 type = 'execute',
                 name = 'Set Value Once',
                 desc = 'SetCVar("SoftTargetInteract",0) SetCVar("SoftTargetEnemyRange",0) SetCVar("SoftTargetFriendRange",0)',
-                width = 0.8,
+                width = 0.75,
                 func = function()
                     self:SetValueOnce('softTargetInteract')
                 end,
@@ -91,7 +131,7 @@ function Module:GetOptions(myOptionsTable, db)
                 type = 'execute',
                 name = 'Reset to Default',
                 desc = 'SetCVar("SoftTargetInteract",1) SetCVar("SoftTargetEnemyRange",45) SetCVar("SoftTargetFriendRange",45)',
-                width = 0.8,
+                width = 0.75,
                 func = function()
                     self:ResetToDefault('softTargetInteract')
                 end,
@@ -114,9 +154,9 @@ function Module:GetOptions(myOptionsTable, db)
             nameplateOpacityToggle = {
                 type = 'toggle',
                 name = 'Auto set value',
-                desc = 'Automatically sets the CVar values to 1 upon logging in (some CVars are character specific)',
+                desc = 'Automatically sets the CVar values to 1 upon logging in (some CVars are character specific or reset randomly)',
                 order = counter(),
-                width = 0.7,
+                width = 0.65,
                 get = get,
                 set = set,
             },
@@ -124,7 +164,7 @@ function Module:GetOptions(myOptionsTable, db)
                 type = 'execute',
                 name = 'Set Value Once',
                 desc = 'SetCVar("nameplateMinAlpha",1) SetCVar("nameplateOccludedAlphaMult",1)',
-                width = 0.8,
+                width = 0.75,
                 func = function()
                     self:SetValueOnce('nameplateOpacity')
                 end,
@@ -134,7 +174,7 @@ function Module:GetOptions(myOptionsTable, db)
                 type = 'execute',
                 name = 'Reset to Default',
                 desc = 'SetCVar("nameplateMinAlpha",0.6) SetCVar("nameplateOccludedAlphaMult",0.4)',
-                width = 0.8,
+                width = 0.75,
                 func = function()
                     self:ResetToDefault('nameplateOpacity')
                 end,
@@ -142,41 +182,48 @@ function Module:GetOptions(myOptionsTable, db)
             },
         },
     }
-    myOptionsTable.args.spellQueueWindow = {
+    myOptionsTable.args.worldPreload = {
         order = counter(),
-        name = "SpellQueueWindow",
+        name = "World Preload CVars",
         type = "group",
-        inline = true,
+        inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
         args = {
-            spellQueueWindowDesc = {
+            worldPreloadDesc = {
                 order = counter(),
                 type = 'description',
-                name = 'This CVar determines the duration of queuing consecutive spell casts in milliseconds. Raising this value may reduce gaps/delays between abilities.',
+                name = 'Setting these CVars to 0 makes your loading screens faster (but some models and textures may not be high resolution or immediately shown when loading in).',
                 width = 'full',
             },
-            spellQueueWindowRange = {
-                type = 'range',
-                name = 'SpellQueueWindow Value',
+            worldPreloadToggle = {
+                type = 'toggle',
+                name = 'Auto set value',
+                desc = 'Automatically sets the CVar values to 0 upon logging in (some CVars are character specific or reset randomly)',
                 order = counter(),
-                get = getSpellQueueWindow,
+                width = 0.65,
+                get = get,
                 set = set,
-                min = 1,
-                max = 400,
-                step = 1,
-                width = 1.5,
             },
-            spellQueueWindowReset = {
+            worldPreloadSetOnce = {
                 type = 'execute',
-                name = 'Reset to Default',
-                desc = 'SetCVar("SpellQueueWindow", 400)',
-                width = 0.8,
+                name = 'Set Value Once',
+                desc = 'SetCVar("preloadPlayerModels",0) SetCVar("worldPreloadHighResTextures",0) SetCVar("worldPreloadNonCritical",0)',
+                width = 0.75,
                 func = function()
-                    self.db.spellQueueWindowRange = 400;
-                    self:ResetToDefault('spellQueueWindow')
+                    self:SetValueOnce('worldPreload')
                 end,
                 order = counter(),
             },
-        }
+            worldPreloadReset = {
+                type = 'execute',
+                name = 'Reset to Default',
+                desc = 'SetCVar("preloadPlayerModels",1) SetCVar("worldPreloadHighResTextures",1) SetCVar("worldPreloadNonCritical",2)',
+                width = 0.75,
+                func = function()
+                    self:ResetToDefault('worldPreload')
+                end,
+                order = counter(),
+            },
+        },
     }
 
     return myOptionsTable;
@@ -199,6 +246,9 @@ function Module:SetupUI()
                 end
 
             end
+            if self.db.worldPreloadToggle then
+                self:SetValueOnce('worldPreload')
+            end
             self:SetValueOnce('spellQueueWindow')
 
         end
@@ -219,6 +269,11 @@ function Module:SetValueOnce(input)
             SetCVar("nameplateMinAlpha", 1)
             SetCVar("nameplateOccludedAlphaMult", 1)
         end
+        if input =='worldPreload' then
+            SetCVar("preloadPlayerModels", 0)
+            SetCVar("worldPreloadHighResTextures", 0)
+            SetCVar("worldPreloadNonCritical", 0)
+        end
     end
 end
 
@@ -237,6 +292,12 @@ function Module:ResetToDefault(input)
             self.db.nameplateOpacityToggle = false;
             SetCVar("nameplateMinAlpha", 0.6)
             SetCVar("nameplateOccludedAlphaMult", 0.4)
+        end
+        if input =='worldPreload' then
+            self.db.worldPreloadToggle = false;
+            SetCVar("preloadPlayerModels", 1)
+            SetCVar("worldPreloadHighResTextures", 1)
+            SetCVar("worldPreloadNonCritical", 2)
         end
     end
 end

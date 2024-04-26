@@ -1,7 +1,7 @@
 local _, XPM = ...;
 local Main = XPM.Main;
 
-local Module = Main:NewModule('ChangeNameplateSize', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule('NameplateSize', 'AceHook-3.0', 'AceEvent-3.0');
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -18,7 +18,7 @@ function Module:GetDescription()
 end
 
 function Module:GetName()
-    return 'Change Nameplate Size';
+    return 'Nameplate Size';
 end
 
 function Module:GetOptions(myOptionsTable, db)
@@ -50,7 +50,7 @@ function Module:GetOptions(myOptionsTable, db)
 
     local counter = CreateCounter(5);
 
-    local ChangeNameplateSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\ChangeNameplateSize:242:495:1:-10|t"
+    local NameplateSizeImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\NameplateSize:242:495:1:-10|t"
 
     myOptionsTable.args.nameplateSizeGroup = {
         order = counter(),
@@ -86,7 +86,7 @@ function Module:GetOptions(myOptionsTable, db)
     myOptionsTable.args.art53 = {
         order = counter(),
         type = 'description',
-        name = '' .. ChangeNameplateSizeImage,
+        name = '' .. NameplateSizeImage,
         width = 'full',
     };
     myOptionsTable.args.empty315222 = {

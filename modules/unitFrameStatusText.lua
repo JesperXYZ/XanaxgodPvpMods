@@ -14,7 +14,7 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module allows you to reformat the status text displayed on the health and mana bar of your unit frames.';
+    return 'This module allows you to reformat the status text displayed on the health and mana bar of your unit frames (you should reload after altering this module).';
 end
 
 function Module:GetName()
@@ -371,7 +371,7 @@ function Module:SetupStatusText()
                 NumericUpdater()
                 C_Timer.After(1, function() NumericUpdater() end)
                 C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(5, function() NumericUpdater() end)
+                C_Timer.After(3, function() NumericUpdater() end)
 
             else
                 --normal retail ui
@@ -420,7 +420,7 @@ function Module:SetupStatusText()
                 NumericUpdater()
                 C_Timer.After(1, function() NumericUpdater() end)
                 C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(5, function() NumericUpdater() end)
+                C_Timer.After(3, function() NumericUpdater() end)
             end
         end
         if WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
@@ -467,7 +467,7 @@ function Module:SetupStatusText()
             NumericUpdater()
             C_Timer.After(1, function() NumericUpdater() end)
             C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(5, function() NumericUpdater() end)
+            C_Timer.After(3, function() NumericUpdater() end)
         end
         if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
             --normal classic ui
@@ -513,7 +513,7 @@ function Module:SetupStatusText()
             NumericUpdater()
             C_Timer.After(1, function() NumericUpdater() end)
             C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(5, function() NumericUpdater() end)
+            C_Timer.After(3, function() NumericUpdater() end)
         end
     end
     --XanaxgodBoth
@@ -587,19 +587,38 @@ function Module:SetupStatusText()
                 NumericUpdater()
                 C_Timer.After(1, function() NumericUpdater() end)
                 C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(5, function() NumericUpdater() end)
+                C_Timer.After(3, function() NumericUpdater() end)
 
             else
                 --normal retail ui
                 local function NumericUpdater()
                     --health bars (player target and focus)
-                    local playerHealth = tostring(FormatValue(UnitHealth("player"))).." ("..tostring(UnitHealth("player")/UnitHealthMax("player")*100-(UnitHealth("player")/UnitHealthMax("player")*100)%1).."%)"
-                    local targetHealth = tostring(FormatValue(UnitHealth("target"))).." ("..tostring(UnitHealth("target")/UnitHealthMax("target")*100-(UnitHealth("target")/UnitHealthMax("target")*100)%1).."%)"
-                    local focusHealth = tostring(FormatValue(UnitHealth("focus"))).." ("..tostring(UnitHealth("focus")/UnitHealthMax("focus")*100-(UnitHealth("focus")/UnitHealthMax("focus")*100)%1).."%)"
+                    local playerHealth
+                    if UnitHealth("player") > 0 then
+                        playerHealth = tostring(FormatValue(UnitHealth("player"))).." ("..tostring(UnitHealth("player")/UnitHealthMax("player")*100-(UnitHealth("player")/UnitHealthMax("player")*100)%1).."%)"
+                    end
+                    local targetHealth
+                    if UnitHealth("target") > 0 then
+                        targetHealth = tostring(FormatValue(UnitHealth("target"))).." ("..tostring(UnitHealth("target")/UnitHealthMax("target")*100-(UnitHealth("target")/UnitHealthMax("target")*100)%1).."%)"
+                    end
+                    local focusHealth
+                    if UnitHealth("focus") > 0 then
+                        focusHealth = tostring(FormatValue(UnitHealth("focus"))).." ("..tostring(UnitHealth("focus")/UnitHealthMax("focus")*100-(UnitHealth("focus")/UnitHealthMax("focus")*100)%1).."%)"
+                    end
 
-                    local playerMana = tostring(FormatValue(UnitPower("player"))).." ("..tostring(UnitPower("player")/UnitPowerMax("player")*100-(UnitPower("player")/UnitPowerMax("player")*100)%1).."%)"
-                    local targetMana = tostring(FormatValue(UnitPower("target"))).." ("..tostring(UnitPower("target")/UnitPowerMax("target")*100-(UnitPower("target")/UnitPowerMax("target")*100)%1).."%)"
-                    local focusMana = tostring(FormatValue(UnitPower("focus"))).." ("..tostring(UnitPower("focus")/UnitPowerMax("focus")*100-(UnitPower("focus")/UnitPowerMax("focus")*100)%1).."%)"
+
+                    local playerMana
+                    if UnitPower("player") > 0 then
+                        playerMana = tostring(FormatValue(UnitPower("player"))).." ("..tostring(UnitPower("player")/UnitPowerMax("player")*100-(UnitPower("player")/UnitPowerMax("player")*100)%1).."%)"
+                    end
+                    local targetMana
+                    if UnitPower("target") > 0 then
+                        targetMana = tostring(FormatValue(UnitPower("target"))).." ("..tostring(UnitPower("target")/UnitPowerMax("target")*100-(UnitPower("target")/UnitPowerMax("target")*100)%1).."%)"
+                    end
+                    local focusMana
+                    if UnitPower("focus") > 0 then
+                        focusMana = tostring(FormatValue(UnitPower("focus"))).." ("..tostring(UnitPower("focus")/UnitPowerMax("focus")*100-(UnitPower("focus")/UnitPowerMax("focus")*100)%1).."%)"
+                    end
 
 
                     --health bars (player target and focus)
@@ -646,7 +665,7 @@ function Module:SetupStatusText()
                 NumericUpdater()
                 C_Timer.After(1, function() NumericUpdater() end)
                 C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(5, function() NumericUpdater() end)
+                C_Timer.After(3, function() NumericUpdater() end)
             end
         end
         if WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
@@ -703,7 +722,7 @@ function Module:SetupStatusText()
             NumericUpdater()
             C_Timer.After(1, function() NumericUpdater() end)
             C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(5, function() NumericUpdater() end)
+            C_Timer.After(3, function() NumericUpdater() end)
         end
         if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
             --normal classic ui
@@ -754,7 +773,7 @@ function Module:SetupStatusText()
             NumericUpdater()
             C_Timer.After(1, function() NumericUpdater() end)
             C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(5, function() NumericUpdater() end)
+            C_Timer.After(3, function() NumericUpdater() end)
         end
     end
 end

@@ -22,13 +22,14 @@ end
 function XanaxgodPvpMods:InitializeDefaults()
     local defaults = {
         modules = {
-            ChangeFrameOpacity = false,
+            UIFrameOpacity = false,
+            UIHideElements = false,
             SnowfallKeyPress = true,
             DisableLUAErrorPopup = true,
             DisableBlizzardButtonEffects = false,
             DisableBlizzardArenaFrames = false,
             MuteArenaDialog = false,
-            ChangeNameplateSize = false,
+            NameplateSize = false,
             EssentialCVarSettings = false,
 
             UnitFrameCastBarSize = false,

@@ -13,10 +13,11 @@ core.lua
 modules\disableBlizzardArenaFrames.lua
 modules\disableLUAErrorPopup.lua
 modules\disableBlizzardButtonEffects.lua
-modules\changeFrameOpacity.lua
+modules\UIFrameOpacity.lua
+modules\UIHideElements.lua
 modules\snowfallKeyPress.lua
 modules\muteArenaDialog.lua
-modules\changeNameplateSize.lua
+modules\nameplateSize.lua
 modules\essentialCVarSettings.lua
 
 modules\unitFrameCastBarSize.lua
