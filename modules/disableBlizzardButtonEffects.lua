@@ -1,7 +1,7 @@
-local _, XPM = ...;
-local Main = XPM.Main;
+local _, XPM = ...
+local Main = XPM.Main
 
-local Module = Main:NewModule('DisableBlizzardButtonEffects', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule("DisableBlizzardButtonEffects", "AceHook-3.0", "AceEvent-3.0")
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -14,34 +14,35 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module disables all the ActionButton glows/effects/animations Blizzard added in 10.1.5.';
+    return "This module disables all the ActionButton glows/effects/animations Blizzard added in 10.1.5."
 end
 
 function Module:GetName()
-    return 'Disable Blizzard Button Effects';
+    return "Disable Blizzard Button Effects"
 end
 
 function Module:GetOptions(myOptionsTable, db)
-    self.db = db;
+    self.db = db
     local defaults = {}
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
-            self.db[key] = value;
+            self.db[key] = value
         end
     end
 
-    local counter = CreateCounter(5);
+    local counter = CreateCounter(5)
 
-    local DisableBlizzardButtonEffectsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableBlizzardButtonEffects:120:360:68:-15|t"
+    local DisableBlizzardButtonEffectsImage =
+    "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableBlizzardButtonEffects:120:360:68:-15|t"
 
     myOptionsTable.args.art3 = {
         order = counter(),
-        type = 'description',
-        name = '' .. DisableBlizzardButtonEffectsImage,
-        width = 'full',
-    };
+        type = "description",
+        name = "" .. DisableBlizzardButtonEffectsImage,
+        width = "full"
+    }
 
-    return myOptionsTable;
+    return myOptionsTable
 end
 
 function Module:SetupUI()
@@ -56,21 +57,21 @@ function Module:SetupUI()
         "UNIT_SPELLCAST_RETICLE_TARGET",
         "UNIT_SPELLCAST_RETICLE_CLEAR",
         "UNIT_SPELLCAST_EMPOWER_START",
-        "UNIT_SPELLCAST_EMPOWER_STOP",
+        "UNIT_SPELLCAST_EMPOWER_STOP"
     }
 
     if self:IsEnabled() then
-        for _,e in ipairs(events) do
+        for _, e in ipairs(events) do
             ActionBarActionEventsFrame:UnregisterEvent(e)
         end
     else
-        for _,e in ipairs(events) do
+        for _, e in ipairs(events) do
             ActionBarActionEventsFrame:RegisterEvent(e)
         end
     end
 
     if self:IsEnabled() then
-        self:SecureHook('ActionButtonCooldown_OnCooldownDone', function (self)
+        self:SecureHook("ActionButtonCooldown_OnCooldownDone", function(self)
             local cooldownFlash = self:GetParent().CooldownFlash
             if cooldownFlash and cooldownFlash.FlashAnim:IsPlaying() then
                 cooldownFlash.FlashAnim:Stop()
@@ -91,9 +92,7 @@ function Module:SetupUI()
         self:SecureHook("ActionButton_ShowOverlayGlow", function(button)
             if button.SpellActivationAlert.ProcStartAnim:IsPlaying() then
                 button.SpellActivationAlert:SetAlpha(0)
-                C_Timer.After(0.26, function()
-                    button.SpellActivationAlert:SetAlpha(1)
-                end)
+                C_Timer.After(0.26, function() button.SpellActivationAlert:SetAlpha(1) end)
             end
         end)
     end
@@ -101,8 +100,8 @@ end
 
 function Module:RefreshUI()
     if self:IsEnabled() then
-        self:Disable();
-        self:Enable();
+        self:Disable()
+        self:Enable()
     end
 end
 

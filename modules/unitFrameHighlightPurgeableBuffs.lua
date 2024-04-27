@@ -1,7 +1,7 @@
-local _, XPM = ...;
-local Main = XPM.Main;
+local _, XPM = ...
+local Main = XPM.Main
 
-local Module = Main:NewModule('UnitFrameHighlightPurgeableBuffs', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule("UnitFrameHighlightPurgeableBuffs", "AceHook-3.0", "AceEvent-3.0")
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -14,131 +14,127 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module allows you to highlight the purgeable buffs of your target and focus as if your current class/spec has an offensive dispell ability.';
+    return "This module allows you to highlight the purgeable buffs of your target and focus as if your current class/spec has an offensive dispell ability."
 end
 
 function Module:GetName()
-    return 'Unit Frame Highlight Purgeable Buffs';
+    return "Unit Frame Highlight Purgeable Buffs"
 end
 
 function Module:GetOptions(myOptionsTable, db)
-    self.db = db;
+    self.db = db
     local defaults = {}
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
-            self.db[key] = value;
+            self.db[key] = value
         end
     end
 
-    local counter = CreateCounter(5);
+    local counter = CreateCounter(5)
 
     local get = function(info)
-        return self.db[info[#info]];
+        return self.db[info[#info]]
     end
     local set = function(info, value)
-        local setting = info[#info];
-        self.db[setting] = value;
+        local setting = info[#info]
+        self.db[setting] = value
 
-        if setting == 'enableForEveryone' then
+        if setting == "enableForEveryone" then
             self:RefreshUI()
         end
     end
 
-    local UnitFrameHighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameHighlightPurgeableBuffs:176:342:92:-7|t"
+    local UnitFrameHighlightPurgeableBuffsImage =
+    "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameHighlightPurgeableBuffs:176:342:92:-7|t"
 
     myOptionsTable.args.enableForEveryone = {
         order = counter(),
-        type = 'toggle',
-        name = 'Highlight purgeable buffs for friendly targets as well',
-        desc = 'Highlights purgeable buffs for friendly targets as well',
-        width = 'full',
+        type = "toggle",
+        name = "Highlight purgeable buffs for friendly targets as well",
+        desc = "Highlights purgeable buffs for friendly targets as well",
+        width = "full",
         get = get,
-        set = set,
-    };
+        set = set
+    }
     myOptionsTable.args.art3 = {
         order = counter(),
-        type = 'description',
-        name = '' .. UnitFrameHighlightPurgeableBuffsImage,
-        width = 'full',
-    };
+        type = "description",
+        name = "" .. UnitFrameHighlightPurgeableBuffsImage,
+        width = "full"
+    }
     myOptionsTable.args.empty3152 = {
         order = counter(),
-        type = 'description',
-        name = ' ',
-        width = 'full',
-    };
+        type = "description",
+        name = " ",
+        width = "full"
+    }
     myOptionsTable.args.IMPORTANT = {
         order = counter(),
-        type = 'description',
-        name = 'This module is no longer compatible with JaxClassicFrames. To enable this function for JaxClassicFrames do the following.',
-        width = 'full',
-    };
+        type = "description",
+        name = "This module is no longer compatible with JaxClassicFrames. To enable this function for JaxClassicFrames do the following.",
+        width = "full"
+    }
     myOptionsTable.args.IMPORTANT3 = {
         order = counter(),
-        type = 'description',
-        name = ' 1.  Go to \\Interface\\Addons\\JaxClassicFrames\\JcfTargetFrame\\JcfTargetFrame.lua',
-        width = 'full',
-    };
+        type = "description",
+        name = " 1.  Go to \\Interface\\Addons\\JaxClassicFrames\\JcfTargetFrame\\JcfTargetFrame.lua",
+        width = "full"
+    }
     myOptionsTable.args.IMPORTANT4 = {
         order = counter(),
-        type = 'description',
+        type = "description",
         name = ' 2.  Go to line 528 (Version 2.1.4) (Ctrl-F search for "local frameStealable")',
-        width = 'full',
-    };
+        width = "full"
+    }
     myOptionsTable.args.IMPORTANT5 = {
         order = counter(),
-        type = 'description',
+        type = "description",
         name = ' 3.  Replace the " canStealOrPurge " variable with " debuffType=="Magic" " ',
-        width = 'full',
-    };
+        width = "full"
+    }
 
-    return myOptionsTable;
+    return myOptionsTable
 end
 
 function Module:SetupUI()
-
     if self:IsEnabled() and not self.db.enableForEveryone then
-
         local function UpdateAurasOnlyHostileTarget(self)
-            if UnitIsEnemy("player","target") then
+            if UnitIsEnemy("player", "target") then
                 for buff in self.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                    local data=C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit,buff.auraInstanceID);
-                    buff.Stealable:SetShown(data.isStealable or data.dispelName=="Magic");
+                    local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
+                    buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
                 end
             end
         end
 
         local function UpdateAurasOnlyHostileFocus(self)
-            if UnitIsEnemy("player","focus") then
+            if UnitIsEnemy("player", "focus") then
                 for buff in self.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                    local data=C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit,buff.auraInstanceID);
-                    buff.Stealable:SetShown(data.isStealable or data.dispelName=="Magic");
+                    local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
+                    buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
                 end
             end
         end
 
-        self:SecureHook(TargetFrame, "UpdateAuras", UpdateAurasOnlyHostileTarget);
-        self:SecureHook(FocusFrame, "UpdateAuras", UpdateAurasOnlyHostileFocus);
-
+        self:SecureHook(TargetFrame, "UpdateAuras", UpdateAurasOnlyHostileTarget)
+        self:SecureHook(FocusFrame, "UpdateAuras", UpdateAurasOnlyHostileFocus)
     elseif self:IsEnabled() then
-
         local function UpdateAurasEveryone(self)
             for buff in self.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                local data=C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit,buff.auraInstanceID);
-                buff.Stealable:SetShown(data.isStealable or data.dispelName=="Magic");
+                local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
+                buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
             end
         end
 
-        self:SecureHook(TargetFrame, "UpdateAuras", UpdateAurasEveryone);
-        self:SecureHook(FocusFrame, "UpdateAuras", UpdateAurasEveryone);
-
+        self:SecureHook(TargetFrame, "UpdateAuras", UpdateAurasEveryone)
+        self:SecureHook(FocusFrame, "UpdateAuras", UpdateAurasEveryone)
     end
 end
 
 function Module:RefreshUI()
     if self:IsEnabled() then
-        self:Disable();
-        self:Enable();
+        self:Disable()
+        self:Enable()
     end
 end
 

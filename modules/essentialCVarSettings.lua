@@ -1,7 +1,7 @@
-local _, XPM = ...;
-local Main = XPM.Main;
+local _, XPM = ...
+local Main = XPM.Main
 
-local Module = Main:NewModule('EssentialCVarSettings', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule("EssentialCVarSettings", "AceHook-3.0", "AceEvent-3.0")
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -14,51 +14,51 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module simplifies changing the value of console variables that really should be available through the default WoW settings.';
+    return "This module simplifies changing the value of console variables that really should be available through the default WoW settings."
 end
 
 function Module:GetName()
-    return 'Essential CVar Settings';
+    return "Essential CVar Settings"
 end
 
 function Module:GetOptions(myOptionsTable, db)
-    self.db = db;
+    self.db = db
     local defaults = {
         worldPreloadToggle = true,
         softTargetInteractToggle = true,
         nameplateOpacityToggle = true,
-        spellQueueWindowRange = tonumber(GetCVar("SpellQueueWindow")),
+        spellQueueWindowRange = tonumber(GetCVar("SpellQueueWindow"))
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
-            self.db[key] = value;
+            self.db[key] = value
         end
     end
     local get = function(info)
-        return self.db[info[#info]];
+        return self.db[info[#info]]
     end
     local getSpellQueueWindow = function(info)
         return tonumber(GetCVar("SpellQueueWindow"))
     end
     local set = function(info, value)
-        local setting = info[#info];
-        self.db[setting] = value;
+        local setting = info[#info]
+        self.db[setting] = value
 
-        if setting == 'softTargetInteractToggle' then
+        if setting == "softTargetInteractToggle" then
             self:RefreshUI()
         end
-        if setting == 'spellQueueWindowRange' then
+        if setting == "spellQueueWindowRange" then
             self:RefreshUI()
         end
-        if setting == 'nameplateOpacityToggle' then
+        if setting == "nameplateOpacityToggle" then
             self:RefreshUI()
         end
-        if setting == 'worldPreloadToggle' then
+        if setting == "worldPreloadToggle" then
             self:RefreshUI()
         end
     end
 
-    local counter = CreateCounter(5);
+    local counter = CreateCounter(5)
 
     myOptionsTable.args.spellQueueWindow = {
         order = counter(),
@@ -68,32 +68,32 @@ function Module:GetOptions(myOptionsTable, db)
         args = {
             spellQueueWindowDesc = {
                 order = counter(),
-                type = 'description',
-                name = 'This CVar determines the duration of queuing consecutive spell casts in milliseconds. Raising this value may reduce gaps/delays between abilities.',
-                width = 'full',
+                type = "description",
+                name = "This CVar determines the duration of queuing consecutive spell casts in milliseconds. Raising this value may reduce gaps/delays between abilities.",
+                width = "full"
             },
             spellQueueWindowRange = {
-                type = 'range',
-                name = 'SpellQueueWindow Value',
+                type = "range",
+                name = "SpellQueueWindow Value",
                 order = counter(),
                 get = getSpellQueueWindow,
                 set = set,
                 min = 1,
                 max = 400,
                 step = 1,
-                width = 1.4,
+                width = 1.4
             },
             spellQueueWindowReset = {
-                type = 'execute',
-                name = 'Reset to Default',
+                type = "execute",
+                name = "Reset to Default",
                 desc = 'SetCVar("SpellQueueWindow", 400)',
                 width = 0.75,
                 func = function()
-                    self.db.spellQueueWindowRange = 400;
-                    self:ResetToDefault('spellQueueWindow')
+                    self.db.spellQueueWindowRange = 400
+                    self:ResetToDefault("spellQueueWindow")
                 end,
-                order = counter(),
-            },
+                order = counter()
+            }
         }
     }
     myOptionsTable.args.softTargetInteract = {
@@ -104,39 +104,39 @@ function Module:GetOptions(myOptionsTable, db)
         args = {
             softTargetInteractDesc = {
                 order = counter(),
-                type = 'description',
-                name = 'Setting the value of these CVars to 0 fixes the odd interaction that sometimes makes your focus macros go on your current target.',
-                width = 'full',
+                type = "description",
+                name = "Setting the value of these CVars to 0 fixes the odd interaction that sometimes makes your focus macros go on your current target.",
+                width = "full"
             },
             softTargetInteractToggle = {
-                type = 'toggle',
-                name = 'Auto set value',
-                desc = 'Automatically sets the CVar values to 0 upon logging in (some CVars are character specific or reset randomly)',
+                type = "toggle",
+                name = "Auto set value",
+                desc = "Automatically sets the CVar values to 0 upon logging in (some CVars are character specific or reset randomly)",
                 order = counter(),
                 width = 0.65,
                 get = get,
-                set = set,
+                set = set
             },
             softTargetInteractSetOnce = {
-                type = 'execute',
-                name = 'Set Value Once',
+                type = "execute",
+                name = "Set Value Once",
                 desc = 'SetCVar("SoftTargetInteract",0) SetCVar("SoftTargetEnemyRange",0) SetCVar("SoftTargetFriendRange",0)',
                 width = 0.75,
                 func = function()
-                    self:SetValueOnce('softTargetInteract')
+                    self:SetValueOnce("softTargetInteract")
                 end,
-                order = counter(),
+                order = counter()
             },
             softTargetInteractReset = {
-                type = 'execute',
-                name = 'Reset to Default',
+                type = "execute",
+                name = "Reset to Default",
                 desc = 'SetCVar("SoftTargetInteract",1) SetCVar("SoftTargetEnemyRange",45) SetCVar("SoftTargetFriendRange",45)',
                 width = 0.75,
                 func = function()
-                    self:ResetToDefault('softTargetInteract')
+                    self:ResetToDefault("softTargetInteract")
                 end,
-                order = counter(),
-            },
+                order = counter()
+            }
         }
     }
     myOptionsTable.args.nameplateOpacity = {
@@ -147,40 +147,40 @@ function Module:GetOptions(myOptionsTable, db)
         args = {
             nameplateOpacityDesc = {
                 order = counter(),
-                type = 'description',
-                name = 'These CVars act as multipliers for the opacity of your nameplates. When set to a value of 1, these CVars make nameplates more visible through pillars and more visible for targets at greater distances.',
-                width = 'full',
+                type = "description",
+                name = "These CVars act as multipliers for the opacity of your nameplates. When set to a value of 1, these CVars make nameplates more visible through pillars and more visible for targets at greater distances.",
+                width = "full"
             },
             nameplateOpacityToggle = {
-                type = 'toggle',
-                name = 'Auto set value',
-                desc = 'Automatically sets the CVar values to 1 upon logging in (some CVars are character specific or reset randomly)',
+                type = "toggle",
+                name = "Auto set value",
+                desc = "Automatically sets the CVar values to 1 upon logging in (some CVars are character specific or reset randomly)",
                 order = counter(),
                 width = 0.65,
                 get = get,
-                set = set,
+                set = set
             },
             nameplateOpacitySetOnce = {
-                type = 'execute',
-                name = 'Set Value Once',
+                type = "execute",
+                name = "Set Value Once",
                 desc = 'SetCVar("nameplateMinAlpha",1) SetCVar("nameplateOccludedAlphaMult",1)',
                 width = 0.75,
                 func = function()
-                    self:SetValueOnce('nameplateOpacity')
+                    self:SetValueOnce("nameplateOpacity")
                 end,
-                order = counter(),
+                order = counter()
             },
             nameplateOpacityReset = {
-                type = 'execute',
-                name = 'Reset to Default',
+                type = "execute",
+                name = "Reset to Default",
                 desc = 'SetCVar("nameplateMinAlpha",0.6) SetCVar("nameplateOccludedAlphaMult",0.4)',
                 width = 0.75,
                 func = function()
-                    self:ResetToDefault('nameplateOpacity')
+                    self:ResetToDefault("nameplateOpacity")
                 end,
-                order = counter(),
-            },
-        },
+                order = counter()
+            }
+        }
     }
     myOptionsTable.args.worldPreload = {
         order = counter(),
@@ -190,86 +190,84 @@ function Module:GetOptions(myOptionsTable, db)
         args = {
             worldPreloadDesc = {
                 order = counter(),
-                type = 'description',
-                name = 'Setting these CVars to 0 makes your loading screens faster (but some models and textures may not be high resolution or immediately shown when loading in).',
-                width = 'full',
+                type = "description",
+                name = "Setting these CVars to 0 makes your loading screens faster (but some models and textures may not be high resolution or immediately shown when loading in).",
+                width = "full"
             },
             worldPreloadToggle = {
-                type = 'toggle',
-                name = 'Auto set value',
-                desc = 'Automatically sets the CVar values to 0 upon logging in (some CVars are character specific or reset randomly)',
+                type = "toggle",
+                name = "Auto set value",
+                desc = "Automatically sets the CVar values to 0 upon logging in (some CVars are character specific or reset randomly)",
                 order = counter(),
                 width = 0.65,
                 get = get,
-                set = set,
+                set = set
             },
             worldPreloadSetOnce = {
-                type = 'execute',
-                name = 'Set Value Once',
+                type = "execute",
+                name = "Set Value Once",
                 desc = 'SetCVar("preloadPlayerModels",0) SetCVar("worldPreloadHighResTextures",0) SetCVar("worldPreloadNonCritical",0)',
                 width = 0.75,
                 func = function()
-                    self:SetValueOnce('worldPreload')
+                    self:SetValueOnce("worldPreload")
                 end,
-                order = counter(),
+                order = counter()
             },
             worldPreloadReset = {
-                type = 'execute',
-                name = 'Reset to Default',
+                type = "execute",
+                name = "Reset to Default",
                 desc = 'SetCVar("preloadPlayerModels",1) SetCVar("worldPreloadHighResTextures",1) SetCVar("worldPreloadNonCritical",2)',
                 width = 0.75,
                 func = function()
-                    self:ResetToDefault('worldPreload')
+                    self:ResetToDefault("worldPreload")
                 end,
-                order = counter(),
-            },
-        },
+                order = counter()
+            }
+        }
     }
 
-    return myOptionsTable;
+    return myOptionsTable
 end
 
 function Module:SetupUI()
-    if not UnitAffectingCombat('player') then
+    if not UnitAffectingCombat("player") then
         if self:IsEnabled() then
             if self.db.softTargetInteractToggle == true then
-                self:SetValueOnce('softTargetInteract')
+                self:SetValueOnce("softTargetInteract")
             end
             if self.db.nameplateOpacityToggle == true then
-                self:SetValueOnce('nameplateOpacity')
+                self:SetValueOnce("nameplateOpacity")
 
                 if IsAddOnLoaded("BetterBlizzPlates") then
-                    self:RegisterEvent("PLAYER_ENTERING_WORLD", "SetupUI");
-                    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "SetupUI");
-                    self:RegisterEvent("GROUP_ROSTER_UPDATE", "SetupUI");
-                    C_Timer.After(1, function() self:SetValueOnce('nameplateOpacity') end)
+                    self:RegisterEvent("PLAYER_ENTERING_WORLD", "SetupUI")
+                    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "SetupUI")
+                    self:RegisterEvent("GROUP_ROSTER_UPDATE", "SetupUI")
+                    C_Timer.After(1, function() self:SetValueOnce("nameplateOpacity") end)
                 end
-
             end
             if self.db.worldPreloadToggle then
-                self:SetValueOnce('worldPreload')
+                self:SetValueOnce("worldPreload")
             end
-            self:SetValueOnce('spellQueueWindow')
-
+            self:SetValueOnce("spellQueueWindow")
         end
     end
 end
 
 function Module:SetValueOnce(input)
     if self:IsEnabled() then
-        if input == 'softTargetInteract' then
+        if input == "softTargetInteract" then
             SetCVar("SoftTargetInteract", 0)
             SetCVar("SoftTargetEnemyRange", 0)
             SetCVar("SoftTargetFriendRange", 0)
         end
-        if input == 'spellQueueWindow' then
+        if input == "spellQueueWindow" then
             SetCVar("SpellQueueWindow", self.db.spellQueueWindowRange)
         end
-        if input == 'nameplateOpacity' then
+        if input == "nameplateOpacity" then
             SetCVar("nameplateMinAlpha", 1)
             SetCVar("nameplateOccludedAlphaMult", 1)
         end
-        if input =='worldPreload' then
+        if input == "worldPreload" then
             SetCVar("preloadPlayerModels", 0)
             SetCVar("worldPreloadHighResTextures", 0)
             SetCVar("worldPreloadNonCritical", 0)
@@ -279,22 +277,22 @@ end
 
 function Module:ResetToDefault(input)
     if self:IsEnabled() then
-        if input == 'softTargetInteract' then
-            self.db.softTargetInteractToggle = false;
+        if input == "softTargetInteract" then
+            self.db.softTargetInteractToggle = false
             SetCVar("SoftTargetInteract", 1)
             SetCVar("SoftTargetEnemyRange", 45)
             SetCVar("SoftTargetFriendRange", 45)
         end
-        if input == 'spellQueueWindow' then
+        if input == "spellQueueWindow" then
             SetCVar("SpellQueueWindow", 400)
         end
-        if input == 'nameplateOpacity' then
-            self.db.nameplateOpacityToggle = false;
+        if input == "nameplateOpacity" then
+            self.db.nameplateOpacityToggle = false
             SetCVar("nameplateMinAlpha", 0.6)
             SetCVar("nameplateOccludedAlphaMult", 0.4)
         end
-        if input =='worldPreload' then
-            self.db.worldPreloadToggle = false;
+        if input == "worldPreload" then
+            self.db.worldPreloadToggle = false
             SetCVar("preloadPlayerModels", 1)
             SetCVar("worldPreloadHighResTextures", 1)
             SetCVar("worldPreloadNonCritical", 2)
@@ -304,8 +302,8 @@ end
 
 function Module:RefreshUI()
     if self:IsEnabled() then
-        self:Disable();
-        self:Enable();
+        self:Disable()
+        self:Enable()
     end
 end
 

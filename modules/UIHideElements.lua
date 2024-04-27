@@ -1,12 +1,12 @@
-local _, XPM = ...;
-local Main = XPM.Main;
+local _, XPM = ...
+local Main = XPM.Main
 
-local Module = Main:NewModule('UIHideElements', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule("UIHideElements", "AceHook-3.0", "AceEvent-3.0")
 
 function Module:OnEnable()
-    self:RegisterEvent("PLAYER_ENTERING_WORLD", "CheckConditions");
-    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "CheckConditions");
-    self:RegisterEvent("GROUP_ROSTER_UPDATE", "CheckConditions");
+    self:RegisterEvent("PLAYER_ENTERING_WORLD", "CheckConditions")
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "CheckConditions")
+    self:RegisterEvent("GROUP_ROSTER_UPDATE", "CheckConditions")
 
     self:CheckConditions()
     Main:ReinitializeOptionsMenu()
@@ -18,15 +18,15 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module allows you to hide specific UI elements or parts of them.';
+    return "This module allows you to hide specific UI elements or parts of them."
 end
 
 function Module:GetName()
-    return 'UI Hide Elements';
+    return "UI Hide Elements"
 end
 
 function Module:GetOptions(myOptionsTable, db)
-    self.db = db;
+    self.db = db
     local defaults = {
         partyLabel = true,
         realmName = true,
@@ -34,82 +34,78 @@ function Module:GetOptions(myOptionsTable, db)
         partyLabel2 = true,
         realmName2 = true,
         entireName2 = false,
-
         statusTrackingBarManager = true,
         statusTrackingBarManager2 = true,
-
         jaxClassicFramesPvpIcon = true,
         jaxClassicFramesPlayerGroupNumber = true,
         jaxClassicFramesPvpIcon2 = true,
-        jaxClassicFramesPlayerGroupNumber2 = true,
-
+        jaxClassicFramesPlayerGroupNumber2 = true
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
-            self.db[key] = value;
+            self.db[key] = value
         end
     end
 
     local get = function(info)
-        return self.db[info[#info]];
+        return self.db[info[#info]]
     end
     local set = function(info, value)
-        local setting = info[#info];
-        self.db[setting] = value;
+        local setting = info[#info]
+        self.db[setting] = value
 
-        if setting == 'partyLabel' then
+        if setting == "partyLabel" then
             self:RefreshUI()
         end
-        if setting == 'realmName' then
+        if setting == "realmName" then
             if self.db.realmName then
-                self.db.entireName = false;
+                self.db.entireName = false
             end
             self:RefreshUI()
         end
-        if setting == 'entireName' then
+        if setting == "entireName" then
             if self.db.entireName then
-                self.db.realmName = false;
+                self.db.realmName = false
             end
             self:RefreshUI()
         end
-        if setting == 'partyLabel2' then
+        if setting == "partyLabel2" then
             self:RefreshUI()
         end
-        if setting == 'realmName2' then
+        if setting == "realmName2" then
             if self.db.realmName2 then
-                self.db.entireName2 = false;
+                self.db.entireName2 = false
             end
             self:RefreshUI()
         end
-        if setting == 'entireName2' then
+        if setting == "entireName2" then
             if self.db.entireName2 then
-                self.db.realmName2 = false;
+                self.db.realmName2 = false
             end
             self:RefreshUI()
         end
 
-        if setting == 'statusTrackingBarManager' then
+        if setting == "statusTrackingBarManager" then
             self:RefreshUI()
         end
-        if setting == 'statusTrackingBarManager2' then
-            self:RefreshUI()
-        end
-
-        if setting == 'jaxClassicFramesPvpIcon' then
-            self:RefreshUI()
-        end
-        if setting == 'jaxClassicFramesPlayerGroupNumber' then
-            self:RefreshUI()
-        end
-        if setting == 'jaxClassicFramesPvpIcon2' then
-            self:RefreshUI()
-        end
-        if setting == 'jaxClassicFramesPlayerGroupNumber2' then
+        if setting == "statusTrackingBarManager2" then
             self:RefreshUI()
         end
 
+        if setting == "jaxClassicFramesPvpIcon" then
+            self:RefreshUI()
+        end
+        if setting == "jaxClassicFramesPlayerGroupNumber" then
+            self:RefreshUI()
+        end
+        if setting == "jaxClassicFramesPvpIcon2" then
+            self:RefreshUI()
+        end
+        if setting == "jaxClassicFramesPlayerGroupNumber2" then
+            self:RefreshUI()
+        end
     end
-    local counter = CreateCounter(5);
+    local counter = CreateCounter(5)
 
     --local UIHideElementsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UIHideElements:160:321:82:0|t"
 
@@ -125,32 +121,32 @@ function Module:GetOptions(myOptionsTable, db)
                 inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
                 args = {
                     partyLabel = {
-                        type = 'toggle',
+                        type = "toggle",
                         name = '"Party" Label',
-                        desc = 'This hides the CompactPartyFrameTitle above the PartyFrame',
+                        desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
                         order = counter(),
                         width = 0.66,
                         get = get,
-                        set = set,
+                        set = set
                     },
                     realmName = {
-                        type = 'toggle',
-                        name = 'Realm Name',
-                        desc = 'This hides the realm names of your party members in the PartyFrame',
+                        type = "toggle",
+                        name = "Realm Name",
+                        desc = "This hides the realm names of your party members in the PartyFrame",
                         order = counter(),
                         width = 0.63,
                         get = get,
-                        set = set,
+                        set = set
                     },
                     entireName = {
-                        type = 'toggle',
-                        name = 'Entire Name',
-                        desc = 'This hides the full names of your party members in the PartyFrame',
+                        type = "toggle",
+                        name = "Entire Name",
+                        desc = "This hides the full names of your party members in the PartyFrame",
                         order = counter(),
                         width = 0.63,
                         get = get,
-                        set = set,
-                    },
+                        set = set
+                    }
                 }
             },
             hideStatusTrackingBarGroup = {
@@ -160,14 +156,14 @@ function Module:GetOptions(myOptionsTable, db)
                 inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
                 args = {
                     statusTrackingBarManager = {
-                        type = 'toggle',
-                        name = 'Hide all experience/reputation/honor status bars',
-                        desc = 'This hides the StatusTrackingBarManager',
+                        type = "toggle",
+                        name = "Hide all experience/reputation/honor status bars",
+                        desc = "This hides the StatusTrackingBarManager",
                         order = counter(),
-                        width = 'full',
+                        width = "full",
                         get = get,
-                        set = set,
-                    },
+                        set = set
+                    }
                 }
             },
             hideJaxClassicFramesElementsGroup = {
@@ -177,27 +173,27 @@ function Module:GetOptions(myOptionsTable, db)
                 inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
                 args = {
                     jaxClassicFramesPvpIcon = {
-                        type = 'toggle',
-                        name = 'PvP Icon',
-                        desc = 'This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not',
+                        type = "toggle",
+                        name = "PvP Icon",
+                        desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
                         order = counter(),
                         width = 0.6,
                         get = get,
-                        set = set,
+                        set = set
                     },
                     jaxClassicFramesPlayerGroupNumber = {
-                        type = 'toggle',
-                        name = 'Player Group Number',
-                        desc = 'This hides the group number indicator that shows up when you are in a group',
+                        type = "toggle",
+                        name = "Player Group Number",
+                        desc = "This hides the group number indicator that shows up when you are in a group",
                         order = counter(),
                         width = 1,
                         get = get,
-                        set = set,
+                        set = set
                     }
-                },
+                }
             }
         }
-    };
+    }
     myOptionsTable.args.insideInstance = {
         order = counter(),
         name = "Inside Raid/Dungeon/Arena/Battleground",
@@ -210,32 +206,32 @@ function Module:GetOptions(myOptionsTable, db)
                 inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
                 args = {
                     partyLabel2 = {
-                        type = 'toggle',
+                        type = "toggle",
                         name = '"Party" Label',
-                        desc = 'This hides the CompactPartyFrameTitle above the PartyFrame',
+                        desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
                         order = counter(),
                         width = 0.66,
                         get = get,
-                        set = set,
+                        set = set
                     },
                     realmName2 = {
-                        type = 'toggle',
-                        name = 'Realm Name',
-                        desc = 'This hides the realm names of your party members in the PartyFrame',
+                        type = "toggle",
+                        name = "Realm Name",
+                        desc = "This hides the realm names of your party members in the PartyFrame",
                         order = counter(),
                         width = 0.63,
                         get = get,
-                        set = set,
+                        set = set
                     },
                     entireName2 = {
-                        type = 'toggle',
-                        name = 'Entire Name',
-                        desc = 'This hides the full names of your party members in the PartyFrame',
+                        type = "toggle",
+                        name = "Entire Name",
+                        desc = "This hides the full names of your party members in the PartyFrame",
                         order = counter(),
                         width = 0.63,
                         get = get,
-                        set = set,
-                    },
+                        set = set
+                    }
                 }
             },
             hideStatusTrackingBarGroup2 = {
@@ -245,14 +241,14 @@ function Module:GetOptions(myOptionsTable, db)
                 inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
                 args = {
                     statusTrackingBarManager2 = {
-                        type = 'toggle',
-                        name = 'Hide all experience/reputation/honor status bars',
-                        desc = 'This hides the StatusTrackingBarManager',
+                        type = "toggle",
+                        name = "Hide all experience/reputation/honor status bars",
+                        desc = "This hides the StatusTrackingBarManager",
                         order = counter(),
-                        width = 'full',
+                        width = "full",
                         get = get,
-                        set = set,
-                    },
+                        set = set
+                    }
                 }
             },
             hideJaxClassicFramesElementsGroup2 = {
@@ -262,44 +258,44 @@ function Module:GetOptions(myOptionsTable, db)
                 inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
                 args = {
                     jaxClassicFramesPvpIcon2 = {
-                        type = 'toggle',
-                        name = 'PvP Icon',
-                        desc = 'This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not',
+                        type = "toggle",
+                        name = "PvP Icon",
+                        desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
                         order = counter(),
                         width = 0.6,
                         get = get,
-                        set = set,
+                        set = set
                     },
                     jaxClassicFramesPlayerGroupNumber2 = {
-                        type = 'toggle',
-                        name = 'Player Group Number',
-                        desc = 'This hides the group number indicator that shows up when you are in a group',
+                        type = "toggle",
+                        name = "Player Group Number",
+                        desc = "This hides the group number indicator that shows up when you are in a group",
                         order = counter(),
                         width = 1,
                         get = get,
-                        set = set,
+                        set = set
                     }
-                },
+                }
             }
-        },
-    };
+        }
+    }
 
-    return myOptionsTable;
+    return myOptionsTable
 end
 
 function Module:HidePartyLabel()
-    local enabled;
+    local enabled
     if self:IsEnabled() then
         if self.IsPlayerInPvPZone() then
-            enabled = self.db.partyLabel2;
+            enabled = self.db.partyLabel2
         else
-            enabled = self.db.partyLabel;
+            enabled = self.db.partyLabel
         end
     else
-        enabled = false;
+        enabled = false
     end
 
-    if GetNumGroupMembers()>0 then
+    if GetNumGroupMembers() > 0 then
         if enabled then
             CompactPartyFrameTitle:SetAlpha(0)
             CompactPartyFrameTitle:Hide()
@@ -311,51 +307,47 @@ function Module:HidePartyLabel()
 end
 
 function Module:HideRealmName()
-
-    local enabled;
+    local enabled
     if self:IsEnabled() then
         if self.IsPlayerInPvPZone() then
-            enabled = self.db.realmName2;
+            enabled = self.db.realmName2
         else
-            enabled = self.db.realmName;
+            enabled = self.db.realmName
         end
     else
-        enabled = false;
+        enabled = false
     end
 
-    if GetNumGroupMembers()>0 and GetNumGroupMembers()<6 then
+    if GetNumGroupMembers() > 0 and GetNumGroupMembers() < 6 then
         if enabled then
-
-            if self:IsHooked('CompactUnitFrame_UpdateName') then
+            if self:IsHooked("CompactUnitFrame_UpdateName") then
                 return
                 --self:UnHook('CompactUnitFrame_UpdateName')
             end
 
-            self:SecureHook('CompactUnitFrame_UpdateName', function()
-                Module:HideRealmNameHelperFunction()
-            end);
+            self:SecureHook("CompactUnitFrame_UpdateName", function() Module:HideRealmNameHelperFunction() end)
 
             function Module:HideRealmNameHelperFunction()
-                local num = 1;
-                local partyCount = GetNumGroupMembers();
+                local num = 1
+                local partyCount = GetNumGroupMembers()
                 repeat
-                    local partyFrameName = _G["CompactPartyFrameMember"..num.."Name"]
+                    local partyFrameName = _G["CompactPartyFrameMember" .. num .. "Name"]
                     local croppedName
 
                     if partyFrameName then
-                        croppedName = partyFrameName:GetText();
+                        croppedName = partyFrameName:GetText()
                     end
 
                     if croppedName then
-                        partyFrameName:SetText(croppedName:match("[^-]+"));
+                        partyFrameName:SetText(croppedName:match("[^-]+"))
                     end
 
                     if partyFrameName then
-                        partyFrameName:Show();
+                        partyFrameName:Show()
                     end
 
-                    num = num + 1;
-                until (num>partyCount)
+                    num = num + 1
+                until (num > partyCount)
             end
 
             Module:HideRealmNameHelperFunction()
@@ -364,71 +356,67 @@ function Module:HideRealmName()
 end
 
 function Module:HideEntireName()
-
-    local enabled;
+    local enabled
     if self:IsEnabled() then
         if self.IsPlayerInPvPZone() then
-            enabled = self.db.entireName2;
+            enabled = self.db.entireName2
         else
-            enabled = self.db.entireName;
+            enabled = self.db.entireName
         end
     else
-        enabled = false;
+        enabled = false
     end
 
-    if GetNumGroupMembers()>0 and GetNumGroupMembers()<6 then
+    if GetNumGroupMembers() > 0 and GetNumGroupMembers() < 6 then
         if enabled then
-
-            if self:IsHooked('CompactUnitFrame_UpdateName') then
+            if self:IsHooked("CompactUnitFrame_UpdateName") then
                 return
                 --self:UnHook('CompactUnitFrame_UpdateName')
             end
 
-            self:SecureHook('CompactUnitFrame_UpdateName', function()
-                Module:HideEntireNameHelperFunction()
-            end);
+            self:SecureHook("CompactUnitFrame_UpdateName", function() Module:HideEntireNameHelperFunction() end)
 
             function Module:HideEntireNameHelperFunction()
-                local num = 1;
-                local partyCount = GetNumGroupMembers();
+                local num = 1
+                local partyCount = GetNumGroupMembers()
                 repeat
-                    local partyFrameName = _G["CompactPartyFrameMember"..num.."Name"]
+                    local partyFrameName = _G["CompactPartyFrameMember" .. num .. "Name"]
 
                     if partyFrameName then
-                        partyFrameName:Hide();
+                        partyFrameName:Hide()
                     end
 
-                    num = num + 1;
-                until (num>partyCount)
+                    num = num + 1
+                until (num > partyCount)
             end
 
-            Module:HideEntireNameHelperFunction();
+            Module:HideEntireNameHelperFunction()
         end
     end
 end
 
 function Module:HideStatusTrackingBarManager()
-    local enabled;
+    local enabled
     if self:IsEnabled() then
         if self.IsPlayerInPvPZone() then
-            enabled = self.db.statusTrackingBarManager2;
+            enabled = self.db.statusTrackingBarManager2
         else
-            enabled = self.db.statusTrackingBarManager;
+            enabled = self.db.statusTrackingBarManager
         end
     else
-        enabled = false;
+        enabled = false
     end
 
     if enabled then
         if StatusTrackingBarManager then
             if StatusTrackingBarManager:IsShown() then
-                StatusTrackingBarManager:SetScale(0.00001);
+                StatusTrackingBarManager:SetScale(0.00001)
             end
         end
     else
         if StatusTrackingBarManager then
             if StatusTrackingBarManager:IsShown() then
-                StatusTrackingBarManager:SetScale(1);
+                StatusTrackingBarManager:SetScale(1)
             end
         end
     end
@@ -436,15 +424,15 @@ end
 
 function Module:HideJaxClassicFramesPvpIcon()
     if IsAddOnLoaded("JaxClassicFrames") then
-        local enabled;
+        local enabled
         if self:IsEnabled() then
             if self.IsPlayerInPvPZone() then
-                enabled = self.db.jaxClassicFramesPvpIcon2;
+                enabled = self.db.jaxClassicFramesPvpIcon2
             else
-                enabled = self.db.jaxClassicFramesPvpIcon;
+                enabled = self.db.jaxClassicFramesPvpIcon
             end
         else
-            enabled = false;
+            enabled = false
         end
 
         if enabled then
@@ -467,22 +455,21 @@ function Module:HideJaxClassicFramesPvpIcon()
             if JcfFocusFrameTextureFramePVPIcon then
                 JcfFocusFrameTextureFramePVPIcon:SetAlpha(1)
             end
-
         end
     end
 end
 
 function Module:HideJaxClassicFramesPlayerGroupNumber()
     if IsAddOnLoaded("JaxClassicFrames") then
-        local enabled;
+        local enabled
         if self:IsEnabled() then
             if self.IsPlayerInPvPZone() then
-                enabled = self.db.jaxClassicFramesPlayerGroupNumber2;
+                enabled = self.db.jaxClassicFramesPlayerGroupNumber2
             else
-                enabled = self.db.jaxClassicFramesPlayerGroupNumber;
+                enabled = self.db.jaxClassicFramesPlayerGroupNumber
             end
         else
-            enabled = false;
+            enabled = false
         end
 
         if enabled then
@@ -498,35 +485,34 @@ function Module:HideJaxClassicFramesPlayerGroupNumber()
 end
 
 function Module:SetupUI()
-    self:HidePartyLabel();
-    self:HideRealmName();
-    self:HideEntireName();
-    self:HideStatusTrackingBarManager();
-    self:HideJaxClassicFramesPvpIcon();
-    self:HideJaxClassicFramesPlayerGroupNumber();
+    self:HidePartyLabel()
+    self:HideRealmName()
+    self:HideEntireName()
+    self:HideStatusTrackingBarManager()
+    self:HideJaxClassicFramesPvpIcon()
+    self:HideJaxClassicFramesPlayerGroupNumber()
 end
 
 function Module:RefreshUI()
     if self:IsEnabled() then
-        self:Disable();
-        self:Enable();
+        self:Disable()
+        self:Enable()
     end
 end
 
 function Module:CheckConditions()
-    if not UnitAffectingCombat('player') then
+    if not UnitAffectingCombat("player") then
         self:SetupUI()
     else
         C_Timer.After(5, function() self:CheckConditions() end)
     end
-
 end
 
 function Module:IsPlayerInPvPZone()
-    local zoneType = select(2, IsInInstance());
+    local zoneType = select(2, IsInInstance())
     -- Check if the player is in a PvP instance -- Check if the player is in a raid or 5-man instance
     if zoneType == "arena" or zoneType == "pvp" or zoneType == "party" or zoneType == "raid" then
-        return true;
+        return true
     else
         return false
     end

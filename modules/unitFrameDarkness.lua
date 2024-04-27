@@ -1,7 +1,7 @@
-local _, XPM = ...;
-local Main = XPM.Main;
+local _, XPM = ...
+local Main = XPM.Main
 
-local Module = Main:NewModule('UnitFrameDarkness', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule("UnitFrameDarkness", "AceHook-3.0", "AceEvent-3.0")
 
 function Module:OnEnable()
     self:CheckConditions()
@@ -14,45 +14,44 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module allows you to darken your unit frames.';
+    return "This module allows you to darken your unit frames."
 end
 
 function Module:GetName()
-    return 'Unit Frame Darkness';
+    return "Unit Frame Darkness"
 end
 
 function Module:GetOptions(myOptionsTable, db)
-    self.db = db;
+    self.db = db
     local defaults = {
         frameDarknessRange = 0.5,
-        castBarDarknessRange = 0.7,
-
+        castBarDarknessRange = 0.7
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
-            self.db[key] = value;
+            self.db[key] = value
         end
     end
 
     local get = function(info)
-        return self.db[info[#info]];
+        return self.db[info[#info]]
     end
     local set = function(info, value)
-        local setting = info[#info];
-        self.db[setting] = value;
+        local setting = info[#info]
+        self.db[setting] = value
 
-        if setting == 'frameDarknessRange' then
+        if setting == "frameDarknessRange" then
             self:RefreshUI()
         end
-        if setting == 'castBarDarknessRange' then
+        if setting == "castBarDarknessRange" then
             self:RefreshUI()
         end
-
     end
 
-    local counter = CreateCounter(5);
+    local counter = CreateCounter(5)
 
-    local UnitFrameDarknessImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameDarkness:134:499:1:-1|t"
+    local UnitFrameDarknessImage =
+    "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameDarkness:134:499:1:-1|t"
 
     myOptionsTable.args.frameDarknessGroup1 = {
         order = counter(),
@@ -61,36 +60,36 @@ function Module:GetOptions(myOptionsTable, db)
         inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
         args = {
             frameDarknessRange = {
-                type = 'range',
-                name = 'Frame Texture Darkness',
+                type = "range",
+                name = "Frame Texture Darkness",
                 order = counter(),
                 get = get,
                 set = set,
                 min = 0,
                 max = 1,
                 step = 0.1,
-                width = 1.1,
-            };
+                width = 1.1
+            },
             castBarDarknessRange = {
-                type = 'range',
-                name = 'Cast Bar Darkness',
+                type = "range",
+                name = "Cast Bar Darkness",
                 order = counter(),
                 get = get,
                 set = set,
                 min = 0,
                 max = 1,
                 step = 0.1,
-                width = 1.1,
-            };
+                width = 1.1
+            }
         }
     }
     myOptionsTable.args.art2222 = {
         order = counter(),
-        type = 'description',
-        name = '' .. UnitFrameDarknessImage,
-        width = 'full',
-    };
-    return myOptionsTable;
+        type = "description",
+        name = "" .. UnitFrameDarknessImage,
+        width = "full"
+    }
+    return myOptionsTable
 end
 
 function Module:SetupFrameDarkness()
@@ -99,9 +98,14 @@ function Module:SetupFrameDarkness()
 
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         if IsAddOnLoaded("JaxClassicFrames") then
-            for i, v in pairs({
-                JcfPlayerFrameTexture, JcfTargetFrameTextureFrameTexture, JcfFocusFrameTextureFrameTexture, JcfPetFrameTexture,
-            }) do
+            for i, v in pairs(
+                    {
+                        JcfPlayerFrameTexture,
+                        JcfTargetFrameTextureFrameTexture,
+                        JcfFocusFrameTextureFrameTexture,
+                        JcfPetFrameTexture
+                    }
+            ) do
                 if self:IsEnabled() then
                     if v then
                         v:SetVertexColor(unitFrameTextureDarkness, unitFrameTextureDarkness, unitFrameTextureDarkness)
@@ -113,11 +117,18 @@ function Module:SetupFrameDarkness()
                 end
             end
 
-            for i, v in pairs({
-                JcfTargetFrameSpellBar.Background, JcfTargetFrameSpellBar.Border, JcfTargetFrameSpellBar.TextBorder, JcfTargetFrameSpellBar.BorderShield,
-
-                JcfFocusFrameSpellBar.Background, JcfFocusFrameSpellBar.Border, JcfFocusFrameSpellBar.TextBorder, JcfFocusFrameSpellBar.BorderShield,
-            }) do
+            for i, v in pairs(
+                    {
+                        JcfTargetFrameSpellBar.Background,
+                        JcfTargetFrameSpellBar.Border,
+                        JcfTargetFrameSpellBar.TextBorder,
+                        JcfTargetFrameSpellBar.BorderShield,
+                        JcfFocusFrameSpellBar.Background,
+                        JcfFocusFrameSpellBar.Border,
+                        JcfFocusFrameSpellBar.TextBorder,
+                        JcfFocusFrameSpellBar.BorderShield
+                    }
+            ) do
                 if self:IsEnabled() then
                     if v then
                         v:SetVertexColor(unitFrameCastBarDarkness, unitFrameCastBarDarkness, unitFrameCastBarDarkness)
@@ -130,9 +141,14 @@ function Module:SetupFrameDarkness()
             end
         else
             --normal retail ui
-            for i, v in pairs({
-                PlayerFrame.PlayerFrameContainer.FrameTexture, TargetFrame.TargetFrameContainer.FrameTexture, FocusFrame.TargetFrameContainer.FrameTexture, PetFrameTexture,
-            }) do
+            for i, v in pairs(
+                    {
+                        PlayerFrame.PlayerFrameContainer.FrameTexture,
+                        TargetFrame.TargetFrameContainer.FrameTexture,
+                        FocusFrame.TargetFrameContainer.FrameTexture,
+                        PetFrameTexture
+                    }
+            ) do
                 if self:IsEnabled() then
                     if v then
                         v:SetVertexColor(unitFrameTextureDarkness, unitFrameTextureDarkness, unitFrameTextureDarkness)
@@ -144,11 +160,18 @@ function Module:SetupFrameDarkness()
                 end
             end
 
-            for i, v in pairs({
-                TargetFrameSpellBar.Background, TargetFrameSpellBar.Border, TargetFrameSpellBar.TextBorder, TargetFrameSpellBar.BorderShield,
-
-                FocusFrameSpellBar.Background, FocusFrameSpellBar.Border, FocusFrameSpellBar.TextBorder, FocusFrameSpellBar.BorderShield,
-            }) do
+            for i, v in pairs(
+                    {
+                        TargetFrameSpellBar.Background,
+                        TargetFrameSpellBar.Border,
+                        TargetFrameSpellBar.TextBorder,
+                        TargetFrameSpellBar.BorderShield,
+                        FocusFrameSpellBar.Background,
+                        FocusFrameSpellBar.Border,
+                        FocusFrameSpellBar.TextBorder,
+                        FocusFrameSpellBar.BorderShield
+                    }
+            ) do
                 if self:IsEnabled() then
                     if v then
                         v:SetVertexColor(unitFrameCastBarDarkness, unitFrameCastBarDarkness, unitFrameCastBarDarkness)
@@ -163,9 +186,14 @@ function Module:SetupFrameDarkness()
     end
     if WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
         --normal classic ui
-        for i, v in pairs({
-            PlayerFrameTexture, TargetFrameTextureFrameTexture, FocusFrameTextureFrameTexture, PetFrameTexture,
-        }) do
+        for i, v in pairs(
+                {
+                    PlayerFrameTexture,
+                    TargetFrameTextureFrameTexture,
+                    FocusFrameTextureFrameTexture,
+                    PetFrameTexture
+                }
+        ) do
             if self:IsEnabled() then
                 if v then
                     v:SetVertexColor(unitFrameTextureDarkness, unitFrameTextureDarkness, unitFrameTextureDarkness)
@@ -177,11 +205,18 @@ function Module:SetupFrameDarkness()
             end
         end
 
-        for i, v in pairs({
-            TargetFrameSpellBar.Background, TargetFrameSpellBar.Border, TargetFrameSpellBar.TextBorder, TargetFrameSpellBar.BorderShield,
-
-            FocusFrameSpellBar.Background, FocusFrameSpellBar.Border, FocusFrameSpellBar.TextBorder, FocusFrameSpellBar.BorderShield,
-        }) do
+        for i, v in pairs(
+                {
+                    TargetFrameSpellBar.Background,
+                    TargetFrameSpellBar.Border,
+                    TargetFrameSpellBar.TextBorder,
+                    TargetFrameSpellBar.BorderShield,
+                    FocusFrameSpellBar.Background,
+                    FocusFrameSpellBar.Border,
+                    FocusFrameSpellBar.TextBorder,
+                    FocusFrameSpellBar.BorderShield
+                }
+        ) do
             if self:IsEnabled() then
                 if v then
                     v:SetVertexColor(unitFrameCastBarDarkness, unitFrameCastBarDarkness, unitFrameCastBarDarkness)
@@ -195,9 +230,13 @@ function Module:SetupFrameDarkness()
     end
     if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
         --normal classic ui
-        for i, v in pairs({
-            PlayerFrameTexture, TargetFrameTextureFrameTexture, PetFrameTexture,
-        }) do
+        for i, v in pairs(
+                {
+                    PlayerFrameTexture,
+                    TargetFrameTextureFrameTexture,
+                    PetFrameTexture
+                }
+        ) do
             if self:IsEnabled() then
                 if v then
                     v:SetVertexColor(unitFrameTextureDarkness, unitFrameTextureDarkness, unitFrameTextureDarkness)
@@ -209,9 +248,14 @@ function Module:SetupFrameDarkness()
             end
         end
 
-        for i, v in pairs({
-            TargetFrameSpellBar.Background, TargetFrameSpellBar.Border, TargetFrameSpellBar.TextBorder, TargetFrameSpellBar.BorderShield,
-        }) do
+        for i, v in pairs(
+                {
+                    TargetFrameSpellBar.Background,
+                    TargetFrameSpellBar.Border,
+                    TargetFrameSpellBar.TextBorder,
+                    TargetFrameSpellBar.BorderShield
+                }
+        ) do
             if self:IsEnabled() then
                 if v then
                     v:SetVertexColor(unitFrameCastBarDarkness, unitFrameCastBarDarkness, unitFrameCastBarDarkness)
@@ -231,8 +275,8 @@ end
 
 function Module:RefreshUI()
     if self:IsEnabled() then
-        self:Disable();
-        self:Enable();
+        self:Disable()
+        self:Enable()
     end
 end
 

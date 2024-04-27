@@ -1,16 +1,15 @@
-local _, XPM = ...;
-local Main = XPM.Main;
+local _, XPM = ...
+local Main = XPM.Main
 
-local Module = Main:NewModule('DisableBlizzardArenaFrames', 'AceHook-3.0', 'AceEvent-3.0');
+local Module = Main:NewModule("DisableBlizzardArenaFrames", "AceHook-3.0", "AceEvent-3.0")
 
 function Module:OnEnable()
-
-    self:RegisterEvent("PLAYER_ENTERING_WORLD", "CheckConditions");
-    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "CheckConditions");
-    self:RegisterEvent("GROUP_ROSTER_UPDATE", "CheckConditions");
-    self:RegisterEvent("ACTIVE_COMBAT_CONFIG_CHANGED", "CheckConditions");
-    self:RegisterEvent("PVP_MATCH_STATE_CHANGED", "CheckConditions");
-    self:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS", "CheckConditions");
+    self:RegisterEvent("PLAYER_ENTERING_WORLD", "CheckConditions")
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "CheckConditions")
+    self:RegisterEvent("GROUP_ROSTER_UPDATE", "CheckConditions")
+    self:RegisterEvent("ACTIVE_COMBAT_CONFIG_CHANGED", "CheckConditions")
+    self:RegisterEvent("PVP_MATCH_STATE_CHANGED", "CheckConditions")
+    self:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS", "CheckConditions")
 
     self:CheckConditions()
     Main:ReinitializeOptionsMenu()
@@ -24,58 +23,58 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module allows you to hide the default arena frames Blizzard added in 10.1.5. Arena frame AddOns such as Gladius will not be affected by this.';
+    return "This module allows you to hide the default arena frames Blizzard added in 10.1.5. Arena frame AddOns such as Gladius will not be affected by this."
 end
 
 function Module:GetName()
-    return 'Disable Blizzard Arena Frames';
+    return "Disable Blizzard Arena Frames"
 end
 
 function Module:GetOptions(myOptionsTable, db)
-    self.db = db;
+    self.db = db
     local defaults = {}
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
-            self.db[key] = value;
+            self.db[key] = value
         end
     end
 
-    local counter = CreateCounter(5);
+    local counter = CreateCounter(5)
 
-    local DisableBlizzardArenaFramesImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableBlizzardArenaFrames:165:308:93:-15|t"
+    local DisableBlizzardArenaFramesImage =
+    "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\DisableBlizzardArenaFrames:165:308:93:-15|t"
 
     myOptionsTable.args.art3 = {
         order = counter(),
-        type = 'description',
-        name = '' .. DisableBlizzardArenaFramesImage,
-        width = 'full',
-    };
+        type = "description",
+        name = "" .. DisableBlizzardArenaFramesImage,
+        width = "full"
+    }
 
-    return myOptionsTable;
+    return myOptionsTable
 end
 
 function Module:SetupUI()
-
     local arenaFrameCluster = CreateFrame("Frame")
 
     CompactArenaFrame:SetParent(arenaFrameCluster)
     CompactArenaFrameTitle:SetParent(arenaFrameCluster)
 
     local function changeArenaFrameSize()
-        if not UnitAffectingCombat('player') then
+        if not UnitAffectingCombat("player") then
             arenaFrameCluster:SetScale(0.001)
         end
     end
 
     local function attemptHideArenaFrame()
-        if not UnitAffectingCombat('player') then
+        if not UnitAffectingCombat("player") then
             arenaFrameCluster:Hide()
         end
     end
 
     -- I dont even know if this actually does anything or it insta resets wtf
     local function moveArenaFrame()
-        if not UnitAffectingCombat('player') then
+        if not UnitAffectingCombat("player") then
             arenaFrameCluster:SetClampedToScreen(false)
             arenaFrameCluster:SetMovable(true)
             arenaFrameCluster:ClearAllPoints()
@@ -103,7 +102,7 @@ function Module:SetupUI()
     CompactArenaFrame:SetScript("OnShow", changeArenaFrameSize)
     CompactArenaFrameTitle:SetScript("OnShow", changeArenaFrameSize)
 
-    if not UnitAffectingCombat('player') then
+    if not UnitAffectingCombat("player") then
         CompactArenaFrame:Hide()
         CompactArenaFrameTitle:Hide()
     end
@@ -123,10 +122,10 @@ function Module:CheckConditions()
 end
 
 function Module:IsPlayerInPvPZone()
-    local zoneType = select(2, IsInInstance());
+    local zoneType = select(2, IsInInstance())
     -- Check if the player is in a PvP instance.
     if zoneType == "arena" then
-        return true;
+        return true
     else
         return false
     end
