@@ -35,6 +35,14 @@ function Module:GetOptions(myOptionsTable, db)
         realmName2 = true,
         entireName2 = false,
 
+        statusTrackingBarManager = true,
+        statusTrackingBarManager2 = true,
+
+        jaxClassicFramesPvpIcon = true,
+        jaxClassicFramesPlayerGroupNumber = true,
+        jaxClassicFramesPvpIcon2 = true,
+        jaxClassicFramesPlayerGroupNumber2 = true,
+
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
@@ -80,10 +88,30 @@ function Module:GetOptions(myOptionsTable, db)
             self:RefreshUI()
         end
 
+        if setting == 'statusTrackingBarManager' then
+            self:RefreshUI()
+        end
+        if setting == 'statusTrackingBarManager2' then
+            self:RefreshUI()
+        end
+
+        if setting == 'jaxClassicFramesPvpIcon' then
+            self:RefreshUI()
+        end
+        if setting == 'jaxClassicFramesPlayerGroupNumber' then
+            self:RefreshUI()
+        end
+        if setting == 'jaxClassicFramesPvpIcon2' then
+            self:RefreshUI()
+        end
+        if setting == 'jaxClassicFramesPlayerGroupNumber2' then
+            self:RefreshUI()
+        end
+
     end
     local counter = CreateCounter(5);
 
-    local UIHideElementsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UIHideElements:160:321:82:0|t"
+    --local UIHideElementsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UIHideElements:160:321:82:0|t"
 
     myOptionsTable.args.outsideInstance = {
         order = counter(),
@@ -125,14 +153,50 @@ function Module:GetOptions(myOptionsTable, db)
                     },
                 }
             },
-
-            art4 = {
+            hideStatusTrackingBarGroup = {
                 order = counter(),
-                type = 'description',
-                name = '' .. UIHideElementsImage,
-                width = 'full',
-            };
-        },
+                name = "Hide StatusTrackingBarManager",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    statusTrackingBarManager = {
+                        type = 'toggle',
+                        name = 'Hide all experience/reputation/honor status bars',
+                        desc = 'This hides the StatusTrackingBarManager',
+                        order = counter(),
+                        width = 'full',
+                        get = get,
+                        set = set,
+                    },
+                }
+            },
+            hideJaxClassicFramesElementsGroup = {
+                order = counter(),
+                name = "Hide Jax Classic Frames Elements",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    jaxClassicFramesPvpIcon = {
+                        type = 'toggle',
+                        name = 'PvP Icon',
+                        desc = 'This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not',
+                        order = counter(),
+                        width = 0.6,
+                        get = get,
+                        set = set,
+                    },
+                    jaxClassicFramesPlayerGroupNumber = {
+                        type = 'toggle',
+                        name = 'Player Group Number',
+                        desc = 'This hides the group number indicator that shows up when you are in a group',
+                        order = counter(),
+                        width = 1,
+                        get = get,
+                        set = set,
+                    }
+                },
+            }
+        }
     };
     myOptionsTable.args.insideInstance = {
         order = counter(),
@@ -174,14 +238,49 @@ function Module:GetOptions(myOptionsTable, db)
                     },
                 }
             },
-
-            art4 = {
+            hideStatusTrackingBarGroup2 = {
                 order = counter(),
-                type = 'description',
-                name = '' .. UIHideElementsImage,
-                width = 'full',
-            };
-
+                name = "Hide StatusTrackingBarManager",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    statusTrackingBarManager2 = {
+                        type = 'toggle',
+                        name = 'Hide all experience/reputation/honor status bars',
+                        desc = 'This hides the StatusTrackingBarManager',
+                        order = counter(),
+                        width = 'full',
+                        get = get,
+                        set = set,
+                    },
+                }
+            },
+            hideJaxClassicFramesElementsGroup2 = {
+                order = counter(),
+                name = "Hide Jax Classic Frames Elements",
+                type = "group",
+                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                args = {
+                    jaxClassicFramesPvpIcon2 = {
+                        type = 'toggle',
+                        name = 'PvP Icon',
+                        desc = 'This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not',
+                        order = counter(),
+                        width = 0.6,
+                        get = get,
+                        set = set,
+                    },
+                    jaxClassicFramesPlayerGroupNumber2 = {
+                        type = 'toggle',
+                        name = 'Player Group Number',
+                        desc = 'This hides the group number indicator that shows up when you are in a group',
+                        order = counter(),
+                        width = 1,
+                        get = get,
+                        set = set,
+                    }
+                },
+            }
         },
     };
 
@@ -308,10 +407,103 @@ function Module:HideEntireName()
     end
 end
 
+function Module:HideStatusTrackingBarManager()
+    local enabled;
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.statusTrackingBarManager2;
+        else
+            enabled = self.db.statusTrackingBarManager;
+        end
+    else
+        enabled = false;
+    end
+
+    if enabled then
+        if StatusTrackingBarManager then
+            if StatusTrackingBarManager:IsShown() then
+                StatusTrackingBarManager:SetScale(0.00001);
+            end
+        end
+    else
+        if StatusTrackingBarManager then
+            if StatusTrackingBarManager:IsShown() then
+                StatusTrackingBarManager:SetScale(1);
+            end
+        end
+    end
+end
+
+function Module:HideJaxClassicFramesPvpIcon()
+    if IsAddOnLoaded("JaxClassicFrames") then
+        local enabled;
+        if self:IsEnabled() then
+            if self.IsPlayerInPvPZone() then
+                enabled = self.db.jaxClassicFramesPvpIcon2;
+            else
+                enabled = self.db.jaxClassicFramesPvpIcon;
+            end
+        else
+            enabled = false;
+        end
+
+        if enabled then
+            if JcfPlayerPVPIcon then
+                JcfPlayerPVPIcon:SetAlpha(0)
+            end
+            if JcfTargetFrameTextureFramePVPIcon then
+                JcfTargetFrameTextureFramePVPIcon:SetAlpha(0)
+            end
+            if JcfFocusFrameTextureFramePVPIcon then
+                JcfFocusFrameTextureFramePVPIcon:SetAlpha(0)
+            end
+        else
+            if JcfPlayerPVPIcon then
+                JcfPlayerPVPIcon:SetAlpha(1)
+            end
+            if JcfTargetFrameTextureFramePVPIcon then
+                JcfTargetFrameTextureFramePVPIcon:SetAlpha(1)
+            end
+            if JcfFocusFrameTextureFramePVPIcon then
+                JcfFocusFrameTextureFramePVPIcon:SetAlpha(1)
+            end
+
+        end
+    end
+end
+
+function Module:HideJaxClassicFramesPlayerGroupNumber()
+    if IsAddOnLoaded("JaxClassicFrames") then
+        local enabled;
+        if self:IsEnabled() then
+            if self.IsPlayerInPvPZone() then
+                enabled = self.db.jaxClassicFramesPlayerGroupNumber2;
+            else
+                enabled = self.db.jaxClassicFramesPlayerGroupNumber;
+            end
+        else
+            enabled = false;
+        end
+
+        if enabled then
+            if JcfPlayerFrameGroupIndicator then
+                JcfPlayerFrameGroupIndicator:SetAlpha(0)
+            end
+        else
+            if JcfPlayerFrameGroupIndicator then
+                JcfPlayerFrameGroupIndicator:SetAlpha(1)
+            end
+        end
+    end
+end
+
 function Module:SetupUI()
     self:HidePartyLabel();
     self:HideRealmName();
     self:HideEntireName();
+    self:HideStatusTrackingBarManager();
+    self:HideJaxClassicFramesPvpIcon();
+    self:HideJaxClassicFramesPlayerGroupNumber();
 end
 
 function Module:RefreshUI()

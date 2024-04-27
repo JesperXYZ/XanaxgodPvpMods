@@ -184,7 +184,7 @@ function Module:GetOptions(myOptionsTable, db)
     myOptionsTable.args.pic1Desc = {
         order = counter(),
         type = 'description',
-        name = 'Default blizzard frames (module disabled vs module enabled).',
+        name = 'Default blizzard frames (module disabled vs. module enabled).',
         width = 'full',
     };
     myOptionsTable.args.art51233 = {
@@ -208,7 +208,7 @@ function Module:GetOptions(myOptionsTable, db)
     myOptionsTable.args.pic2Desc = {
         order = counter(),
         type = 'description',
-        name = 'Jax Classic Frames (module disabled vs module enabled).',
+        name = 'Jax Classic Frames (module disabled vs. module enabled).',
         width = 'full',
     };
     myOptionsTable.args.art512334 = {
