@@ -1,4 +1,4 @@
-## Interface: 100205
+## Interface: 100206
 ## Title: |cdf1fd288Xanaxgod PvP Mods|r
 ## Author: Xanaxgod
 ## IconTexture: Interface\Addons\XanaxgodPvpMods\media\icon
