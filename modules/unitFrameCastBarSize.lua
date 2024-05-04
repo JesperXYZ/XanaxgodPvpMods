@@ -98,13 +98,13 @@ function Module:SetupCastBarSize()
     if self:IsEnabled() then
         TargetFrameSpellBar:SetScale(self.db.targetCastBarSize)
         C_Timer.After(2, function() TargetFrameSpellBar:SetScale(self.db.targetCastBarSize) end)
-        if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+        if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
             FocusFrameSpellBar:SetScale(self.db.focusCastBarSize)
             C_Timer.After(2, function() FocusFrameSpellBar:SetScale(self.db.focusCastBarSize) end)
         end
     else
         TargetFrameSpellBar:SetScale(1)
-        if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+        if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
             FocusFrameSpellBar:SetScale(1)
         end
     end
@@ -140,8 +140,8 @@ function Module:IsAvailableForCurrentVersion()
         else
             return true -- retail
         end
-    elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-        return true -- wrath
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+        return true -- cata
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
         return true -- vanilla
     end

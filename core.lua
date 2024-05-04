@@ -13,7 +13,7 @@ function XanaxgodPvpMods:OnInitialize()
     self:InitializeDefaults()
 
     for moduleName, module in self:IterateModules() do
-        if (self.db.modules[moduleName] == false) then
+        if (self.db.modules[moduleName] == false) or (module:IsAvailableForCurrentVersion() == false) then
             module:Disable()
         end
     end

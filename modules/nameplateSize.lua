@@ -138,8 +138,8 @@ function Module:IsAvailableForCurrentVersion()
         else
             return true -- retail
         end
-    elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-        return false -- wrath
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+        return false -- cata
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
         return false -- vanilla
     end

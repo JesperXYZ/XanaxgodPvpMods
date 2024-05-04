@@ -155,7 +155,7 @@ function Module:SetupUI()
     if snowfallKeyPressSize > 0 and snowfallKeyPressGirth > 0 then
         self:SecureHook("ActionButtonDown", function(id)
             local button
-            if not WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and not WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+            if not WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC and not WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
                 if C_PetBattles.IsInBattle() then
                     if PetBattleFrame then
                         if id > NUM_BATTLE_PET_HOTKEYS then
@@ -215,8 +215,8 @@ end
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         return true -- retail
-    elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-        return true -- wrath
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+        return true -- cata
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
         return true -- vanilla
     end

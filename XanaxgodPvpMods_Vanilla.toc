@@ -1,9 +1,9 @@
-## Interface: 11500
+## Interface: 11502
 ## Title: |cdf1fd288Xanaxgod PvP Mods|r
 ## Author: Xanaxgod
 ## IconTexture: Interface\Addons\XanaxgodPvpMods\media\icon
 ## Notes: Contains various mods/tweaks/improvements for PvP gameplay.
-## Version: v1.5
+## Version: v1.6
 ## SavedVariables: XPMDB
 
 libs\libs.xml

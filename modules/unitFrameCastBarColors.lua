@@ -1057,8 +1057,8 @@ end
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         return true -- retail
-    elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-        return false -- wrath
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+        return false -- cata
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
         return false -- vanilla
     end

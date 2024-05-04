@@ -39,7 +39,13 @@ function Module:GetOptions(myOptionsTable, db)
         jaxClassicFramesPvpIcon = true,
         jaxClassicFramesPlayerGroupNumber = true,
         jaxClassicFramesPvpIcon2 = true,
-        jaxClassicFramesPlayerGroupNumber2 = true
+        jaxClassicFramesPlayerGroupNumber2 = true,
+        classicFramesPvpIcon = true,
+        classicFramesPlayerGroupNumber = true,
+        classicFramesNameBackground = true,
+        classicFramesPvpIcon2 = true,
+        classicFramesPlayerGroupNumber2 = true,
+        classicFramesNameBackground2 = true
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
@@ -104,181 +110,359 @@ function Module:GetOptions(myOptionsTable, db)
         if setting == "jaxClassicFramesPlayerGroupNumber2" then
             self:RefreshUI()
         end
+
+        if setting == "classicFramesPvpIcon" then
+            self:RefreshUI()
+        end
+        if setting == "classicFramesPlayerGroupNumber" then
+            self:RefreshUI()
+        end
+        if setting == "classicFramesNameBackground" then
+            self:RefreshUI()
+        end
+        if setting == "classicFramesPvpIcon2" then
+            self:RefreshUI()
+        end
+        if setting == "classicFramesPlayerGroupNumber2" then
+            self:RefreshUI()
+        end
+        if setting == "classicFramesNameBackground2" then
+            self:RefreshUI()
+        end
+
     end
     local counter = CreateCounter(5)
 
     --local UIHideElementsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UIHideElements:160:321:82:0|t"
 
-    myOptionsTable.args.outsideInstance = {
-        order = counter(),
-        name = "Outside Instance",
-        type = "group",
-        args = {
-            hideCompactPartyFrameElementsGroup = {
-                order = counter(),
-                name = "Hide CompactPartyFrame Elements",
-                type = "group",
-                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-                args = {
-                    partyLabel = {
-                        type = "toggle",
-                        name = '"Party" Label',
-                        desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
-                        order = counter(),
-                        width = 0.66,
-                        get = get,
-                        set = set
-                    },
-                    realmName = {
-                        type = "toggle",
-                        name = "Realm Name",
-                        desc = "This hides the realm names of your party members in the PartyFrame",
-                        order = counter(),
-                        width = 0.63,
-                        get = get,
-                        set = set
-                    },
-                    entireName = {
-                        type = "toggle",
-                        name = "Entire Name",
-                        desc = "This hides the full names of your party members in the PartyFrame",
-                        order = counter(),
-                        width = 0.63,
-                        get = get,
-                        set = set
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+        myOptionsTable.args.outsideInstance = {
+            order = counter(),
+            name = "Outside Instance",
+            type = "group",
+            args = {
+                hideCompactPartyFrameElementsGroup = {
+                    order = counter(),
+                    name = "Hide CompactPartyFrame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        partyLabel = {
+                            type = "toggle",
+                            name = '"Party" Label',
+                            desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
+                            order = counter(),
+                            width = 0.66,
+                            get = get,
+                            set = set
+                        },
+                        realmName = {
+                            type = "toggle",
+                            name = "Realm Name",
+                            desc = "This hides the realm names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        },
+                        entireName = {
+                            type = "toggle",
+                            name = "Entire Name",
+                            desc = "This hides the full names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        }
                     }
-                }
-            },
-            hideStatusTrackingBarGroup = {
-                order = counter(),
-                name = "Hide StatusTrackingBarManager",
-                type = "group",
-                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-                args = {
-                    statusTrackingBarManager = {
-                        type = "toggle",
-                        name = "Hide all experience/reputation/honor status bars",
-                        desc = "This hides the StatusTrackingBarManager",
-                        order = counter(),
-                        width = "full",
-                        get = get,
-                        set = set
+                },
+                hideStatusTrackingBarGroup = {
+                    order = counter(),
+                    name = "Hide StatusTrackingBarManager",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        statusTrackingBarManager = {
+                            type = "toggle",
+                            name = "Hide all experience/reputation/honor status bars",
+                            desc = "This hides the StatusTrackingBarManager",
+                            order = counter(),
+                            width = "full",
+                            get = get,
+                            set = set
+                        }
                     }
-                }
-            },
-            hideJaxClassicFramesElementsGroup = {
-                order = counter(),
-                name = "Hide Jax Classic Frames Elements",
-                type = "group",
-                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-                args = {
-                    jaxClassicFramesPvpIcon = {
-                        type = "toggle",
-                        name = "PvP Icon",
-                        desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
-                        order = counter(),
-                        width = 0.6,
-                        get = get,
-                        set = set
-                    },
-                    jaxClassicFramesPlayerGroupNumber = {
-                        type = "toggle",
-                        name = "Player Group Number",
-                        desc = "This hides the group number indicator that shows up when you are in a group",
-                        order = counter(),
-                        width = 1,
-                        get = get,
-                        set = set
-                    }
-                }
-            }
-        }
-    }
-    myOptionsTable.args.insideInstance = {
-        order = counter(),
-        name = "Inside Raid/Dungeon/Arena/Battleground",
-        type = "group",
-        args = {
-            hideCompactPartyFrameElementsGroup2 = {
-                order = counter(),
-                name = "Hide CompactPartyFrame Elements",
-                type = "group",
-                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-                args = {
-                    partyLabel2 = {
-                        type = "toggle",
-                        name = '"Party" Label',
-                        desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
-                        order = counter(),
-                        width = 0.66,
-                        get = get,
-                        set = set
-                    },
-                    realmName2 = {
-                        type = "toggle",
-                        name = "Realm Name",
-                        desc = "This hides the realm names of your party members in the PartyFrame",
-                        order = counter(),
-                        width = 0.63,
-                        get = get,
-                        set = set
-                    },
-                    entireName2 = {
-                        type = "toggle",
-                        name = "Entire Name",
-                        desc = "This hides the full names of your party members in the PartyFrame",
-                        order = counter(),
-                        width = 0.63,
-                        get = get,
-                        set = set
-                    }
-                }
-            },
-            hideStatusTrackingBarGroup2 = {
-                order = counter(),
-                name = "Hide StatusTrackingBarManager",
-                type = "group",
-                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-                args = {
-                    statusTrackingBarManager2 = {
-                        type = "toggle",
-                        name = "Hide all experience/reputation/honor status bars",
-                        desc = "This hides the StatusTrackingBarManager",
-                        order = counter(),
-                        width = "full",
-                        get = get,
-                        set = set
-                    }
-                }
-            },
-            hideJaxClassicFramesElementsGroup2 = {
-                order = counter(),
-                name = "Hide Jax Classic Frames Elements",
-                type = "group",
-                inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-                args = {
-                    jaxClassicFramesPvpIcon2 = {
-                        type = "toggle",
-                        name = "PvP Icon",
-                        desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
-                        order = counter(),
-                        width = 0.6,
-                        get = get,
-                        set = set
-                    },
-                    jaxClassicFramesPlayerGroupNumber2 = {
-                        type = "toggle",
-                        name = "Player Group Number",
-                        desc = "This hides the group number indicator that shows up when you are in a group",
-                        order = counter(),
-                        width = 1,
-                        get = get,
-                        set = set
+                },
+                hideJaxClassicFramesElementsGroup = {
+                    order = counter(),
+                    name = "Hide Jax Classic Frames Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        jaxClassicFramesPvpIcon = {
+                            type = "toggle",
+                            name = "PvP Icon",
+                            desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
+                            order = counter(),
+                            width = 0.6,
+                            get = get,
+                            set = set
+                        },
+                        jaxClassicFramesPlayerGroupNumber = {
+                            type = "toggle",
+                            name = "Player Group Number",
+                            desc = "This hides the group number indicator that shows up when you are in a group",
+                            order = counter(),
+                            width = 1,
+                            get = get,
+                            set = set
+                        }
                     }
                 }
             }
         }
-    }
+        myOptionsTable.args.insideInstance = {
+            order = counter(),
+            name = "Inside Raid/Dungeon/Arena/Battleground",
+            type = "group",
+            args = {
+                hideCompactPartyFrameElementsGroup2 = {
+                    order = counter(),
+                    name = "Hide CompactPartyFrame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        partyLabel2 = {
+                            type = "toggle",
+                            name = '"Party" Label',
+                            desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
+                            order = counter(),
+                            width = 0.66,
+                            get = get,
+                            set = set
+                        },
+                        realmName2 = {
+                            type = "toggle",
+                            name = "Realm Name",
+                            desc = "This hides the realm names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        },
+                        entireName2 = {
+                            type = "toggle",
+                            name = "Entire Name",
+                            desc = "This hides the full names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        }
+                    }
+                },
+                hideStatusTrackingBarGroup2 = {
+                    order = counter(),
+                    name = "Hide StatusTrackingBarManager",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        statusTrackingBarManager2 = {
+                            type = "toggle",
+                            name = "Hide all experience/reputation/honor status bars",
+                            desc = "This hides the StatusTrackingBarManager",
+                            order = counter(),
+                            width = "full",
+                            get = get,
+                            set = set
+                        }
+                    }
+                },
+                hideJaxClassicFramesElementsGroup2 = {
+                    order = counter(),
+                    name = "Hide Jax Classic Frames Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        jaxClassicFramesPvpIcon2 = {
+                            type = "toggle",
+                            name = "PvP Icon",
+                            desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
+                            order = counter(),
+                            width = 0.6,
+                            get = get,
+                            set = set
+                        },
+                        jaxClassicFramesPlayerGroupNumber2 = {
+                            type = "toggle",
+                            name = "Player Group Number",
+                            desc = "This hides the group number indicator that shows up when you are in a group",
+                            order = counter(),
+                            width = 1,
+                            get = get,
+                            set = set
+                        }
+                    }
+                }
+            }
+        }
+
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+        myOptionsTable.args.outsideInstance = {
+            order = counter(),
+            name = "Outside Instance",
+            type = "group",
+            args = {
+                hideCompactPartyFrameElementsGroup = {
+                    order = counter(),
+                    name = "Hide CompactPartyFrame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        partyLabel = {
+                            type = "toggle",
+                            name = '"Party" Label',
+                            desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
+                            order = counter(),
+                            width = 0.66,
+                            get = get,
+                            set = set
+                        },
+                        realmName = {
+                            type = "toggle",
+                            name = "Realm Name",
+                            desc = "This hides the realm names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        },
+                        entireName = {
+                            type = "toggle",
+                            name = "Entire Name",
+                            desc = "This hides the full names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        }
+                    }
+                },
+                hideClassicFramesElementsGroup = {
+                    order = counter(),
+                    name = "Hide Unit Frame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        classicFramesPvpIcon = {
+                            type = "toggle",
+                            name = "PvP Icon",
+                            desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
+                            order = counter(),
+                            width = 0.6,
+                            get = get,
+                            set = set
+                        },
+                        classicFramesPlayerGroupNumber = {
+                            type = "toggle",
+                            name = "Player Group Number",
+                            desc = "This hides the group number indicator that shows up when you are in a group",
+                            order = counter(),
+                            width = 1,
+                            get = get,
+                            set = set
+                        },
+                        classicFramesNameBackground = {
+                            type = "toggle",
+                            name = "Name Background",
+                            desc = "This hides the colored background that indicates whether if you or your target/focus is friendly or hostile",
+                            order = counter(),
+                            width = 1,
+                            get = get,
+                            set = set
+                        }
+                    }
+                }
+            }
+        }
+        myOptionsTable.args.insideInstance = {
+            order = counter(),
+            name = "Inside Raid/Dungeon/Arena/Battleground",
+            type = "group",
+            args = {
+                hideCompactPartyFrameElementsGroup2 = {
+                    order = counter(),
+                    name = "Hide CompactPartyFrame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        partyLabel2 = {
+                            type = "toggle",
+                            name = '"Party" Label',
+                            desc = "This hides the CompactPartyFrameTitle above the PartyFrame",
+                            order = counter(),
+                            width = 0.66,
+                            get = get,
+                            set = set
+                        },
+                        realmName2 = {
+                            type = "toggle",
+                            name = "Realm Name",
+                            desc = "This hides the realm names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        },
+                        entireName2 = {
+                            type = "toggle",
+                            name = "Entire Name",
+                            desc = "This hides the full names of your party members in the PartyFrame",
+                            order = counter(),
+                            width = 0.63,
+                            get = get,
+                            set = set
+                        }
+                    }
+                },
+                hideClassicFramesElementsGroup2 = {
+                    order = counter(),
+                    name = "Hide Unit Frame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        classicFramesPvpIcon2 = {
+                            type = "toggle",
+                            name = "PvP Icon",
+                            desc = "This hides the pvp icon that indicates whether if you or your target/focus is pvp flagged or not",
+                            order = counter(),
+                            width = 0.6,
+                            get = get,
+                            set = set
+                        },
+                        classicFramesPlayerGroupNumber2 = {
+                            type = "toggle",
+                            name = "Player Group Number",
+                            desc = "This hides the group number indicator that shows up when you are in a group",
+                            order = counter(),
+                            width = 1,
+                            get = get,
+                            set = set
+                        },
+                        classicFramesNameBackground2 = {
+                            type = "toggle",
+                            name = "Name Background",
+                            desc = "This hides the colored background that indicates whether if you or your target/focus is friendly or hostile",
+                            order = counter(),
+                            width = 1,
+                            get = get,
+                            set = set
+                        }
+                    }
+                }
+            }
+        }
+    end
 
     return myOptionsTable
 end
@@ -297,11 +481,15 @@ function Module:HidePartyLabel()
 
     if GetNumGroupMembers() > 0 then
         if enabled then
-            CompactPartyFrameTitle:SetAlpha(0)
-            CompactPartyFrameTitle:Hide()
+            if CompactPartyFrameTitle then
+                CompactPartyFrameTitle:SetAlpha(0)
+                CompactPartyFrameTitle:Hide()
+            end
         else
-            CompactPartyFrameTitle:SetAlpha(1)
-            CompactPartyFrameTitle:Show()
+            if CompactPartyFrameTitle then
+                CompactPartyFrameTitle:SetAlpha(1)
+                CompactPartyFrameTitle:Show()
+            end
         end
     end
 end
@@ -331,14 +519,44 @@ function Module:HideRealmName()
                 local num = 1
                 local partyCount = GetNumGroupMembers()
                 repeat
-                    local partyFrameName = _G["CompactPartyFrameMember" .. num .. "Name"]
+                    local partyFrameName
                     local croppedName
+
+                    partyFrameName = _G["CompactPartyFrameMember" .. num .. "Name"]
 
                     if partyFrameName then
                         croppedName = partyFrameName:GetText()
                     end
 
-                    if croppedName then
+                    if croppedName and partyFrameName then
+                        partyFrameName:SetText(croppedName:match("[^-]+"))
+                    end
+
+                    if partyFrameName then
+                        partyFrameName:Show()
+                    end
+
+                    partyFrameName = _G["CompactRaidFrame" .. num .. "Name"]
+
+                    if partyFrameName then
+                        croppedName = partyFrameName:GetText()
+                    end
+
+                    if croppedName and partyFrameName then
+                        partyFrameName:SetText(croppedName:match("[^-]+"))
+                    end
+
+                    if partyFrameName then
+                        partyFrameName:Show()
+                    end
+
+                    partyFrameName = _G["PartyMemberFrame" .. num .. "Name"]
+
+                    if partyFrameName then
+                        croppedName = partyFrameName:GetText()
+                    end
+
+                    if croppedName and partyFrameName then
                         partyFrameName:SetText(croppedName:match("[^-]+"))
                     end
 
@@ -380,7 +598,21 @@ function Module:HideEntireName()
                 local num = 1
                 local partyCount = GetNumGroupMembers()
                 repeat
-                    local partyFrameName = _G["CompactPartyFrameMember" .. num .. "Name"]
+                    local partyFrameName
+
+                    partyFrameName = _G["CompactPartyFrameMember" .. num .. "Name"]
+
+                    if partyFrameName then
+                        partyFrameName:Hide()
+                    end
+
+                    partyFrameName = _G["CompactRaidFrame" .. num .. "Name"]
+
+                    if partyFrameName then
+                        partyFrameName:Hide()
+                    end
+
+                    partyFrameName = _G["PartyMemberFrame" .. num .. "Name"]
 
                     if partyFrameName then
                         partyFrameName:Hide()
@@ -484,6 +716,95 @@ function Module:HideJaxClassicFramesPlayerGroupNumber()
     end
 end
 
+function Module:HideClassicFramesPvpIcon()
+    local enabled
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.classicFramesPvpIcon2
+        else
+            enabled = self.db.classicFramesPvpIcon
+        end
+    else
+        enabled = false
+    end
+
+    if enabled then
+        if PlayerPVPIcon then
+            PlayerPVPIcon:SetAlpha(0)
+        end
+        if TargetFrameTextureFramePVPIcon then
+            TargetFrameTextureFramePVPIcon:SetAlpha(0)
+        end
+        if FocusFrameTextureFramePVPIcon then
+            FocusFrameTextureFramePVPIcon:SetAlpha(0)
+        end
+    else
+        if PlayerPVPIcon then
+            PlayerPVPIcon:SetAlpha(1)
+        end
+        if TargetFrameTextureFramePVPIcon then
+            TargetFrameTextureFramePVPIcon:SetAlpha(1)
+        end
+        if FocusFrameTextureFramePVPIcon then
+            FocusFrameTextureFramePVPIcon:SetAlpha(1)
+        end
+    end
+end
+
+function Module:HideClassicFramesPlayerGroupNumber()
+    local enabled
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.classicFramesPlayerGroupNumber2
+        else
+            enabled = self.db.classicFramesPlayerGroupNumber
+        end
+    else
+        enabled = false
+    end
+
+    if enabled then
+        if PlayerFrameGroupIndicator then
+            PlayerFrameGroupIndicator:SetAlpha(0)
+        end
+    else
+        if PlayerFrameGroupIndicator then
+            PlayerFrameGroupIndicator:SetAlpha(1)
+        end
+    end
+end
+
+function Module:HideClassicFramesNameBackground()
+    local function enabled()
+        if self:IsEnabled() then
+            if self.IsPlayerInPvPZone() then
+                return self.db.classicFramesNameBackground2
+            else
+                return self.db.classicFramesNameBackground
+            end
+        else
+            return false
+        end
+    end
+
+    local frame = CreateFrame("FRAME")
+    local function eventHandler(self, event, ...)
+        if TargetFrameNameBackground and enabled() then
+            TargetFrameNameBackground:SetVertexColor(0, 0, 0, 0.6)
+        end
+        if FocusFrameNameBackground and enabled() then
+            FocusFrameNameBackground:SetVertexColor(0, 0, 0, 0.6)
+        end
+    end
+
+    frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    frame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+    frame:RegisterEvent("UNIT_FACTION")
+
+    frame:SetScript("OnEvent", eventHandler)
+end
+
 function Module:SetupUI()
     self:HidePartyLabel()
     self:HideRealmName()
@@ -491,6 +812,15 @@ function Module:SetupUI()
     self:HideStatusTrackingBarManager()
     self:HideJaxClassicFramesPvpIcon()
     self:HideJaxClassicFramesPlayerGroupNumber()
+end
+
+function Module:SetupUIClassic()
+    self:HidePartyLabel()
+    self:HideRealmName()
+    self:HideEntireName()
+    self:HideClassicFramesPvpIcon()
+    self:HideClassicFramesPlayerGroupNumber()
+    self:HideClassicFramesNameBackground()
 end
 
 function Module:RefreshUI()
@@ -502,7 +832,11 @@ end
 
 function Module:CheckConditions()
     if not UnitAffectingCombat("player") then
-        self:SetupUI()
+        if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+            self:SetupUI()
+        elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+            self:SetupUIClassic()
+        end
     else
         C_Timer.After(5, function() self:CheckConditions() end)
     end
@@ -521,8 +855,8 @@ end
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         return true -- retail
-    elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-        return false -- wrath
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+        return true -- cata
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
         return false -- vanilla
     end
