@@ -29,7 +29,9 @@ function Module:GetOptions(myOptionsTable, db)
         bothToggle = false,
         noneToggle = false,
         xanaxgodNumericValueToggle = true,
-        xanaxgodBothToggle = false
+        xanaxgodBothToggle = false,
+        selectedFont = "Fonts\\FRIZQT__.TTF",
+        fontSize = 10
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
@@ -212,6 +214,9 @@ function Module:GetOptions(myOptionsTable, db)
             self:RefreshUI()
             self:RefreshUI()
         end
+        if setting == "selectedFont" or setting == "fontSize" then
+            self:RefreshUI()
+        end
     end
 
     local counter = CreateCounter(5)
@@ -307,6 +312,53 @@ function Module:GetOptions(myOptionsTable, db)
             }
         }
     }
+    myOptionsTable.args.fontGroup = {
+        order = counter(),
+        name = "Font Settings",
+        type = "group",
+        inline = true,
+        args = {
+            selectedFont = {
+                type = "select",
+                name = "Font",
+                desc = "Select the font for status text.",
+                order = counter(),
+                width = 0.8,
+                values = {
+                    ["Fonts\\FRIZQT__.TTF"] = "Friz Quadrata TT",
+                    ["Fonts\\ARIALN.TTF"] = "Arial Narrow",
+                    ["Fonts\\MORPHEUS.TTF"] = "Morpheus",
+                    ["Fonts\\SKURRI.TTF"] = "Skurri"
+                },
+                get = get,
+                set = set
+            },
+            fontSize = {
+                type = "range",
+                name = "Font Size",
+                desc = "Adjust the font size for status text.",
+                order = counter(),
+                width = 0.6,
+                min = 8,
+                max = 16,
+                step = 1,
+                get = get,
+                set = set
+            },
+            resetToDefault = {
+                type = "execute",
+                name = "Reset to Default",
+                desc = "Reset font and size to default values.",
+                order = counter(),
+                width = 0.75,
+                func = function()
+                    self.db.selectedFont = defaults.selectedFont
+                    self.db.fontSize = defaults.fontSize
+                    self:RefreshUI()
+                end,
+            }
+        }
+    }
     myOptionsTable.args.art222 = {
         order = counter(),
         type = "description",
@@ -318,6 +370,234 @@ function Module:GetOptions(myOptionsTable, db)
 end
 
 function Module:SetupStatusText()
+
+    local unitFrames = {
+        player = {
+            health = nil,
+            healthRight = nil,
+            healthLeft = nil,
+            mana = nil,
+            manaRight = nil,
+            manaLeft = nil
+        },
+        target = {
+            health = nil,
+            healthRight = nil,
+            healthLeft = nil,
+            mana = nil,
+            manaRight = nil,
+            manaLeft = nil
+        },
+        focus = {
+            health = nil,
+            healthRight = nil,
+            healthLeft = nil,
+            mana = nil,
+            manaRight = nil,
+            manaLeft = nil
+        },
+        pet = {
+            health = nil,
+            healthRight = nil,
+            healthLeft = nil,
+            mana = nil,
+            manaRight = nil,
+            manaLeft = nil
+        }
+    }
+
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+        if IsAddOnLoaded("JaxClassicFrames") then
+            unitFrames.player.health = JcfPlayerFrameHealthBarText
+            unitFrames.player.healthRight = JcfPlayerFrameHealthBarTextRight
+            unitFrames.player.healthLeft = JcfPlayerFrameHealthBarTextLeft
+            unitFrames.player.mana = JcfPlayerFrameManaBarText
+            unitFrames.player.manaRight = JcfPlayerFrameManaBarTextRight
+            unitFrames.player.manaLeft = JcfPlayerFrameManaBarTextLeft
+
+            unitFrames.target.health = JcfTargetFrameTextureFrame.HealthBarText
+            unitFrames.target.healthRight = JcfTargetFrameTextureFrame.HealthBarTextRight
+            unitFrames.target.healthLeft = JcfTargetFrameTextureFrame.HealthBarTextLeft
+            unitFrames.target.mana = JcfTargetFrameTextureFrame.ManaBarText
+            unitFrames.target.manaRight = JcfTargetFrameTextureFrame.ManaBarTextRight
+            unitFrames.target.manaLeft = JcfTargetFrameTextureFrame.ManaBarTextLeft
+
+            unitFrames.focus.health = JcfFocusFrameTextureFrame.HealthBarText
+            unitFrames.focus.healthRight = JcfFocusFrameTextureFrame.HealthBarTextRight
+            unitFrames.focus.healthLeft = JcfFocusFrameTextureFrame.HealthBarTextLeft
+            unitFrames.focus.mana = JcfFocusFrameTextureFrame.ManaBarText
+            unitFrames.focus.manaRight = JcfFocusFrameTextureFrame.ManaBarTextRight
+            unitFrames.focus.manaLeft = JcfFocusFrameTextureFrame.ManaBarTextLeft
+
+            unitFrames.pet.health = JcfPetFrameHealthBarText
+            unitFrames.pet.healthRight = JcfPetFrameHealthBarTextRight
+            unitFrames.pet.healthLeft = JcfPetFrameHealthBarTextLeft
+            unitFrames.pet.mana = JcfPetFrameManaBarText
+            unitFrames.pet.manaRight = JcfPetFrameManaBarTextRight
+            unitFrames.pet.manaLeft = JcfPetFrameManaBarTextLeft
+        else
+            unitFrames.player.health = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.HealthBarText
+            unitFrames.player.healthRight = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.RightText
+            unitFrames.player.healthLeft = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.LeftText
+            unitFrames.player.mana = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.ManaBarText
+            unitFrames.player.manaRight = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.RightText
+            unitFrames.player.manaLeft = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.LeftText
+
+            unitFrames.target.health = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString
+            unitFrames.target.healthRight = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.RightText
+            unitFrames.target.healthLeft = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.LeftText
+            unitFrames.target.mana = TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText
+            unitFrames.target.manaRight = TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.RightText
+            unitFrames.target.manaLeft = TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.LeftText
+
+            unitFrames.focus.health = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString
+            unitFrames.focus.healthRight = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.RightText
+            unitFrames.focus.healthLeft = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.LeftText
+            unitFrames.focus.mana = FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText
+            unitFrames.focus.manaRight = FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.RightText
+            unitFrames.focus.manaLeft = FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.LeftText
+
+            unitFrames.pet.health = PetFrameHealthBarText
+            unitFrames.pet.healthRight = PetFrameHealthBarTextRight
+            unitFrames.pet.healthLeft = PetFrameHealthBarTextLeft
+            unitFrames.pet.mana = PetFrameManaBarText
+            unitFrames.pet.manaRight = PetFrameManaBarTextRight
+            unitFrames.pet.manaLeft = PetFrameManaBarTextLeft
+        end
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+        unitFrames.player.health = PlayerFrameHealthBarText
+        unitFrames.player.healthRight = PlayerFrameHealthBarTextRight
+        unitFrames.player.healthLeft = PlayerFrameHealthBarTextLeft
+        unitFrames.player.mana = PlayerFrameManaBarText
+        unitFrames.player.manaRight = PlayerFrameManaBarTextRight
+        unitFrames.player.manaLeft = PlayerFrameManaBarTextLeft
+
+        unitFrames.target.health = TargetFrameTextureFrame.HealthBarText
+        unitFrames.target.healthRight = TargetFrameTextureFrame.HealthBarTextRight
+        unitFrames.target.healthLeft = TargetFrameTextureFrame.HealthBarTextLeft
+        unitFrames.target.mana = TargetFrameTextureFrame.ManaBarText
+        unitFrames.target.manaRight = TargetFrameTextureFrame.ManaBarTextRight
+        unitFrames.target.manaLeft = TargetFrameTextureFrame.ManaBarTextLeft
+
+        unitFrames.focus.health = FocusFrameTextureFrame.HealthBarText
+        unitFrames.focus.healthRight = FocusFrameTextureFrame.HealthBarTextRight
+        unitFrames.focus.healthLeft = FocusFrameTextureFrame.HealthBarTextLeft
+        unitFrames.focus.mana = FocusFrameTextureFrame.ManaBarText
+        unitFrames.focus.manaRight = FocusFrameTextureFrame.ManaBarTextRight
+        unitFrames.focus.manaLeft = FocusFrameTextureFrame.ManaBarTextLeft
+
+        unitFrames.pet.health = PetFrameHealthBarText
+        unitFrames.pet.healthRight = PetFrameHealthBarTextRight
+        unitFrames.pet.healthLeft = PetFrameHealthBarTextLeft
+        unitFrames.pet.mana = PetFrameManaBarText
+        unitFrames.pet.manaRight = PetFrameManaBarTextRight
+        unitFrames.pet.manaLeft = PetFrameManaBarTextLeft
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+        unitFrames.player.health = PlayerFrameHealthBarText
+        unitFrames.player.healthRight = PlayerFrameHealthBarTextRight
+        unitFrames.player.healthLeft = PlayerFrameHealthBarTextLeft
+        unitFrames.player.mana = PlayerFrameManaBarText
+        unitFrames.player.manaRight = PlayerFrameHealthBarTextRight
+        unitFrames.player.manaLeft = PlayerFrameHealthBarTextLeft
+
+        unitFrames.target.health = TargetFrameHealthBarText
+        unitFrames.target.healthRight = TargetFrameTextureFrame.HealthBarTextRight
+        unitFrames.target.healthLeft = TargetFrameTextureFrame.HealthBarTextLeft
+        unitFrames.target.mana = TargetFrameManaBarText
+        unitFrames.target.manaRight = TargetFrameTextureFrame.ManaBarTextRight
+        unitFrames.target.manaLeft = TargetFrameTextureFrame.ManaBarTextLeft
+
+        unitFrames.focus.health = nil
+        unitFrames.focus.healthRight = nil
+        unitFrames.focus.healthLeft = nil
+        unitFrames.focus.mana = nil
+        unitFrames.focus.manaRight = nil
+        unitFrames.focus.manaLeft = nil
+
+        unitFrames.pet.health = PetFrameHealthBarText
+        unitFrames.pet.healthRight = PetFrameHealthBarTextRight
+        unitFrames.pet.healthLeft = PetFrameHealthBarTextLeft
+        unitFrames.pet.mana = PetFrameManaBarText
+        unitFrames.pet.manaRight = PetFrameManaBarTextRight
+        unitFrames.pet.manaLeft = PetFrameManaBarTextLeft
+    end
+
+    local font = self.db.selectedFont
+    local fontSize = self.db.fontSize
+
+    for unitType, statusTexts in pairs(unitFrames) do
+        for barType, statusText in pairs(statusTexts) do
+            if statusText then
+                if unitType == "pet" then
+                    statusText:SetFont(font, fontSize - 1, "OUTLINE")
+                else
+                    statusText:SetFont(font, fontSize, "OUTLINE")
+                end
+            end
+        end
+    end
+
+    local function FormatValue(val)
+        --0 to 99.999
+        if val < 100000 then
+            if val < 1 then
+                return " "
+            elseif val < 1000 then
+                --999 and below
+                return ("%.0f"):format(val)
+            else
+                if val < 10000 then
+                    --9.999 and below
+                    local s = ("%.0f"):format(val)
+                    return (string.sub(s, 1, 1) .. "," .. string.sub(s, 2, 4))
+                else
+                    --99.999 and below
+                    local s = ("%.0f"):format(val)
+                    return (string.sub(s, 1, 2) .. "," .. string.sub(s, 3, 5))
+                end
+            end
+        --100 K to 99.999 K
+        elseif val < 100000000 then
+
+            return ("%.0f K"):format(val / 1000)
+
+            --[[if val < 1000000 then
+                --999 K and below
+                return ("%.0f K"):format(val / 1000)
+            elseif val < 10000000 then
+                --9.999 K and below
+                local s = ("%.0f K"):format(val / 1000)
+                return (string.sub(s, 1, 1) .. "," .. string.sub(s, 2, 6))
+            else
+                --99.999 K and below
+                local s = ("%.0f K"):format(val / 1000)
+                return (string.sub(s, 1, 2) .. "," .. string.sub(s, 3, 7))
+            end]]--
+
+        --100 M to 99.999 M
+        elseif val < 100000000000 then
+
+            return ("%.0f M"):format(val / 1000000)
+
+            --[[if val < 1000000000 then
+                --999 M and below
+                return ("%.0f M"):format(val / 1000000)
+            elseif val < 10000000000 then
+                --9.999 M and below
+                local s = ("%.0f M"):format(val / 1000000)
+                return (string.sub(s, 1, 1) .. "," .. string.sub(s, 2, 6))
+            else
+                --99.999 M and below
+                local s = ("%.0f M"):format(val / 1000000)
+                return (string.sub(s, 1, 2) .. "," .. string.sub(s, 3, 7))
+            end]]--
+
+        else
+            --100 B and above
+            return ("%.0ft B"):format(val / 1000000000000)
+        end
+    end
+
     --NumericValue
     if self:IsEnabled() and self.db.numericValueToggle then
         SetCVar("statusText")
@@ -346,189 +626,37 @@ function Module:SetupStatusText()
         SetCVar("statusText")
         SetCVar("statusText", 1)
         SetCVar("statusTextDisplay", "NUMERIC")
+
+        local function NumericUpdater()
+            for unitType, statusTexts in pairs(unitFrames) do
+                for barType, statusText in pairs(statusTexts) do
+                    if barType == "health" then
+                        statusText:SetText(tostring(FormatValue(UnitHealth(unitType))))
+                    end
+                    if barType == "mana" then
+                        statusText:SetText(tostring(FormatValue(UnitPower(unitType))))
+                    end
+                end
+            end
+        end
+
         if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-            if IsAddOnLoaded("JaxClassicFrames") then
-                local function NumericUpdater()
-                    --health bars (player target and focus)
-                    if JcfPlayerFrameHealthBarText:GetText() then
-                        JcfPlayerFrameHealthBarText:SetText(JcfPlayerFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if JcfTargetFrameTextureFrame.HealthBarText:GetText() then
-                        JcfTargetFrameTextureFrame.HealthBarText:SetText(JcfTargetFrameTextureFrame.HealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if JcfFocusFrameTextureFrame.HealthBarText:GetText() then
-                        JcfFocusFrameTextureFrame.HealthBarText:SetText(JcfFocusFrameTextureFrame.HealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    --Mana/power bars (player target and focus)
-                    if JcfPlayerFrameManaBarText:GetText() then
-                        JcfPlayerFrameManaBarText:SetText(JcfPlayerFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if JcfTargetFrameTextureFrame.ManaBarText:GetText() then
-                        JcfTargetFrameTextureFrame.ManaBarText:SetText(JcfTargetFrameTextureFrame.ManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-
-                    if JcfFocusFrameTextureFrame.ManaBarText:GetText() then
-                        JcfFocusFrameTextureFrame.ManaBarText:SetText(JcfFocusFrameTextureFrame.ManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    --pet bars
-                    if JcfPetFrameHealthBarText:GetText() then
-                        JcfPetFrameHealthBarText:SetText(JcfPetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if JcfPetFrameManaBarText:GetText() then
-                        JcfPetFrameManaBarText:SetText(JcfPetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
-
-                if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
-                    return
-                end
-                self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
-
-                self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
-
-                NumericUpdater()
-                C_Timer.After(1, function() NumericUpdater() end)
-                C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(3, function() NumericUpdater() end)
-            else
-                --normal retail ui
-                local function NumericUpdater()
-                    --health bars (player target and focus)
-                    if PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.HealthBarText:GetText() then
-                        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.HealthBarText:SetText(PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.HealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:GetText() then
-                        TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:SetText(TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:GetText():match("[^/]+[^ /]"))
-                    end
-                    if FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:GetText() then
-                        FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:SetText(FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:GetText():match("[^/]+[^ /]"))
-                    end
-                    --Mana/power bars (player target and focus)
-                    if PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.ManaBarText:GetText() then
-                        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.ManaBarText:SetText(PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.ManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:GetText() then
-                        TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:SetText(TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:GetText() then
-                        FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:SetText(FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    --pet bars
-                    if PetFrameHealthBarText:GetText() then
-                        PetFrameHealthBarText:SetText(PetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if PetFrameManaBarText:GetText() then
-                        PetFrameManaBarText:SetText(PetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
-
-                if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
-                    return
-                end
-                self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
-
-                self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
-
-                NumericUpdater()
-                C_Timer.After(1, function() NumericUpdater() end)
-                C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(3, function() NumericUpdater() end)
-            end
-        end
-        if WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
-            --normal classic ui
-            local function NumericUpdater()
-                --health bars (player target and focus)
-                if PlayerFrameHealthBarText:GetText() then
-                    PlayerFrameHealthBarText:SetText(PlayerFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if TargetFrameTextureFrame.HealthBarText:GetText() then
-                    TargetFrameTextureFrame.HealthBarText:SetText(
-                            TargetFrameTextureFrame.HealthBarText:GetText():match("[^/]+[^ /]")
-                    )
-                end
-                if FocusFrameTextureFrame.HealthBarText:GetText() then
-                    FocusFrameTextureFrame.HealthBarText:SetText(
-                            FocusFrameTextureFrame.HealthBarText:GetText():match("[^/]+[^ /]")
-                    )
-                end
-                --Mana/power bars (player target and focus)
-                if PlayerFrameManaBarText:GetText() then
-                    PlayerFrameManaBarText:SetText(PlayerFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if TargetFrameTextureFrame.ManaBarText:GetText() then
-                    TargetFrameTextureFrame.ManaBarText:SetText(
-                            TargetFrameTextureFrame.ManaBarText:GetText():match("[^/]+[^ /]")
-                    )
-                end
-                if FocusFrameTextureFrame.ManaBarText:GetText() then
-                    FocusFrameTextureFrame.ManaBarText:SetText(
-                            FocusFrameTextureFrame.ManaBarText:GetText():match("[^/]+[^ /]")
-                    )
-                end
-                --pet bars
-                if PetFrameHealthBarText:GetText() then
-                    PetFrameHealthBarText:SetText(PetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if PetFrameManaBarText:GetText() then
-                    PetFrameManaBarText:SetText(PetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                end
+            if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
+                return
             end
 
+            self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
+            self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
+
+        else
             if self:IsHooked("TextStatusBar_UpdateTextStringWithValues") then
                 return
             end
 
             self:SecureHook("TextStatusBar_UpdateTextStringWithValues", function() NumericUpdater() end)
-
-            NumericUpdater()
-            C_Timer.After(1, function() NumericUpdater() end)
-            C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(3, function() NumericUpdater() end)
         end
-        if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-            --normal classic ui
-            local function NumericUpdater()
-                --health bars (player target and focus)
-                if PlayerFrameHealthBarText:GetText() then
-                    PlayerFrameHealthBarText:SetText(PlayerFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if TargetFrameHealthBarText then
-                    if TargetFrameHealthBarText:GetText() then
-                        TargetFrameHealthBarText:SetText(TargetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
 
-                --Mana/power bars (player target and focus)
-                if PlayerFrameManaBarText:GetText() then
-                    PlayerFrameManaBarText:SetText(PlayerFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if TargetFrameManaBarText then
-                    if TargetFrameManaBarText:GetText() then
-                        TargetFrameManaBarText:SetText(TargetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
-
-                --pet bars
-                if PetFrameHealthBarText:GetText() then
-                    PetFrameHealthBarText:SetText(PetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if PetFrameManaBarText:GetText() then
-                    PetFrameManaBarText:SetText(PetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                end
-            end
-
-            if self:IsHooked("TextStatusBar_UpdateTextStringWithValues") then
-                return
-            end
-
-            self:SecureHook("TextStatusBar_UpdateTextStringWithValues", function() NumericUpdater() end)
-
-            NumericUpdater()
-            C_Timer.After(1, function() NumericUpdater() end)
-            C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(3, function() NumericUpdater() end)
-        end
+        NumericUpdater()
     end
     --XanaxgodBoth
     if self:IsEnabled() and self.db.xanaxgodBothToggle then
@@ -536,260 +664,44 @@ function Module:SetupStatusText()
         SetCVar("statusText", 1)
         SetCVar("statusTextDisplay", "NUMERIC")
 
-        local function FormatValue(val)
-            if val < 100000 then
-                return ("%.0f"):format(val)
-            elseif val < 100000000 then
-                return ("%.0f K"):format(val / 1000)
-            elseif val < 100000000000 then
-                return ("%.0f M"):format(val / 1000000)
-            else
-                return ("%.0ft"):format(val / 1000000000000)
+        local function NumericUpdater()
+            for unitType, statusTexts in pairs(unitFrames) do
+                for barType, statusText in pairs(statusTexts) do
+                    if barType == "health" then
+                        if UnitHealth(unitType) < 1 then
+                            statusText:SetText(" ")
+                        else
+                            statusText:SetText(tostring(FormatValue(UnitHealth(unitType))).. " (" .. tostring(UnitHealth(unitType) / UnitHealthMax(unitType) * 100 - (UnitHealth(unitType) / UnitHealthMax(unitType) * 100) % 1) .. "%)")
+                        end
+                    end
+                    if barType == "mana" then
+                        if UnitPower(unitType) < 1 then
+                            statusText:SetText(" ")
+                        else
+                            statusText:SetText(tostring(FormatValue(UnitPower(unitType))).. " (" .. tostring(UnitPower(unitType) / UnitPowerMax(unitType) * 100 - (UnitPower(unitType) / UnitPowerMax(unitType) * 100) % 1) .. "%)")
+                        end
+                    end
+                end
             end
         end
 
         if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-            if IsAddOnLoaded("JaxClassicFrames") then
-                local function NumericUpdater()
-                    --health bars (player target and focus)
-                    local playerHealth
-                    if UnitHealth("player") > 0 then
-                        playerHealth = tostring(FormatValue(UnitHealth("player"))) .. " (" .. tostring(UnitHealth("player") / UnitHealthMax("player") * 100 - (UnitHealth("player") / UnitHealthMax("player") * 100) % 1) .. "%)"
-                    end
-                    local targetHealth
-                    if UnitHealth("target") > 0 then
-                        targetHealth = tostring(FormatValue(UnitHealth("target"))) .. " (" .. tostring(UnitHealth("target") / UnitHealthMax("target") * 100 - (UnitHealth("target") / UnitHealthMax("target") * 100) % 1) .. "%)"
-                    end
-                    local focusHealth
-                    if UnitHealth("focus") > 0 then
-                        focusHealth = tostring(FormatValue(UnitHealth("focus"))) .. " (" .. tostring(UnitHealth("focus") / UnitHealthMax("focus") * 100 - (UnitHealth("focus") / UnitHealthMax("focus") * 100) % 1) .. "%)"
-                    end
-
-                    local playerMana
-                    if UnitPower("player") > 0 then
-                        playerMana = tostring(FormatValue(UnitPower("player"))) .. " (" .. tostring(UnitPower("player") / UnitPowerMax("player") * 100 - (UnitPower("player") / UnitPowerMax("player") * 100) % 1) .. "%)"
-                    end
-                    local targetMana
-                    if UnitPower("target") > 0 then
-                        targetMana = tostring(FormatValue(UnitPower("target"))) .. " (" .. tostring(UnitPower("target") / UnitPowerMax("target") * 100 - (UnitPower("target") / UnitPowerMax("target") * 100) % 1) .. "%)"
-                    end
-                    local focusMana
-                    if UnitPower("focus") > 0 then
-                        focusMana = tostring(FormatValue(UnitPower("focus"))) .. " (" .. tostring(UnitPower("focus") / UnitPowerMax("focus") * 100 - (UnitPower("focus") / UnitPowerMax("focus") * 100) % 1) .. "%)"
-                    end
-
-                    if JcfPlayerFrameHealthBarText:GetText() then
-                        JcfPlayerFrameHealthBarText:SetText(playerHealth)
-                    end
-                    if JcfTargetFrameTextureFrame.HealthBarText:GetText() then
-                        JcfTargetFrameTextureFrame.HealthBarText:SetText(targetHealth)
-                    end
-                    if JcfFocusFrameTextureFrame.HealthBarText:GetText() then
-                        JcfFocusFrameTextureFrame.HealthBarText:SetText(focusHealth)
-                    end
-                    --Mana/power bars (player target and focus)
-                    if JcfPlayerFrameManaBarText:GetText() then
-                        JcfPlayerFrameManaBarText:SetText(playerMana)
-                    end
-                    if JcfTargetFrameTextureFrame.ManaBarText:GetText() then
-                        JcfTargetFrameTextureFrame.ManaBarText:SetText(targetMana)
-                    end
-
-                    if JcfFocusFrameTextureFrame.ManaBarText:GetText() then
-                        JcfFocusFrameTextureFrame.ManaBarText:SetText(focusMana)
-                    end
-                    --pet bars
-                    if JcfPetFrameHealthBarText:GetText() then
-                        JcfPetFrameHealthBarText:SetText(JcfPetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if JcfPetFrameManaBarText:GetText() then
-                        JcfPetFrameManaBarText:SetText(JcfPetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
-
-                if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
-                    return
-                end
-                self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
-
-                self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
-
-                NumericUpdater()
-                C_Timer.After(1, function() NumericUpdater() end)
-                C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(3, function() NumericUpdater() end)
-            else
-                --normal retail ui
-                local function NumericUpdater()
-                    --health bars (player target and focus)
-                    local playerHealth
-                    if UnitHealth("player") > 0 then
-                        playerHealth = tostring(FormatValue(UnitHealth("player"))) .. " (" .. tostring(UnitHealth("player") / UnitHealthMax("player") * 100 - (UnitHealth("player") / UnitHealthMax("player") * 100) % 1) .. "%)"
-                    end
-                    local targetHealth
-                    if UnitHealth("target") > 0 then
-                        targetHealth = tostring(FormatValue(UnitHealth("target"))) .. " (" .. tostring(UnitHealth("target") / UnitHealthMax("target") * 100 - (UnitHealth("target") / UnitHealthMax("target") * 100) % 1) .. "%)"
-                    end
-                    local focusHealth
-                    if UnitHealth("focus") > 0 then
-                        focusHealth = tostring(FormatValue(UnitHealth("focus"))) .. " (" .. tostring(UnitHealth("focus") / UnitHealthMax("focus") * 100 - (UnitHealth("focus") / UnitHealthMax("focus") * 100) % 1) .. "%)"
-                    end
-
-                    local playerMana
-                    if UnitPower("player") > 0 then
-                        playerMana = tostring(FormatValue(UnitPower("player"))) .. " (" .. tostring(UnitPower("player") / UnitPowerMax("player") * 100 - (UnitPower("player") / UnitPowerMax("player") * 100) % 1) .. "%)"
-                    end
-                    local targetMana
-                    if UnitPower("target") > 0 then
-                        targetMana = tostring(FormatValue(UnitPower("target"))) .. " (" .. tostring(UnitPower("target") / UnitPowerMax("target") * 100 - (UnitPower("target") / UnitPowerMax("target") * 100) % 1) .. "%)"
-                    end
-                    local focusMana
-                    if UnitPower("focus") > 0 then
-                        focusMana = tostring(FormatValue(UnitPower("focus"))) .. " (" .. tostring(UnitPower("focus") / UnitPowerMax("focus") * 100 - (UnitPower("focus") / UnitPowerMax("focus") * 100) % 1) .. "%)"
-                    end
-
-                    --health bars (player target and focus)
-                    if PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.HealthBarText:GetText() then
-                        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.HealthBarText:SetText(playerHealth)
-                    end
-                    if TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:GetText() then
-                        TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:SetText(targetHealth)
-                    end
-                    if FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:GetText() then
-                        FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString:SetText(focusHealth)
-                    end
-                    --Mana/power bars (player target and focus)
-                    if PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.ManaBarText:GetText() then
-                        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.ManaBarText:SetText(playerMana)
-                    end
-                    if TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:GetText() then
-                        TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:SetText(targetMana)
-                    end
-                    if FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:GetText() then
-                        FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText:SetText(focusMana)
-                    end
-                    --pet bars
-                    if PetFrameHealthBarText:GetText() then
-                        PetFrameHealthBarText:SetText(PetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                    if PetFrameManaBarText:GetText() then
-                        PetFrameManaBarText:SetText(PetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
-
-                if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
-                    return
-                end
-                self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
-
-                self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
-
-                NumericUpdater()
-                C_Timer.After(1, function() NumericUpdater() end)
-                C_Timer.After(2, function() NumericUpdater() end)
-                C_Timer.After(3, function() NumericUpdater() end)
-            end
-        end
-        if WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
-            --normal classic ui
-            local function NumericUpdater()
-                --health bars (player target and focus)
-                local playerHealth = tostring(FormatValue(UnitHealth("player"))) .. " (" .. tostring(UnitHealth("player") / UnitHealthMax("player") * 100 - (UnitHealth("player") / UnitHealthMax("player") * 100) % 1) .. "%)"
-                local targetHealth = tostring(FormatValue(UnitHealth("target"))) .. " (" .. tostring(UnitHealth("target") / UnitHealthMax("target") * 100 - (UnitHealth("target") / UnitHealthMax("target") * 100) % 1) .. "%)"
-                local focusHealth = tostring(FormatValue(UnitHealth("focus"))) .. " (" .. tostring(UnitHealth("focus") / UnitHealthMax("focus") * 100 - (UnitHealth("focus") / UnitHealthMax("focus") * 100) % 1) .. "%)"
-
-                local playerMana = tostring(FormatValue(UnitPower("player"))) .. " (" .. tostring(UnitPower("player") / UnitPowerMax("player") * 100 - (UnitPower("player") / UnitPowerMax("player") * 100) % 1) .. "%)"
-                local targetMana = tostring(FormatValue(UnitPower("target"))) .. " (" .. tostring(UnitPower("target") / UnitPowerMax("target") * 100 - (UnitPower("target") / UnitPowerMax("target") * 100) % 1) .. "%)"
-                local focusMana = tostring(FormatValue(UnitPower("focus"))) .. " (" .. tostring(UnitPower("focus") / UnitPowerMax("focus") * 100 - (UnitPower("focus") / UnitPowerMax("focus") * 100) % 1) .. "%)"
-
-                --health bars (player target and focus)
-                if PlayerFrameHealthBarText:GetText() then
-                    PlayerFrameHealthBarText:SetText(playerHealth)
-                end
-                if TargetFrameTextureFrame.HealthBarText:GetText() then
-                    TargetFrameTextureFrame.HealthBarText:SetText(targetHealth)
-                end
-                if FocusFrameTextureFrame.HealthBarText:GetText() then
-                    FocusFrameTextureFrame.HealthBarText:SetText(focusHealth)
-                end
-                --Mana/power bars (player target and focus)
-                if PlayerFrameManaBarText:GetText() then
-                    PlayerFrameManaBarText:SetText(playerMana)
-                end
-                if TargetFrameTextureFrame.ManaBarText:GetText() then
-                    TargetFrameTextureFrame.ManaBarText:SetText(targetMana)
-                end
-                if FocusFrameTextureFrame.ManaBarText:GetText() then
-                    FocusFrameTextureFrame.ManaBarText:SetText(focusMana)
-                end
-                --pet bars
-                if PetFrameHealthBarText:GetText() then
-                    PetFrameHealthBarText:SetText(PetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if PetFrameManaBarText:GetText() then
-                    PetFrameManaBarText:SetText(PetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                end
+            if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
+                return
             end
 
+            self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
+            self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
+
+        else
             if self:IsHooked("TextStatusBar_UpdateTextStringWithValues") then
                 return
             end
 
             self:SecureHook("TextStatusBar_UpdateTextStringWithValues", function() NumericUpdater() end)
-
-            NumericUpdater()
-            C_Timer.After(1, function() NumericUpdater() end)
-            C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(3, function() NumericUpdater() end)
         end
-        if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-            --normal classic ui
-            local function NumericUpdater()
-                --health bars (player target and focus)
-                local playerHealth = tostring(FormatValue(UnitHealth("player"))) .. " (" .. tostring(UnitHealth("player") / UnitHealthMax("player") * 100 - (UnitHealth("player") / UnitHealthMax("player") * 100) % 1) .. "%)"
 
-                local playerMana = tostring(FormatValue(UnitPower("player"))) .. " (" .. tostring(UnitPower("player") / UnitPowerMax("player") * 100 - (UnitPower("player") / UnitPowerMax("player") * 100) % 1) .. "%)"
-
-                --health bars (player target and focus)
-                if PlayerFrameHealthBarText:GetText() then
-                    PlayerFrameHealthBarText:SetText(playerHealth)
-                end
-                if TargetFrameHealthBarText then
-                    if TargetFrameHealthBarText:GetText() then
-                        TargetFrameHealthBarText:SetText(TargetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
-
-                --Mana/power bars (player target and focus)
-                if PlayerFrameManaBarText:GetText() then
-                    PlayerFrameManaBarText:SetText(playerMana)
-                end
-                if TargetFrameManaBarText then
-                    if TargetFrameManaBarText:GetText() then
-                        TargetFrameManaBarText:SetText(TargetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                    end
-                end
-
-                --pet bars
-                if PetFrameHealthBarText:GetText() then
-                    PetFrameHealthBarText:SetText(PetFrameHealthBarText:GetText():match("[^/]+[^ /]"))
-                end
-                if PetFrameManaBarText:GetText() then
-                    PetFrameManaBarText:SetText(PetFrameManaBarText:GetText():match("[^/]+[^ /]"))
-                end
-            end
-
-            if self:IsHooked("TextStatusBar_UpdateTextStringWithValues") then
-                return
-            end
-
-            self:SecureHook("TextStatusBar_UpdateTextStringWithValues", function() NumericUpdater() end)
-
-            NumericUpdater()
-            C_Timer.After(1, function() NumericUpdater() end)
-            C_Timer.After(2, function() NumericUpdater() end)
-            C_Timer.After(3, function() NumericUpdater() end)
-        end
+        NumericUpdater()
     end
 end
 

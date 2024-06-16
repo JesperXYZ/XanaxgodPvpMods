@@ -28,11 +28,13 @@ function Module:GetOptions(myOptionsTable, db)
         classConditionsRmp = true,
         classConditionsRogue = false,
         outOfCombatTrackerToggle = true,
+        outOfCombatTrackerPlayersOnlyToggle = true,
         outOfCombatTrackerOpacity = 1,
         outOfCombatTrackerSize = 2,
         outOfCombatTrackerXOffset = 0,
         outOfCombatTrackerYOffset = 5,
         inCombatTrackerToggle = true,
+        inCombatTrackerPlayersOnlyToggle = true,
         inCombatTrackerOpacity = 0.7,
         inCombatTrackerSize = 2,
         inCombatTrackerXOffset = 0,
@@ -90,6 +92,9 @@ function Module:GetOptions(myOptionsTable, db)
         if setting == "outOfCombatTrackerToggle" then
             self:RefreshUI()
         end
+        if setting == "outOfCombatTrackerPlayersOnlyToggle" then
+            self:RefreshUI()
+        end
         if setting == "outOfCombatTrackerOpacity" then
             self:RefreshUI()
         end
@@ -103,6 +108,9 @@ function Module:GetOptions(myOptionsTable, db)
             self:RefreshUI()
         end
         if setting == "inCombatTrackerToggle" then
+            self:RefreshUI()
+        end
+        if setting == "inCombatTrackerPlayersOnlyToggle" then
             self:RefreshUI()
         end
         if setting == "inCombatTrackerOpacity" then
@@ -175,7 +183,16 @@ function Module:GetOptions(myOptionsTable, db)
                 name = "Enable",
                 desc = "Toggle to enable/disable the out-of-combat icon.",
                 order = counter(),
-                width = "full",
+                width = 0.6,
+                get = get,
+                set = set
+            },
+            outOfCombatTrackerPlayersOnlyToggle = {
+                type = "toggle",
+                name = "Track players only",
+                desc = "Toggle to only show the out-of-combat icon on players.",
+                order = counter(),
+                width = 1.4,
                 get = get,
                 set = set
             },
@@ -246,7 +263,16 @@ function Module:GetOptions(myOptionsTable, db)
                 name = "Enable",
                 desc = "Toggle to enable/disable the in-combat icon.",
                 order = counter(),
-                width = "full",
+                width = 0.6,
+                get = get,
+                set = set
+            },
+            inCombatTrackerPlayersOnlyToggle = {
+                type = "toggle",
+                name = "Track players only",
+                desc = "Toggle to only show the in-combat icon on players.",
+                order = counter(),
+                width = 1.4,
                 get = get,
                 set = set
             },
@@ -311,32 +337,48 @@ function Module:GetOptions(myOptionsTable, db)
 end
 
 function Module:TargetOutOfCombat()
-    if not UnitAffectingCombat("target") and not UnitIsFriend("player", "target") then
-        outOfCombatTargetFrame:Show()
+    if not UnitAffectingCombat("target") and not UnitIsFriend("player", "target") and UnitHealth("target") > 0 then
+        if self.db.outOfCombatTrackerPlayersOnlyToggle and (not UnitIsPlayer("target")) then
+            outOfCombatTargetFrame:Hide()
+        else
+            outOfCombatTargetFrame:Show()
+        end
     else
         outOfCombatTargetFrame:Hide()
     end
 end
 
 function Module:FocusOutOfCombat()
-    if not UnitAffectingCombat("focus") and not UnitIsFriend("player", "focus") then
-        outOfCombatFocusFrame:Show()
+    if not UnitAffectingCombat("focus") and not UnitIsFriend("player", "focus") and UnitHealth("focus") > 0 then
+        if self.db.outOfCombatTrackerPlayersOnlyToggle and (not UnitIsPlayer("focus")) then
+            outOfCombatFocusFrame:Hide()
+        else
+            outOfCombatFocusFrame:Show()
+        end
     else
         outOfCombatFocusFrame:Hide()
     end
 end
 
 function Module:TargetInCombat()
-    if UnitAffectingCombat("target") and not UnitIsFriend("player", "target") then
-        inCombatTargetFrame:Show()
+    if UnitAffectingCombat("target") and not UnitIsFriend("player", "target") and UnitHealth("target") > 0 then
+        if self.db.inCombatTrackerPlayersOnlyToggle and (not UnitIsPlayer("target")) then
+            inCombatTargetFrame:Hide()
+        else
+            inCombatTargetFrame:Show()
+        end
     else
         inCombatTargetFrame:Hide()
     end
 end
 
 function Module:FocusInCombat()
-    if UnitAffectingCombat("focus") and not UnitIsFriend("player", "focus") then
-        inCombatFocusFrame:Show()
+    if UnitAffectingCombat("focus") and not UnitIsFriend("player", "focus") and UnitHealth("focus") > 0 then
+        if self.db.inCombatTrackerPlayersOnlyToggle and (not UnitIsPlayer("focus")) then
+            inCombatFocusFrame:Hide()
+        else
+            inCombatFocusFrame:Show()
+        end
     else
         inCombatFocusFrame:Hide()
     end
@@ -485,6 +527,42 @@ function Module:Hooks()
                 self:FocusInCombat()
             end
         end)
+        self:SecureHook(FocusFrame, "OnUpdate", function()
+            if self.db.outOfCombatTrackerToggle then
+                self:TargetOutOfCombat()
+                self:FocusOutOfCombat()
+            end
+            if self.db.inCombatTrackerToggle then
+                self:TargetInCombat()
+                self:FocusInCombat()
+            end
+        end)
+
+        local eventFrame = CreateFrame("Frame")
+
+        local function OnEvent()
+            if self.db.outOfCombatTrackerToggle then
+                self:TargetOutOfCombat()
+                self:FocusOutOfCombat()
+                C_Timer.After(0.1, function() self:TargetOutOfCombat() end)
+                C_Timer.After(0.1, function() self:FocusOutOfCombat() end)
+            end
+            if self.db.inCombatTrackerToggle then
+                self:TargetInCombat()
+                self:FocusInCombat()
+                C_Timer.After(0.1, function() self:TargetInCombat() end)
+                C_Timer.After(0.1, function() self:FocusInCombat() end)
+            end
+        end
+
+        eventFrame:RegisterEvent("UNIT_COMBAT")
+        eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        eventFrame:RegisterEvent("UNIT_TARGET")
+        eventFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+        eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+
+        eventFrame:SetScript("OnEvent", OnEvent)
     end
 
     if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
@@ -496,6 +574,28 @@ function Module:Hooks()
                 self:TargetInCombat()
             end
         end)
+
+        local eventFrame = CreateFrame("Frame")
+
+        local function OnEvent()
+            if self.db.outOfCombatTrackerToggle then
+                self:TargetOutOfCombat()
+                C_Timer.After(0.1, function() self:TargetOutOfCombat() end)
+            end
+            if self.db.inCombatTrackerToggle then
+                self:TargetInCombat()
+                C_Timer.After(0.1, function() self:TargetInCombat() end)
+            end
+        end
+
+        eventFrame:RegisterEvent("UNIT_COMBAT")
+        eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        eventFrame:RegisterEvent("UNIT_TARGET")
+        eventFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+        eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+
+        eventFrame:SetScript("OnEvent", OnEvent)
     end
 
     if WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
@@ -503,12 +603,42 @@ function Module:Hooks()
             if self.db.outOfCombatTrackerToggle then
                 self:TargetOutOfCombat()
                 self:FocusOutOfCombat()
+                C_Timer.After(0.1, function() self:TargetOutOfCombat() end)
+                C_Timer.After(0.1, function() self:FocusOutOfCombat() end)
             end
             if self.db.inCombatTrackerToggle then
                 self:TargetInCombat()
                 self:FocusInCombat()
+                C_Timer.After(0.1, function() self:TargetInCombat() end)
+                C_Timer.After(0.1, function() self:FocusInCombat() end)
             end
         end)
+
+        local eventFrame = CreateFrame("Frame")
+
+        local function OnEvent()
+            if self.db.outOfCombatTrackerToggle then
+                self:TargetOutOfCombat()
+                self:FocusOutOfCombat()
+                C_Timer.After(0.1, function() self:TargetOutOfCombat() end)
+                C_Timer.After(0.1, function() self:FocusOutOfCombat() end)
+            end
+            if self.db.inCombatTrackerToggle then
+                self:TargetInCombat()
+                self:FocusInCombat()
+                C_Timer.After(0.1, function() self:TargetInCombat() end)
+                C_Timer.After(0.1, function() self:FocusInCombat() end)
+            end
+        end
+
+        eventFrame:RegisterEvent("UNIT_COMBAT")
+        eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        eventFrame:RegisterEvent("UNIT_TARGET")
+        eventFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+        eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+
+        eventFrame:SetScript("OnEvent", OnEvent)
     end
 end
 
