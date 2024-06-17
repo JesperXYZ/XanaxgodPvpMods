@@ -390,15 +390,21 @@ function Module:UpdateMicroButtonOpacity()
         CharacterMicroButton:SetAlpha(alpha)
         SpellbookMicroButton:SetAlpha(alpha)
         TalentMicroButton:SetAlpha(alpha)
-        AchievementMicroButton:SetAlpha(alpha)
         QuestLogMicroButton:SetAlpha(alpha)
-        GuildMicroButton:SetAlpha(alpha)
-        CollectionsMicroButton:SetAlpha(alpha)
-        PVPMicroButton:SetAlpha(alpha)
-        LFGMicroButton:SetAlpha(alpha)
-        EJMicroButton:SetAlpha(alpha)
         MainMenuMicroButton:SetAlpha(alpha)
         HelpMicroButton:SetAlpha(alpha)
+        if (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) then
+            AchievementMicroButton:SetAlpha(alpha)
+            GuildMicroButton:SetAlpha(alpha)
+            CollectionsMicroButton:SetAlpha(alpha)
+            PVPMicroButton:SetAlpha(alpha)
+            LFGMicroButton:SetAlpha(alpha)
+            EJMicroButton:SetAlpha(alpha)
+        end
+        if (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+            SocialsMicroButton:SetAlpha(alpha)
+            WorldMapMicroButton:SetAlpha(alpha)
+        end
     end
 
 
@@ -411,15 +417,21 @@ function Module:UpdateMicroButtonOpacity()
                 CharacterMicroButton:Hide()
                 SpellbookMicroButton:Hide()
                 TalentMicroButton:Hide()
-                AchievementMicroButton:Hide()
                 QuestLogMicroButton:Hide()
-                GuildMicroButton:Hide()
-                CollectionsMicroButton:Hide()
-                PVPMicroButton:Hide()
-                LFGMicroButton:Hide()
-                EJMicroButton:Hide()
                 MainMenuMicroButton:Hide()
                 HelpMicroButton:Hide()
+                if (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) then
+                    AchievementMicroButton:Hide()
+                    GuildMicroButton:Hide()
+                    CollectionsMicroButton:Hide()
+                    PVPMicroButton:Hide()
+                    LFGMicroButton:Hide()
+                    EJMicroButton:Hide()
+                end
+                if (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+                    SocialsMicroButton:Hide()
+                    WorldMapMicroButton:Hide()
+                end
             end
         else
             if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
@@ -428,15 +440,21 @@ function Module:UpdateMicroButtonOpacity()
                 CharacterMicroButton:Show()
                 SpellbookMicroButton:Show()
                 TalentMicroButton:Show()
-                AchievementMicroButton:Show()
                 QuestLogMicroButton:Show()
-                GuildMicroButton:Show()
-                CollectionsMicroButton:Show()
-                PVPMicroButton:Show()
-                LFGMicroButton:Show()
-                EJMicroButton:Show()
                 MainMenuMicroButton:Show()
                 HelpMicroButton:Show()
+                if (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) then
+                    AchievementMicroButton:Show()
+                    GuildMicroButton:Show()
+                    CollectionsMicroButton:Show()
+                    PVPMicroButton:Show()
+                    LFGMicroButton:Show()
+                    EJMicroButton:Show()
+                end
+                if (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+                    SocialsMicroButton:Show()
+                    WorldMapMicroButton:Show()
+                end
             end
         end
     end
@@ -533,28 +551,34 @@ function Module:UpdateEntireChatFrameOpacity()
         ChatFrame5Tab:SetAlpha(alpha / 2)
         ChatFrame6Tab:SetAlpha(alpha / 2)
 
-        FriendsMicroButton:SetAlpha(alpha)
         ChatFrameChannelButton:SetAlpha(alpha)
         ChatFrameMenuButton:SetAlpha(alpha)
         ChatFrame1ButtonFrameUpButton:SetAlpha(alpha)
         ChatFrame1ButtonFrameDownButton:SetAlpha(alpha)
         ChatFrame1ButtonFrameBottomButton:SetAlpha(alpha)
+        if (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) then
+            FriendsMicroButton:SetAlpha(alpha)
+        end
 
         if not UnitAffectingCombat("player") then
             if alpha == 0 then
-                FriendsMicroButton:Hide()
                 ChatFrameChannelButton:Hide()
                 ChatFrameMenuButton:Hide()
                 ChatFrame1ButtonFrameUpButton:Hide()
                 ChatFrame1ButtonFrameDownButton:Hide()
                 ChatFrame1ButtonFrameBottomButton:Hide()
+                if (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) then
+                    FriendsMicroButton:Hide()
+                end
             else
-                FriendsMicroButton:Show()
                 ChatFrameChannelButton:Show()
                 ChatFrameMenuButton:Show()
                 ChatFrame1ButtonFrameUpButton:Show()
                 ChatFrame1ButtonFrameDownButton:Show()
                 ChatFrame1ButtonFrameBottomButton:Show()
+                if (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) then
+                    FriendsMicroButton:Show()
+                end
             end
         end
     end
