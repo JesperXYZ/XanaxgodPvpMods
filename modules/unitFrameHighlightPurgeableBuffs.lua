@@ -151,34 +151,6 @@ function Module:SetupUI()
                 self:UpdateAurasClassic("focus", scaleFactor, alphaFactor)
             end)
         end
-
-        --[[local eventHandlerFrame = CreateFrame("Frame", "EventHandlerFrame")
-        eventHandlerFrame:RegisterEvent("UNIT_AURA")
-        eventHandlerFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-        eventHandlerFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-        eventHandlerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-
-        eventHandlerFrame:SetScript("OnEvent", function(_, event, unit)
-            if event == "PLAYER_TARGET_CHANGED" then
-                Module:UpdateAurasClassic("target", scaleFactor, alphaFactor)
-            elseif event == "PLAYER_FOCUS_CHANGED" then
-                Module:UpdateAurasClassic("focus", scaleFactor, alphaFactor)
-            elseif unit == "focus" then
-                Module:UpdateAurasClassic(unit, scaleFactor, alphaFactor)
-            end
-        end)
-
-        if not self:IsHooked("TargetFrame_UpdateAuras") then
-            self:SecureHook("TargetFrame_UpdateAuras", function()
-                self:UpdateAurasClassic("target", scaleFactor, alphaFactor)
-            end)
-        end
-        if not self:IsHooked("UpdateAuras") then
-            self:SecureHook("UpdateAuras", function()
-                self:UpdateAurasClassic("focus", scaleFactor, alphaFactor)
-            end)
-        end
-        ]]--
     end
 end
 
