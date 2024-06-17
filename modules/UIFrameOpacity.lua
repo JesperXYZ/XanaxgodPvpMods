@@ -333,13 +333,41 @@ function Module:UpdateBagsBarOpacity()
         alpha = 1
     end
 
-    BagsBar:SetAlpha(alpha) -- Set opacity
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+        BagsBar:SetAlpha(alpha)
+    elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+        MainMenuBarBackpackButton:SetAlpha(alpha)
+        CharacterBag0SlotIconTexture:SetAlpha(alpha)
+        CharacterBag1SlotIconTexture:SetAlpha(alpha)
+        CharacterBag2SlotIconTexture:SetAlpha(alpha)
+        CharacterBag3SlotIconTexture:SetAlpha(alpha)
+        CharacterBag0SlotNormalTexture:SetAlpha(alpha)
+        CharacterBag1SlotNormalTexture:SetAlpha(alpha)
+        CharacterBag2SlotNormalTexture:SetAlpha(alpha)
+        CharacterBag3SlotNormalTexture:SetAlpha(alpha)
+    end
 
     if not UnitAffectingCombat("player") then
         if alpha == 0 then
-            BagsBar:Hide()
+            if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+                BagsBar:Hide()
+            elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+                MainMenuBarBackpackButton:Hide()
+                CharacterBag0SlotIconTexture:Hide()
+                CharacterBag1SlotIconTexture:Hide()
+                CharacterBag2SlotIconTexture:Hide()
+                CharacterBag3SlotIconTexture:Hide()
+            end
         else
-            BagsBar:Show()
+            if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+                BagsBar:Show()
+            elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+                MainMenuBarBackpackButton:Show()
+                CharacterBag0SlotIconTexture:Show()
+                CharacterBag1SlotIconTexture:Show()
+                CharacterBag2SlotIconTexture:Show()
+                CharacterBag3SlotIconTexture:Show()
+            end
         end
     end
 end
@@ -356,13 +384,60 @@ function Module:UpdateMicroButtonOpacity()
         alpha = 1
     end
 
-    MicroMenu:SetAlpha(alpha) -- Set opacity
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+        MicroMenu:SetAlpha(alpha) -- Set opacity
+    elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+        CharacterMicroButton:SetAlpha(alpha)
+        SpellbookMicroButton:SetAlpha(alpha)
+        TalentMicroButton:SetAlpha(alpha)
+        AchievementMicroButton:SetAlpha(alpha)
+        QuestLogMicroButton:SetAlpha(alpha)
+        GuildMicroButton:SetAlpha(alpha)
+        CollectionsMicroButton:SetAlpha(alpha)
+        PVPMicroButton:SetAlpha(alpha)
+        LFGMicroButton:SetAlpha(alpha)
+        EJMicroButton:SetAlpha(alpha)
+        MainMenuMicroButton:SetAlpha(alpha)
+        HelpMicroButton:SetAlpha(alpha)
+    end
+
 
     if not UnitAffectingCombat("player") then
         if alpha == 0 then
-            MicroMenu:Hide()
+
+            if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+                MicroMenu:Hide()
+            elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+                CharacterMicroButton:Hide()
+                SpellbookMicroButton:Hide()
+                TalentMicroButton:Hide()
+                AchievementMicroButton:Hide()
+                QuestLogMicroButton:Hide()
+                GuildMicroButton:Hide()
+                CollectionsMicroButton:Hide()
+                PVPMicroButton:Hide()
+                LFGMicroButton:Hide()
+                EJMicroButton:Hide()
+                MainMenuMicroButton:Hide()
+                HelpMicroButton:Hide()
+            end
         else
-            MicroMenu:Show()
+            if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+                MicroMenu:Show()
+            elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+                CharacterMicroButton:Show()
+                SpellbookMicroButton:Show()
+                TalentMicroButton:Show()
+                AchievementMicroButton:Show()
+                QuestLogMicroButton:Show()
+                GuildMicroButton:Show()
+                CollectionsMicroButton:Show()
+                PVPMicroButton:Show()
+                LFGMicroButton:Show()
+                EJMicroButton:Show()
+                MainMenuMicroButton:Show()
+                HelpMicroButton:Show()
+            end
         end
     end
 end
@@ -378,8 +453,9 @@ function Module:UpdateQueueStatusButtonOpacity()
     else
         alpha = 1
     end
-
-    QueueStatusButton:SetAlpha(alpha) -- Set opacity
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+        QueueStatusButton:SetAlpha(alpha)
+    end
 end
 
 function Module:UpdateEntireChatFrameOpacity()
@@ -394,53 +470,95 @@ function Module:UpdateEntireChatFrameOpacity()
         alpha = 1
     end
 
-    ChatFrame1:SetAlpha(alpha)
-    ChatFrame2:SetAlpha(alpha)
-    ChatFrame3:SetAlpha(alpha)
-    ChatFrame4:SetAlpha(alpha)
-    ChatFrame5:SetAlpha(alpha)
-    ChatFrame6:SetAlpha(alpha)
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+        ChatFrame1:SetAlpha(alpha)
+        ChatFrame2:SetAlpha(alpha)
+        ChatFrame3:SetAlpha(alpha)
+        ChatFrame4:SetAlpha(alpha)
+        ChatFrame5:SetAlpha(alpha)
+        ChatFrame6:SetAlpha(alpha)
 
-    ChatFrame1Tab:SetAlpha(alpha / 2)
-    ChatFrame2Tab:SetAlpha(alpha / 2)
-    ChatFrame3Tab:SetAlpha(alpha / 2)
-    ChatFrame4Tab:SetAlpha(alpha / 2)
-    ChatFrame5Tab:SetAlpha(alpha / 2)
-    ChatFrame6Tab:SetAlpha(alpha / 2)
+        ChatFrame1Tab:SetAlpha(alpha / 2)
+        ChatFrame2Tab:SetAlpha(alpha / 2)
+        ChatFrame3Tab:SetAlpha(alpha / 2)
+        ChatFrame4Tab:SetAlpha(alpha / 2)
+        ChatFrame5Tab:SetAlpha(alpha / 2)
+        ChatFrame6Tab:SetAlpha(alpha / 2)
 
-    QuickJoinToastButton:SetAlpha(alpha)
+        QuickJoinToastButton:SetAlpha(alpha)
 
-    GeneralDockManagerOverflowButton:SetAlpha(alpha)
+        GeneralDockManagerOverflowButton:SetAlpha(alpha)
 
-    if not UnitAffectingCombat("player") then
-        if alpha == 0 then
-            local a = 1
-            repeat
-                if a == ShownChatWindows then
-                    self:HideFrame(_G["ChatFrame" .. a])
-                end
+        if not UnitAffectingCombat("player") then
+            if alpha == 0 then
+                local a = 1
+                repeat
+                    if a == ShownChatWindows then
+                        self:HideFrame(_G["ChatFrame" .. a])
+                    end
 
-                a = a + 1
-            until (a > NUM_CHAT_WINDOWS)
-            self:HideFrame(ChatFrame1Tab)
-            self:HideFrame(ChatFrame2Tab)
-            self:HideFrame(QuickJoinToastButton)
+                    a = a + 1
+                until (a > NUM_CHAT_WINDOWS)
+                self:HideFrame(ChatFrame1Tab)
+                self:HideFrame(ChatFrame2Tab)
+                self:HideFrame(QuickJoinToastButton)
 
-            self:HideFrame(GeneralDockManagerOverflowButton)
-        else
-            local a = 1
-            repeat
-                if a == ShownChatWindows then
-                    self:ShowFrame(_G["ChatFrame" .. a])
-                end
-                a = a + 1
-            until (a > NUM_CHAT_WINDOWS)
+                self:HideFrame(GeneralDockManagerOverflowButton)
+            else
+                local a = 1
+                repeat
+                    if a == ShownChatWindows then
+                        self:ShowFrame(_G["ChatFrame" .. a])
+                    end
+                    a = a + 1
+                until (a > NUM_CHAT_WINDOWS)
 
-            self:ShowFrame(ChatFrame1Tab)
-            self:ShowFrame(ChatFrame2Tab)
-            self:ShowFrame(QuickJoinToastButton)
+                self:ShowFrame(ChatFrame1Tab)
+                self:ShowFrame(ChatFrame2Tab)
+                self:ShowFrame(QuickJoinToastButton)
+            end
+        end
+    elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+        ChatFrame1:SetAlpha(alpha)
+        ChatFrame2:SetAlpha(alpha)
+        ChatFrame3:SetAlpha(alpha)
+        ChatFrame4:SetAlpha(alpha)
+        ChatFrame5:SetAlpha(alpha)
+        ChatFrame6:SetAlpha(alpha)
+
+        ChatFrame1Tab:SetAlpha(alpha / 2)
+        ChatFrame2Tab:SetAlpha(alpha / 2)
+        ChatFrame3Tab:SetAlpha(alpha / 2)
+        ChatFrame4Tab:SetAlpha(alpha / 2)
+        ChatFrame5Tab:SetAlpha(alpha / 2)
+        ChatFrame6Tab:SetAlpha(alpha / 2)
+
+        FriendsMicroButton:SetAlpha(alpha)
+        ChatFrameChannelButton:SetAlpha(alpha)
+        ChatFrameMenuButton:SetAlpha(alpha)
+        ChatFrame1ButtonFrameUpButton:SetAlpha(alpha)
+        ChatFrame1ButtonFrameDownButton:SetAlpha(alpha)
+        ChatFrame1ButtonFrameBottomButton:SetAlpha(alpha)
+
+        if not UnitAffectingCombat("player") then
+            if alpha == 0 then
+                FriendsMicroButton:Hide()
+                ChatFrameChannelButton:Hide()
+                ChatFrameMenuButton:Hide()
+                ChatFrame1ButtonFrameUpButton:Hide()
+                ChatFrame1ButtonFrameDownButton:Hide()
+                ChatFrame1ButtonFrameBottomButton:Hide()
+            else
+                FriendsMicroButton:Show()
+                ChatFrameChannelButton:Show()
+                ChatFrameMenuButton:Show()
+                ChatFrame1ButtonFrameUpButton:Show()
+                ChatFrame1ButtonFrameDownButton:Show()
+                ChatFrame1ButtonFrameBottomButton:Show()
+            end
         end
     end
+
 end
 
 function Module:HideFrame(frame)
@@ -520,8 +638,8 @@ function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         return true -- retail
     elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
-        return false -- cata
+        return true -- cata
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-        return false -- vanilla
+        return true -- vanilla
     end
 end

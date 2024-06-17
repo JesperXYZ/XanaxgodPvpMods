@@ -321,7 +321,6 @@ function Module:GetOptions(myOptionsTable, db)
             selectedFont = {
                 type = "select",
                 name = "Font",
-                desc = "Select the font for status text.",
                 order = counter(),
                 width = 0.8,
                 values = {
@@ -336,7 +335,6 @@ function Module:GetOptions(myOptionsTable, db)
             fontSize = {
                 type = "range",
                 name = "Font Size",
-                desc = "Adjust the font size for status text.",
                 order = counter(),
                 width = 0.6,
                 min = 8,

@@ -23,7 +23,11 @@ end
 
 function Module:GetOptions(myOptionsTable, db)
     self.db = db
-    local defaults = {}
+    local defaults = {
+        enableForEveryone = false,
+        scaleFactor = 1.25,
+        alphaFactor = 0.75
+    }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
             self.db[key] = value
@@ -39,13 +43,10 @@ function Module:GetOptions(myOptionsTable, db)
         local setting = info[#info]
         self.db[setting] = value
 
-        if setting == "enableForEveryone" then
-            self:RefreshUI()
-        end
+        self:RefreshUI()
     end
 
-    local UnitFrameHighlightPurgeableBuffsImage =
-    "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameHighlightPurgeableBuffs:176:342:92:-7|t"
+    local UnitFrameHighlightPurgeableBuffsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UnitFrameHighlightPurgeableBuffs:176:342:92:-7|t"
 
     myOptionsTable.args.enableForEveryone = {
         order = counter(),
@@ -56,40 +57,64 @@ function Module:GetOptions(myOptionsTable, db)
         get = get,
         set = set
     }
+    myOptionsTable.args.reloadExecute = {
+        type = "execute",
+        name = "/reload",
+        desc = "",
+        width = 0.45,
+        func = function()
+            ReloadUI()
+        end,
+        order = counter()
+    }
+    myOptionsTable.args.highlightSettingsGroup = {
+        order = counter(),
+        type = "group",
+        name = "Highlight Settings",
+        guiInline = true,
+        args = {
+            scaleFactor = {
+                order = counter(),
+                type = "range",
+                name = "Scale",
+                desc = "Adjust the scale of the purgeable buff highlight overlay",
+                min = 1.0,
+                max = 2.0,
+                step = 0.01,
+                get = get,
+                set = set,
+                width = 0.7
+            },
+            alphaFactor = {
+                order = counter(),
+                type = "range",
+                name = "Opacity",
+                desc = "Adjust the transparency of the purgeable buff highlight overlay",
+                min = 0.1,
+                max = 1.0,
+                step = 0.05,
+                get = get,
+                set = set,
+                width = 0.7
+            },
+            resetToDefault = {
+                order = counter(),
+                type = "execute",
+                name = "Reset to Default",
+                desc = "Reset scale and transparency to default values.",
+                width = 0.75,
+                func = function()
+                    self.db.scaleFactor = defaults.scaleFactor
+                    self.db.alphaFactor = defaults.alphaFactor
+                    self:RefreshUI()
+                end,
+            }
+        }
+    }
     myOptionsTable.args.art3 = {
         order = counter(),
         type = "description",
-        name = "" .. UnitFrameHighlightPurgeableBuffsImage,
-        width = "full"
-    }
-    myOptionsTable.args.empty3152 = {
-        order = counter(),
-        type = "description",
-        name = " ",
-        width = "full"
-    }
-    myOptionsTable.args.IMPORTANT = {
-        order = counter(),
-        type = "description",
-        name = "This module is no longer compatible with JaxClassicFrames. To enable this function for JaxClassicFrames do the following.",
-        width = "full"
-    }
-    myOptionsTable.args.IMPORTANT3 = {
-        order = counter(),
-        type = "description",
-        name = " 1.  Go to \\Interface\\Addons\\JaxClassicFrames\\JcfTargetFrame\\JcfTargetFrame.lua",
-        width = "full"
-    }
-    myOptionsTable.args.IMPORTANT4 = {
-        order = counter(),
-        type = "description",
-        name = ' 2.  Go to line 528 (Version 2.1.4) (Ctrl-F search for "local frameStealable")',
-        width = "full"
-    }
-    myOptionsTable.args.IMPORTANT5 = {
-        order = counter(),
-        type = "description",
-        name = ' 3.  Replace the " canStealOrPurge " variable with " debuffType=="Magic" " ',
+        name = UnitFrameHighlightPurgeableBuffsImage,
         width = "full"
     }
 
@@ -97,38 +122,207 @@ function Module:GetOptions(myOptionsTable, db)
 end
 
 function Module:SetupUI()
-    if self:IsEnabled() and not self.db.enableForEveryone then
-        local function UpdateAurasOnlyHostileTarget(self)
-            if UnitIsEnemy("player", "target") then
-                for buff in self.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                    local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
-                    buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
-                end
-            end
+    local scaleFactor = self.db.scaleFactor
+    local alphaFactor = self.db.alphaFactor
+
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+        if IsAddOnLoaded("JaxClassicFrames") then
+            JcfTargetFrame:HookScript("OnUpdate", function()
+                self:UpdateAurasRetailJcf("target", scaleFactor, alphaFactor)
+            end)
+            JcfFocusFrame:HookScript("OnUpdate", function()
+                self:UpdateAurasRetailJcf("focus", scaleFactor, alphaFactor)
+            end)
+        else
+            TargetFrame:HookScript("OnUpdate", function()
+                self:UpdateAurasRetail("target", scaleFactor, alphaFactor)
+            end)
+            FocusFrame:HookScript("OnUpdate", function()
+                self:UpdateAurasRetail("focus", scaleFactor, alphaFactor)
+            end)
+        end
+    elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
+        TargetFrame:HookScript("OnUpdate", function()
+            self:UpdateAurasClassic("target", scaleFactor, alphaFactor)
+        end)
+
+        if WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+            FocusFrame:HookScript("OnUpdate", function()
+                self:UpdateAurasClassic("focus", scaleFactor, alphaFactor)
+            end)
         end
 
-        local function UpdateAurasOnlyHostileFocus(self)
-            if UnitIsEnemy("player", "focus") then
-                for buff in self.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                    local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
-                    buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
-                end
-            end
-        end
+        --[[local eventHandlerFrame = CreateFrame("Frame", "EventHandlerFrame")
+        eventHandlerFrame:RegisterEvent("UNIT_AURA")
+        eventHandlerFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+        eventHandlerFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+        eventHandlerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-        self:SecureHook(TargetFrame, "UpdateAuras", UpdateAurasOnlyHostileTarget)
-        self:SecureHook(FocusFrame, "UpdateAuras", UpdateAurasOnlyHostileFocus)
-    elseif self:IsEnabled() then
-        local function UpdateAurasEveryone(self)
-            for buff in self.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
-                buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
+        eventHandlerFrame:SetScript("OnEvent", function(_, event, unit)
+            if event == "PLAYER_TARGET_CHANGED" then
+                Module:UpdateAurasClassic("target", scaleFactor, alphaFactor)
+            elseif event == "PLAYER_FOCUS_CHANGED" then
+                Module:UpdateAurasClassic("focus", scaleFactor, alphaFactor)
+            elseif unit == "focus" then
+                Module:UpdateAurasClassic(unit, scaleFactor, alphaFactor)
             end
-        end
+        end)
 
-        self:SecureHook(TargetFrame, "UpdateAuras", UpdateAurasEveryone)
-        self:SecureHook(FocusFrame, "UpdateAuras", UpdateAurasEveryone)
+        if not self:IsHooked("TargetFrame_UpdateAuras") then
+            self:SecureHook("TargetFrame_UpdateAuras", function()
+                self:UpdateAurasClassic("target", scaleFactor, alphaFactor)
+            end)
+        end
+        if not self:IsHooked("UpdateAuras") then
+            self:SecureHook("UpdateAuras", function()
+                self:UpdateAurasClassic("focus", scaleFactor, alphaFactor)
+            end)
+        end
+        ]]--
     end
+end
+
+function Module:UpdateAurasRetailJcf(unit, scaleFactor, alphaFactor)
+    local prefix
+    if unit == "target" then
+        prefix = "JcfTargetFrameBuff"
+    elseif unit == "focus" then
+        prefix = "JcfFocusFrameBuff"
+    end
+
+    for i = 1, 40 do
+        local buffFrameName = prefix .. i
+        local buffFrame = _G[buffFrameName]
+        local buffFrameStealable = _G[buffFrameName .. "Stealable"]
+        local name, _, icon, debuffType = UnitAura(unit, i, "HELPFUL")
+
+        if not buffFrame or not buffFrame:IsShown() then break end
+
+        if buffFrameStealable then
+            buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+            buffFrameStealable:SetBlendMode("ADD")
+            buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
+
+            buffFrameStealable:SetSize(buffFrame:GetWidth() * scaleFactor, buffFrame:GetHeight() * scaleFactor)
+            buffFrameStealable:SetAlpha(alphaFactor)
+            buffFrameStealable:SetShown(debuffType == "Magic")
+        else
+            buffFrameStealable = buffFrame:CreateTexture(nil, "OVERLAY")
+            buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+            buffFrameStealable:SetBlendMode("ADD")
+            buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
+
+            buffFrameStealable:SetSize(buffFrame:GetWidth() * scaleFactor, buffFrame:GetHeight() * scaleFactor)
+            buffFrameStealable:SetAlpha(alphaFactor)
+            buffFrameStealable:SetShown(debuffType == "Magic")
+        end
+
+        -- Hide the Stealable texture for friendly targets if enableForEveryone is false
+        if (not self.db.enableForEveryone) and (UnitIsFriend("player", unit)) then
+            buffFrameStealable:Hide()
+        end
+    end
+end
+
+function Module:UpdateAurasRetail(unit, scaleFactor, alphaFactor)
+    -- Function to update the Stealable texture for auras
+    local function UpdateStealableTexture(buff, data)
+        if not buff.Stealable then
+            buff.Stealable = buff:CreateTexture(nil, "OVERLAY")
+            buff.Stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+            buff.Stealable:SetBlendMode("ADD")
+            buff.Stealable:SetPoint("CENTER", buff, "CENTER")
+        end
+        buff.Stealable:SetAlpha(alphaFactor)
+        buff.Stealable:SetSize(buff:GetWidth() * scaleFactor, buff:GetHeight() * scaleFactor)
+        buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
+    end
+
+    -- Update auras for the target
+    if unit == "target" then
+        for buff in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+            local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
+            UpdateStealableTexture(buff, data)
+        end
+    end
+
+    -- Update auras for the focus
+    if unit == "focus" then
+        for buff in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+            local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
+            UpdateStealableTexture(buff, data)
+        end
+    end
+
+    -- Hide the Stealable texture for friendly targets if enableForEveryone is false
+    if (not self.db.enableForEveryone) and (UnitIsFriend("player", unit)) then
+        if unit == "target" then
+            for buff in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                if buff.Stealable then
+                    buff.Stealable:Hide()
+                end
+            end
+        elseif unit == "focus" then
+            for buff in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                if buff.Stealable then
+                    buff.Stealable:Hide()
+                end
+            end
+        end
+    end
+end
+
+function Module:UpdateAurasClassic(unit, scaleFactor, alphaFactor)
+    local prefix
+    if unit == "target" then
+        prefix = "TargetFrameBuff"
+    elseif unit == "focus" then
+        prefix = "FocusFrameBuff"
+    end
+
+    for i = 1, 40 do
+        local buffFrameName = prefix .. i
+        local buffFrame = _G[buffFrameName]
+        local buffFrameStealable = _G[buffFrameName .. "Stealable"]
+        local name, _, icon, debuffType = UnitAura(unit, i, "HELPFUL")
+
+        if not buffFrame or not buffFrame:IsShown() then break end
+
+        if buffFrameStealable then
+            buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+            buffFrameStealable:SetBlendMode("ADD")
+            buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
+
+            buffFrameStealable:SetSize(buffFrame:GetWidth() * scaleFactor, buffFrame:GetHeight() * scaleFactor)
+            buffFrameStealable:SetAlpha(alphaFactor)
+            buffFrameStealable:SetShown(debuffType == "Magic")
+        else
+            buffFrameStealable = buffFrame:CreateTexture(nil, "OVERLAY")
+            buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+            buffFrameStealable:SetBlendMode("ADD")
+            buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
+
+            buffFrameStealable:SetSize(buffFrame:GetWidth() * scaleFactor, buffFrame:GetHeight() * scaleFactor)
+            buffFrameStealable:SetAlpha(alphaFactor)
+            buffFrameStealable:SetShown(debuffType == "Magic")
+        end
+
+        -- Hide the Stealable texture for friendly targets if enableForEveryone is false
+        if (not self.db.enableForEveryone) and (UnitIsFriend("player", unit)) then
+            buffFrameStealable:Hide()
+        end
+    end
+end
+
+function Module:RefreshUI()
+    if self:IsEnabled() then
+        self:Disable()
+        self:Enable()
+    end
+end
+
+function Module:CheckConditions()
+    self:SetupUI()
 end
 
 function Module:RefreshUI()
@@ -144,14 +338,10 @@ end
 
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        if IsAddOnLoaded("JaxClassicFrames") then
-            return false
-        else
-            return true -- retail
-        end
+        return true -- retail
     elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
-        return false -- cata
+        return true -- cata
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-        return false -- vanilla
+        return true -- vanilla
     end
 end
