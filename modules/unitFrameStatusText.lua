@@ -376,7 +376,10 @@ function Module:SetupStatusText()
             healthLeft = nil,
             mana = nil,
             manaRight = nil,
-            manaLeft = nil
+            manaLeft = nil,
+            alternatePower = nil,
+            alternatePowerRight = nil,
+            alternatePowerLeft = nil
         },
         target = {
             health = nil,
@@ -412,6 +415,9 @@ function Module:SetupStatusText()
             unitFrames.player.mana = JcfPlayerFrameManaBarText
             unitFrames.player.manaRight = JcfPlayerFrameManaBarTextRight
             unitFrames.player.manaLeft = JcfPlayerFrameManaBarTextLeft
+            unitFrames.player.alternatePower = JcfPlayerFrameAlternateManaBarText
+            unitFrames.player.alternatePowerRight = JcfPlayerFrameAlternateManaBarRightText
+            unitFrames.player.alternatePowerLeft = JcfPlayerFrameAlternateManaBarLeftText
 
             unitFrames.target.health = JcfTargetFrameTextureFrame.HealthBarText
             unitFrames.target.healthRight = JcfTargetFrameTextureFrame.HealthBarTextRight
@@ -434,23 +440,26 @@ function Module:SetupStatusText()
             unitFrames.pet.manaRight = JcfPetFrameManaBarTextRight
             unitFrames.pet.manaLeft = JcfPetFrameManaBarTextLeft
         else
-            unitFrames.player.health = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.HealthBarText
-            unitFrames.player.healthRight = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.RightText
-            unitFrames.player.healthLeft = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar.LeftText
+            unitFrames.player.health = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer.HealthBarText
+            unitFrames.player.healthRight = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer.RightText
+            unitFrames.player.healthLeft = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer.LeftText
             unitFrames.player.mana = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.ManaBarText
             unitFrames.player.manaRight = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.RightText
             unitFrames.player.manaLeft = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ManaBarArea.ManaBar.LeftText
+            unitFrames.player.alternatePower = AlternatePowerBarText
+            unitFrames.player.alternatePowerRight = AlternatePowerBar.LeftText
+            unitFrames.player.alternatePowerLeft = AlternatePowerBar.RightText
 
-            unitFrames.target.health = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString
-            unitFrames.target.healthRight = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.RightText
-            unitFrames.target.healthLeft = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.LeftText
+            unitFrames.target.health = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBarText
+            unitFrames.target.healthRight = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.RightText
+            unitFrames.target.healthLeft = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.LeftText
             unitFrames.target.mana = TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText
             unitFrames.target.manaRight = TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.RightText
             unitFrames.target.manaLeft = TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.LeftText
 
-            unitFrames.focus.health = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.TextString
-            unitFrames.focus.healthRight = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.RightText
-            unitFrames.focus.healthLeft = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar.LeftText
+            unitFrames.focus.health = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBarText
+            unitFrames.focus.healthRight = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.RightText
+            unitFrames.focus.healthLeft = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.LeftText
             unitFrames.focus.mana = FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.ManaBarText
             unitFrames.focus.manaRight = FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.RightText
             unitFrames.focus.manaLeft = FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar.LeftText
@@ -469,6 +478,9 @@ function Module:SetupStatusText()
         unitFrames.player.mana = PlayerFrameManaBarText
         unitFrames.player.manaRight = PlayerFrameManaBarTextRight
         unitFrames.player.manaLeft = PlayerFrameManaBarTextLeft
+        unitFrames.player.alternatePower = nil
+        unitFrames.player.alternatePowerRight = nil
+        unitFrames.player.alternatePowerLeft = nil
 
         unitFrames.target.health = TargetFrameTextureFrame.HealthBarText
         unitFrames.target.healthRight = TargetFrameTextureFrame.HealthBarTextRight
@@ -497,6 +509,9 @@ function Module:SetupStatusText()
         unitFrames.player.mana = PlayerFrameManaBarText
         unitFrames.player.manaRight = PlayerFrameHealthBarTextRight
         unitFrames.player.manaLeft = PlayerFrameHealthBarTextLeft
+        unitFrames.player.alternatePower = nil
+        unitFrames.player.alternatePowerRight = nil
+        unitFrames.player.alternatePowerLeft = nil
 
         unitFrames.target.health = TargetFrameHealthBarText
         unitFrames.target.healthRight = TargetFrameTextureFrame.HealthBarTextRight
@@ -526,7 +541,7 @@ function Module:SetupStatusText()
     for unitType, statusTexts in pairs(unitFrames) do
         for barType, statusText in pairs(statusTexts) do
             if statusText then
-                if unitType == "pet" then
+                if unitType == "pet" or barType == "alternatePower" or barType == "alternatePowerRight" or barType == "alternatePowerLeft" then
                     statusText:SetFont(font, fontSize - 1, "OUTLINE")
                 else
                     statusText:SetFont(font, fontSize, "OUTLINE")
@@ -634,6 +649,17 @@ function Module:SetupStatusText()
                     if barType == "mana" then
                         statusText:SetText(tostring(FormatValue(UnitPower(unitType))))
                     end
+                    if barType == "alternatePower" then
+                        local croppedName = statusText:GetText()
+
+                        if croppedName then
+                            if croppedName:find("/") then
+                                croppedName = croppedName:match("[^/]+")
+                                croppedName = croppedName:sub(1, -2)
+                                statusText:SetText(croppedName)
+                            end
+                        end
+                    end
                 end
             end
         end
@@ -674,9 +700,20 @@ function Module:SetupStatusText()
                     end
                     if barType == "mana" then
                         if UnitPower(unitType) < 1 then
-                            statusText:SetText(" ")
+                            statusText:SetText("0")
                         else
                             statusText:SetText(tostring(FormatValue(UnitPower(unitType))).. " (" .. tostring(UnitPower(unitType) / UnitPowerMax(unitType) * 100 - (UnitPower(unitType) / UnitPowerMax(unitType) * 100) % 1) .. "%)")
+                        end
+                    end
+                    if barType == "alternatePower" then
+                        local croppedName = statusText:GetText()
+
+                        if croppedName then
+                            if croppedName:find("/") then
+                                croppedName = croppedName:match("[^/]+")
+                                croppedName = croppedName:sub(1, -2)
+                                statusText:SetText(croppedName)
+                            end
                         end
                     end
                 end

@@ -25,8 +25,8 @@ function Module:GetOptions(myOptionsTable, db)
     self.db = db
     local defaults = {
         enableForEveryone = false,
-        scaleFactor = 1.25,
-        alphaFactor = 0.75
+        scaleFactor = 1.3,
+        alphaFactor = 0.8
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
@@ -207,7 +207,9 @@ function Module:UpdateAurasRetail(unit, scaleFactor, alphaFactor)
         end
         buff.Stealable:SetAlpha(alphaFactor)
         buff.Stealable:SetSize(buff:GetWidth() * scaleFactor, buff:GetHeight() * scaleFactor)
-        buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
+        if data ~= nil then
+            buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
+        end
     end
 
     -- Update auras for the target

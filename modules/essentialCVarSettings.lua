@@ -255,22 +255,51 @@ end
 
 function Module:SetValueOnce(input)
     if self:IsEnabled() then
+        local currentValue
+
         if input == "softTargetInteract" then
-            SetCVar("SoftTargetInteract", 0)
-            SetCVar("SoftTargetEnemyRange", 0)
-            SetCVar("SoftTargetFriendRange", 0)
+            currentValue = GetCVar("SoftTargetInteract")
+            if currentValue ~= "0" then
+                SetCVar("SoftTargetInteract", "0")
+            end
+            currentValue = GetCVar("SoftTargetEnemyRange")
+            if currentValue ~= "0" then
+                SetCVar("SoftTargetEnemyRange", "0")
+            end
+            currentValue = GetCVar("SoftTargetFriendRange")
+            if currentValue ~= "0" then
+                SetCVar("SoftTargetFriendRange", "0")
+            end
         end
+
         if input == "spellQueueWindow" then
             SetCVar("SpellQueueWindow", self.db.spellQueueWindowRange)
         end
+
         if input == "nameplateOpacity" then
-            SetCVar("nameplateMinAlpha", 1)
-            SetCVar("nameplateOccludedAlphaMult", 1)
+            currentValue = GetCVar("nameplateMinAlpha")
+            if currentValue ~= "1" then
+                SetCVar("nameplateMinAlpha", "1")
+            end
+            currentValue = GetCVar("nameplateOccludedAlphaMult")
+            if currentValue ~= "1" then
+                SetCVar("nameplateOccludedAlphaMult", "1")
+            end
         end
+
         if input == "worldPreload" then
-            SetCVar("preloadPlayerModels", 0)
-            SetCVar("worldPreloadHighResTextures", 0)
-            SetCVar("worldPreloadNonCritical", 0)
+            currentValue = GetCVar("preloadPlayerModels")
+            if currentValue ~= "0" then
+                SetCVar("preloadPlayerModels", "0")
+            end
+            currentValue = GetCVar("worldPreloadHighResTextures")
+            if currentValue ~= "0" then
+                SetCVar("worldPreloadHighResTextures", "0")
+            end
+            currentValue = GetCVar("worldPreloadNonCritical")
+            if currentValue ~= "0" then
+                SetCVar("worldPreloadNonCritical", "0")
+            end
         end
     end
 end

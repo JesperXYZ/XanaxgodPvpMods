@@ -38,8 +38,8 @@ function XanaxgodPvpMods:InitializeDefaults()
             UnitFrameStatusText = false,
             UnitFrameDarkness = false,
             UnitFrameCombatTracker = true,
-            UnitFrameHighlightPurgeableBuffs = false,
-            UnitFrameShadowSightHelper = true
+            UnitFrameHighlightPurgeableBuffs = true,
+            UnitFrameRangeTracker = false
         },
         moduleDb = {}
     }

@@ -99,6 +99,54 @@ function Module:GetOptions(myOptionsTable, db)
         end,
         order = counter()
     }
+    myOptionsTable.args.empty51235 = {
+        order = counter(),
+        type = "description",
+        name = " ",
+        width = "full"
+    }
+    myOptionsTable.args.pic1Desc = {
+        order = counter(),
+        type = "description",
+        name = "Default blizzard frames (module disabled vs. module enabled).",
+        width = "full"
+    }
+    myOptionsTable.args.art51233 = {
+        order = counter(),
+        type = "description",
+        name = "" .. UnitFrameCastBarColors1Image,
+        width = "full"
+    }
+    myOptionsTable.args.empty512325 = {
+        order = counter(),
+        type = "description",
+        name = " ",
+        width = "full"
+    }
+    myOptionsTable.args.empty512335 = {
+        order = counter(),
+        type = "description",
+        name = " ",
+        width = "full"
+    }
+    myOptionsTable.args.pic2Desc = {
+        order = counter(),
+        type = "description",
+        name = "Jax Classic Frames (module disabled vs. module enabled).",
+        width = "full"
+    }
+    myOptionsTable.args.art512334 = {
+        order = counter(),
+        type = "description",
+        name = "" .. UnitFrameCastBarColors2Image,
+        width = "full"
+    }
+    myOptionsTable.args.empty512351 = {
+        order = counter(),
+        type = "description",
+        name = " ",
+        width = "full"
+    }
     myOptionsTable.args.colorSettingsGroup = {
         order = counter(),
         name = "Custom Cast Bar Colors",
@@ -169,54 +217,6 @@ function Module:GetOptions(myOptionsTable, db)
                 set = setColor
             }
         }
-    }
-    myOptionsTable.args.empty51235 = {
-        order = counter(),
-        type = "description",
-        name = " ",
-        width = "full"
-    }
-    myOptionsTable.args.empty512351 = {
-        order = counter(),
-        type = "description",
-        name = " ",
-        width = "full"
-    }
-    myOptionsTable.args.pic1Desc = {
-        order = counter(),
-        type = "description",
-        name = "Default blizzard frames (module disabled vs. module enabled).",
-        width = "full"
-    }
-    myOptionsTable.args.art51233 = {
-        order = counter(),
-        type = "description",
-        name = "" .. UnitFrameCastBarColors1Image,
-        width = "full"
-    }
-    myOptionsTable.args.empty512325 = {
-        order = counter(),
-        type = "description",
-        name = " ",
-        width = "full"
-    }
-    myOptionsTable.args.empty512335 = {
-        order = counter(),
-        type = "description",
-        name = " ",
-        width = "full"
-    }
-    myOptionsTable.args.pic2Desc = {
-        order = counter(),
-        type = "description",
-        name = "Jax Classic Frames (module disabled vs. module enabled).",
-        width = "full"
-    }
-    myOptionsTable.args.art512334 = {
-        order = counter(),
-        type = "description",
-        name = "" .. UnitFrameCastBarColors2Image,
-        width = "full"
     }
 
     return myOptionsTable
