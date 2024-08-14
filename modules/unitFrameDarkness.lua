@@ -97,7 +97,7 @@ function Module:SetupFrameDarkness()
     local unitFrameCastBarDarkness = self.db.castBarDarknessRange
 
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        if IsAddOnLoaded("JaxClassicFrames") then
+        if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
             for i, v in pairs(
                     {
                         JcfPlayerFrameTexture,

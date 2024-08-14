@@ -428,7 +428,7 @@ end
 function Module:SetupUI()
     if self.db.outOfCombatTrackerToggle then
         if not outOfCombatTargetFrame and not outOfCombatFocusFrame then
-            if IsAddOnLoaded("JaxClassicFrames") then
+            if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
                 outOfCombatTargetFrame = CreateFrame("Frame", "outOfCombatTargetFrame", JcfTargetFrame)
             else
                 outOfCombatTargetFrame = CreateFrame("Frame", "outOfCombatTargetFrame", TargetFrame)
@@ -445,7 +445,7 @@ function Module:SetupUI()
 
             outOfCombatTargetFrame:Hide()
 
-            if IsAddOnLoaded("JaxClassicFrames") then
+            if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
                 outOfCombatFocusFrame = CreateFrame("Frame", "outOfCombatFocusFrame", JcfFocusFrame)
             else
                 outOfCombatFocusFrame = CreateFrame("Frame", "outOfCombatFocusFrame", FocusFrame)
@@ -471,7 +471,7 @@ function Module:SetupUI()
 
     if self.db.inCombatTrackerToggle then
         if not inCombatTargetFrame and not inCombatFocusFrame then
-            if IsAddOnLoaded("JaxClassicFrames") then
+            if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
                 inCombatTargetFrame = CreateFrame("Frame", "inCombatTargetFrame", JcfTargetFrame)
             else
                 inCombatTargetFrame = CreateFrame("Frame", "inCombatTargetFrame", TargetFrame)
@@ -488,7 +488,7 @@ function Module:SetupUI()
 
             inCombatTargetFrame:Hide()
 
-            if IsAddOnLoaded("JaxClassicFrames") then
+            if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
                 inCombatFocusFrame = CreateFrame("Frame", "inCombatFocusFrame", JcfFocusFrame)
             else
                 inCombatFocusFrame = CreateFrame("Frame", "inCombatFocusFrame", FocusFrame)

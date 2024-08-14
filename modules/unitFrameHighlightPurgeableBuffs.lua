@@ -126,7 +126,7 @@ function Module:SetupUI()
     local alphaFactor = self.db.alphaFactor
 
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        if IsAddOnLoaded("JaxClassicFrames") then
+        if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
             JcfTargetFrame:HookScript("OnUpdate", function()
                 self:UpdateAurasRetailJcf("target", scaleFactor, alphaFactor)
             end)

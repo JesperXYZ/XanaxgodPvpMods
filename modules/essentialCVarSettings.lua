@@ -238,7 +238,7 @@ function Module:SetupUI()
             if self.db.nameplateOpacityToggle == true then
                 self:SetValueOnce("nameplateOpacity")
 
-                if IsAddOnLoaded("BetterBlizzPlates") then
+                if C_AddOns.IsAddOnLoaded("BetterBlizzPlates") then
                     self:RegisterEvent("PLAYER_ENTERING_WORLD", "SetupUI")
                     self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "SetupUI")
                     self:RegisterEvent("GROUP_ROSTER_UPDATE", "SetupUI")

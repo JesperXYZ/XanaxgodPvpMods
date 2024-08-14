@@ -408,7 +408,7 @@ function Module:SetupStatusText()
     }
 
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        if IsAddOnLoaded("JaxClassicFrames") then
+        if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
             unitFrames.player.health = JcfPlayerFrameHealthBarText
             unitFrames.player.healthRight = JcfPlayerFrameHealthBarTextRight
             unitFrames.player.healthLeft = JcfPlayerFrameHealthBarTextLeft

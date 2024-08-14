@@ -135,7 +135,7 @@ end
 
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        if IsAddOnLoaded("JaxClassicFrames") then
+        if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
             return false
         else
             return true -- retail

@@ -218,22 +218,24 @@ function Module:ShowRangeFrame()
 
         elseif self.db.buff and not rangeFrame:IsShown() then
             for i = 1, 40 do
-                local D, _, _, _, _, x = UnitBuff("player", i)
-                if D == self.db.buffTextfield then
-                    if x then
-                        if x > 0 then
-                            local expireTime = x - GetTime()
-                            local a = 0
-                            repeat
-                                C_Timer.After(a, function() self:UpdateRange() end)
-                                a = a + 0.1
-                            until a > expireTime
-                            rangeFrame:Show()
+                local D = C_UnitAuras.GetBuffDataByIndex("player", i)
+                if D ~= nil then
+                    if D.name == self.db.buffTextfield then
+                        if D.expirationTime then
+                            if D.expirationTime > 0 then
+                                local expireTime = D.expirationTime - GetTime()
+                                local a = 0
+                                repeat
+                                    C_Timer.After(a, function() self:UpdateRange() end)
+                                    a = a + 0.1
+                                until a > expireTime
+                                rangeFrame:Show()
 
-                            if expireTime < 0 then
-                                C_Timer.After(0.1, function() rangeFrame:Hide() end)
-                            else
-                                C_Timer.After(expireTime, function() rangeFrame:Hide() end)
+                                if expireTime < 0 then
+                                    C_Timer.After(0.1, function() rangeFrame:Hide() end)
+                                else
+                                    C_Timer.After(expireTime, function() rangeFrame:Hide() end)
+                                end
                             end
                         end
                     end
@@ -243,22 +245,24 @@ function Module:ShowRangeFrame()
 
         elseif self.db.debuff and not rangeFrame:IsShown() then
             for i = 1, 40 do
-                local D, _, _, _, _, x = UnitDebuff("player", i)
-                if D == self.db.debuffTextfield then
-                    if x then
-                        if x > 0 then
-                            local expireTime = x - GetTime()
-                            local a = 0
-                            repeat
-                                C_Timer.After(a, function() self:UpdateRange() end)
-                                a = a + 0.1
-                            until a > expireTime
-                            rangeFrame:Show()
+                local D = C_UnitAuras.GetDebuffDataByIndex("player", i)
+                if D ~= nil then
+                    if D.name == self.db.debuffTextfield then
+                        if D.expirationTime then
+                            if D.expirationTime > 0 then
+                                local expireTime = D.expirationTime - GetTime()
+                                local a = 0
+                                repeat
+                                    C_Timer.After(a, function() self:UpdateRange() end)
+                                    a = a + 0.1
+                                until a > expireTime
+                                rangeFrame:Show()
 
-                            if expireTime < 0 then
-                                C_Timer.After(0.1, function() rangeFrame:Hide() end)
-                            else
-                                C_Timer.After(expireTime, function() rangeFrame:Hide() end)
+                                if expireTime < 0 then
+                                    C_Timer.After(0.1, function() rangeFrame:Hide() end)
+                                else
+                                    C_Timer.After(expireTime, function() rangeFrame:Hide() end)
+                                end
                             end
                         end
                     end
@@ -309,7 +313,7 @@ function Module:SetupUI()
     end
 
     if rangeFrame == nil then
-        if IsAddOnLoaded("JaxClassicFrames") then
+        if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
             rangeFrame = CreateFrame("Frame", "RangeFrame", JcfTargetFrame)
         else
             rangeFrame = CreateFrame("Frame", "RangeFrame", TargetFrame)

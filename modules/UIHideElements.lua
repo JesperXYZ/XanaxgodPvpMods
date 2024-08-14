@@ -655,7 +655,7 @@ function Module:HideStatusTrackingBarManager()
 end
 
 function Module:HideJaxClassicFramesPvpIcon()
-    if IsAddOnLoaded("JaxClassicFrames") then
+    if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
         local enabled
         if self:IsEnabled() then
             if self.IsPlayerInPvPZone() then
@@ -692,7 +692,7 @@ function Module:HideJaxClassicFramesPvpIcon()
 end
 
 function Module:HideJaxClassicFramesPlayerGroupNumber()
-    if IsAddOnLoaded("JaxClassicFrames") then
+    if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
         local enabled
         if self:IsEnabled() then
             if self.IsPlayerInPvPZone() then

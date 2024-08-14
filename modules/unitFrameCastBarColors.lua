@@ -242,7 +242,7 @@ function Module:SetupCastBarColors()
         else
             local defaults
 
-            if IsAddOnLoaded("JaxClassicFrames") then
+            if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
                 defaults = {
                     successColor = {
                         r = 0,
@@ -374,7 +374,7 @@ function Module:SetupCastBarColors()
             end
         end
 
-        if IsAddOnLoaded("JaxClassicFrames") then
+        if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
             JcfTargetFrameSpellBar.Flash:SetDrawLayer("BACKGROUND", -8)
             JcfFocusFrameSpellBar.Flash:SetDrawLayer("BACKGROUND", -8)
 

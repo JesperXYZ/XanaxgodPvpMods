@@ -582,7 +582,6 @@ function Module:UpdateEntireChatFrameOpacity()
             end
         end
     end
-
 end
 
 function Module:HideFrame(frame)

@@ -133,7 +133,7 @@ end
 
 function Module:IsAvailableForCurrentVersion()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        if IsAddOnLoaded("BetterBlizzPlates") then
+        if C_AddOns.IsAddOnLoaded("BetterBlizzPlates") then
             return false
         else
             return true -- retail
