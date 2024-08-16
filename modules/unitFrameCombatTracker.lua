@@ -31,14 +31,14 @@ function Module:GetOptions(myOptionsTable, db)
         outOfCombatTrackerPlayersOnlyToggle = true,
         outOfCombatTrackerOpacity = 1,
         outOfCombatTrackerSize = 2,
-        outOfCombatTrackerXOffset = 0,
-        outOfCombatTrackerYOffset = 5,
+        outOfCombatTrackerXOffset = 20,
+        outOfCombatTrackerYOffset = 2,
         inCombatTrackerToggle = true,
         inCombatTrackerPlayersOnlyToggle = true,
         inCombatTrackerOpacity = 0.7,
         inCombatTrackerSize = 2,
-        inCombatTrackerXOffset = 0,
-        inCombatTrackerYOffset = 5
+        inCombatTrackerXOffset = 20,
+        inCombatTrackerYOffset = 2
     }
     for key, value in pairs(defaults) do
         if self.db[key] == nil then

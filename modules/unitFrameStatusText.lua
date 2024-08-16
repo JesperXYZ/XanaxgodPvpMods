@@ -439,6 +439,38 @@ function Module:SetupStatusText()
             unitFrames.pet.mana = JcfPetFrameManaBarText
             unitFrames.pet.manaRight = JcfPetFrameManaBarTextRight
             unitFrames.pet.manaLeft = JcfPetFrameManaBarTextLeft
+        elseif C_AddOns.IsAddOnLoaded("ClassicFrames") then
+            unitFrames.player.health = CfPlayerFrameHealthBarText
+            unitFrames.player.healthRight = CfPlayerFrameHealthBar.RightText
+            unitFrames.player.healthLeft = CfPlayerFrameHealthBar.LeftText
+            unitFrames.player.mana = CfPlayerFrameManaBarText
+            unitFrames.player.manaRight = CfPlayerFrameManaBar.RightText
+            unitFrames.player.manaLeft = CfPlayerFrameManaBar.LeftText
+            unitFrames.player.alternatePower = AlternatePowerBarText
+            unitFrames.player.alternatePowerRight = AlternatePowerBar.LeftText
+            unitFrames.player.alternatePowerLeft = AlternatePowerBar.RightText
+
+            unitFrames.target.health = CfTargetFrameHealthBarText
+            unitFrames.target.healthRight = CfTargetFrameHealthBarTextRight
+            unitFrames.target.healthLeft = CfTargetFrameHealthBarTextLeft
+            unitFrames.target.mana = CfTargetFrameManaBarText
+            unitFrames.target.manaRight = CfTargetFrameManaBarTextRight
+            unitFrames.target.manaLeft = CfTargetFrameManaBarTextLeft
+
+            unitFrames.focus.health = CfFocusFrameHealthBarText
+            unitFrames.focus.healthRight = CfFocusFrameHealthBarTextRight
+            unitFrames.focus.healthLeft = CfFocusFrameHealthBarTextLeft
+            unitFrames.focus.mana = CfFocusFrameManaBarText
+            unitFrames.focus.manaRight = CfFocusFrameManaBarTextRight
+            unitFrames.focus.manaLeft = CfFocusFrameManaBarTextLeft
+
+            unitFrames.pet.health = PetFrameHealthBarText
+            unitFrames.pet.healthRight = PetFrameHealthBarTextRight
+            unitFrames.pet.healthLeft = PetFrameHealthBarTextLeft
+            unitFrames.pet.mana = PetFrameManaBarText
+            unitFrames.pet.manaRight = PetFrameManaBarTextRight
+            unitFrames.pet.manaLeft = PetFrameManaBarTextLeft
+
         else
             unitFrames.player.health = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer.HealthBarText
             unitFrames.player.healthRight = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer.RightText
@@ -665,12 +697,26 @@ function Module:SetupStatusText()
         end
 
         if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-            if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
-                return
-            end
+            if C_AddOns.IsAddOnLoaded("ClassicFrames") then
+                PlayerFrame:HookScript("OnUpdate", function(self)
+                    NumericUpdater()
+                end)
 
-            self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
-            self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
+                self:SecureHook(TargetFrame, "OnUpdate", function()
+                    NumericUpdater()
+                end)
+
+                self:SecureHook(FocusFrame, "OnUpdate", function()
+                    NumericUpdater()
+                end)
+            else
+                if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
+                    return
+                end
+
+                self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
+                self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
+            end
 
         else
             if self:IsHooked("TextStatusBar_UpdateTextStringWithValues") then
@@ -721,12 +767,26 @@ function Module:SetupStatusText()
         end
 
         if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-            if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
-                return
-            end
+            if C_AddOns.IsAddOnLoaded("ClassicFrames") then
+                PlayerFrame:HookScript("OnUpdate", function(self)
+                    NumericUpdater()
+                end)
 
-            self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
-            self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
+                self:SecureHook(TargetFrame, "OnUpdate", function()
+                    NumericUpdater()
+                end)
+
+                self:SecureHook(FocusFrame, "OnUpdate", function()
+                    NumericUpdater()
+                end)
+            else
+                if self:IsHooked("UnitFrameHealthBar_OnUpdate") or self:IsHooked("UnitFrameManaBar_OnUpdate") then
+                    return
+                end
+
+                self:SecureHook("UnitFrameHealthBar_OnUpdate", function() NumericUpdater() end)
+                self:SecureHook("UnitFrameManaBar_OnUpdate", function() NumericUpdater() end)
+            end
 
         else
             if self:IsHooked("TextStatusBar_UpdateTextStringWithValues") then

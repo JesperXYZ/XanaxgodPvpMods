@@ -23,33 +23,7 @@ end
 
 function Module:GetOptions(myOptionsTable, db)
     self.db = db
-    local defaults = {
-        customCastBarColorsToggle = false,
-        successColor = {
-            r = 0,
-            g = 1,
-            b = 0,
-            a = 1
-        },
-        normalColor = {
-            r = 1,
-            g = 0.7,
-            b = 0,
-            a = 1
-        },
-        interruptedColor = {
-            r = 1,
-            g = 0,
-            b = 0,
-            a = 1
-        },
-        notInterruptibleColor = {
-            r = 0.3,
-            g = 0.3,
-            b = 0.3,
-            a = 1
-        }
-    }
+    local defaults = {}
     for key, value in pairs(defaults) do
         if self.db[key] == nil then
             self.db[key] = value
@@ -66,14 +40,6 @@ function Module:GetOptions(myOptionsTable, db)
         if setting == "customCastBarColorsToggle" then
             self:RefreshUI()
         end
-    end
-    local getColor = function(info)
-        local color = self.db[info[#info]]
-        return color.r, color.g, color.b, color.a
-    end
-    local setColor = function(info, r, g, b, a)
-        local color = self.db[info[#info]]
-        color.r, color.g, color.b, color.a = r, g, b, a
     end
 
     local counter = CreateCounter(5)
@@ -132,7 +98,7 @@ function Module:GetOptions(myOptionsTable, db)
     myOptionsTable.args.pic2Desc = {
         order = counter(),
         type = "description",
-        name = "Jax Classic Frames (module disabled vs. module enabled).",
+        name = "Classic Frames / JCF (module disabled vs. module enabled).",
         width = "full"
     }
     myOptionsTable.args.art512334 = {
@@ -146,77 +112,6 @@ function Module:GetOptions(myOptionsTable, db)
         type = "description",
         name = " ",
         width = "full"
-    }
-    myOptionsTable.args.colorSettingsGroup = {
-        order = counter(),
-        name = "Custom Cast Bar Colors",
-        type = "group",
-        inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
-        args = {
-            customCastBarColorsToggle = {
-                type = "toggle",
-                name = "Enable",
-                order = counter(),
-                width = 0.525,
-                get = get,
-                set = set
-            },
-            reset = {
-                type = "execute",
-                name = "Reset to Default",
-                width = 0.8,
-                func = function()
-                    self.db.successColor = defaults.successColor
-                    self.db.normalColor = defaults.normalColor
-                    self.db.interruptedColor = defaults.interruptedColor
-                    self.db.notInterruptibleColor = defaults.notInterruptibleColor
-                    Module:RefreshUI()
-                end,
-                order = counter()
-            },
-            spaceDesc = {
-                order = counter(),
-                type = "description",
-                name = "  ",
-                width = 0.175
-            },
-            successColor = {
-                type = "color",
-                name = "Success/channel cast bar color",
-                hasAlpha = true,
-                width = 0.75,
-                order = counter(),
-                get = getColor,
-                set = setColor
-            },
-            normalColor = {
-                type = "color",
-                name = "Normal cast bar color",
-                hasAlpha = true,
-                width = 0.75,
-                order = counter(),
-                get = getColor,
-                set = setColor
-            },
-            interruptedColor = {
-                type = "color",
-                name = "Interrupted cast bar color",
-                hasAlpha = true,
-                width = 0.75,
-                order = counter(),
-                get = getColor,
-                set = setColor
-            },
-            notInterruptibleColor = {
-                type = "color",
-                name = "Not interruptible cast bar color",
-                hasAlpha = true,
-                width = 0.75,
-                order = counter(),
-                get = getColor,
-                set = setColor
-            }
-        }
     }
 
     return myOptionsTable
@@ -234,75 +129,70 @@ function Module:SetupCastBarColors()
         local red
         local grey
 
-        if self.db.customCastBarColorsToggle then
-            green = self.db.successColor
-            yellow = self.db.normalColor
-            red = self.db.interruptedColor
-            grey = self.db.notInterruptibleColor
+        local defaults
+
+        if C_AddOns.IsAddOnLoaded("JaxClassicFrames") or C_AddOns.IsAddOnLoaded("ClassicFrames") then
+            defaults = {
+                successColor = {
+                    r = 0,
+                    g = 1,
+                    b = 0,
+                    a = 1
+                },
+                normalColor = {
+                    r = 1,
+                    g = 0.7,
+                    b = 0,
+                    a = 1
+                },
+                interruptedColor = {
+                    r = 1,
+                    g = 0,
+                    b = 0,
+                    a = 1
+                },
+                notInterruptibleColor = {
+                    r = 0.3,
+                    g = 0.3,
+                    b = 0.3,
+                    a = 1
+                }
+            }
         else
-            local defaults
-
-            if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
-                defaults = {
-                    successColor = {
-                        r = 0,
-                        g = 1,
-                        b = 0,
-                        a = 1
-                    },
-                    normalColor = {
-                        r = 1,
-                        g = 0.7,
-                        b = 0,
-                        a = 1
-                    },
-                    interruptedColor = {
-                        r = 1,
-                        g = 0,
-                        b = 0,
-                        a = 1
-                    },
-                    notInterruptibleColor = {
-                        r = 0.3,
-                        g = 0.3,
-                        b = 0.3,
-                        a = 1
-                    }
+            defaults = {
+                successColor = {
+                    r = 0,
+                    g = 1,
+                    b = 0,
+                    a = 1
+                },
+                normalColor = {
+                    r = 1,
+                    g = 0.9,
+                    b = 0,
+                    a = 1
+                },
+                interruptedColor = {
+                    r = 1,
+                    g = 0,
+                    b = 0,
+                    a = 1
+                },
+                notInterruptibleColor = {
+                    r = 0.3,
+                    g = 0.3,
+                    b = 0.3,
+                    a = 1
                 }
-            else
-                defaults = {
-                    successColor = {
-                        r = 0,
-                        g = 1,
-                        b = 0,
-                        a = 1
-                    },
-                    normalColor = {
-                        r = 1,
-                        g = 0.9,
-                        b = 0,
-                        a = 1
-                    },
-                    interruptedColor = {
-                        r = 1,
-                        g = 0,
-                        b = 0,
-                        a = 1
-                    },
-                    notInterruptibleColor = {
-                        r = 0.3,
-                        g = 0.3,
-                        b = 0.3,
-                        a = 1
-                    }
-                }
-            end
-
-            green = defaults.successColor
-            yellow = defaults.normalColor
-            red = defaults.interruptedColor
-            grey = defaults.notInterruptibleColor
+            }
         end
+
+        green = defaults.successColor
+        yellow = defaults.normalColor
+        red = defaults.interruptedColor
+        grey = defaults.notInterruptibleColor
+
+
 
         function Module:CheckCastStatus(castType)
             if castType == "TargetEmpower" then
@@ -375,6 +265,7 @@ function Module:SetupCastBarColors()
         end
 
         if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
+
             JcfTargetFrameSpellBar.Flash:SetDrawLayer("BACKGROUND", -8)
             JcfFocusFrameSpellBar.Flash:SetDrawLayer("BACKGROUND", -8)
 
@@ -684,7 +575,336 @@ function Module:SetupCastBarColors()
             Module:JCFSetRed()
             Module:JCFSetYellow()
             Module:JCFSetGreen()
+
+        elseif C_AddOns.IsAddOnLoaded("ClassicFrames") then
+
+            TargetFrameSpellBar.Flash:SetDrawLayer("BACKGROUND", -8)
+            FocusFrameSpellBar.Flash:SetDrawLayer("BACKGROUND", -8)
+
+            function Module:CFStopCastHandler(unitTarget)
+                if unitTarget == "target" then
+                    Module:CheckCastStatus("TargetCast")
+                    if not isTargetCasting then
+                        if (GetTime()) > (targetCastEndTime - 0.1) then
+                        else
+                            targetCastEndTime = targetCastEndTime + 999999
+
+                            Module:CFSetRed(unitTarget)
+                        end
+                    end
+                end
+
+                if unitTarget == "focus" then
+                    Module:CheckCastStatus("FocusCast")
+                    if not isFocusCasting then
+                        if (GetTime()) > (focusCastEndTime - 0.1) then
+                        else
+                            focusCastEndTime = focusCastEndTime + 999999
+
+                            Module:CFSetRed(unitTarget)
+                        end
+                    end
+                end
+            end
+
+            function Module:CFStartCastHandler(unitTarget)
+                if unitTarget == "target" then
+                    Module:CheckCastStatus("TargetCast")
+                    if isTargetCasting then
+                        local notInterruptible = select(8, UnitCastingInfo(unitTarget))
+                        if notInterruptible then
+                            Module:CFSetGrey(unitTarget)
+                        else
+                            Module:CFSetYellow(unitTarget)
+                        end
+                    end
+                end
+
+                if unitTarget == "focus" then
+                    Module:CheckCastStatus("FocusCast")
+                    if isFocusCasting then
+                        local notInterruptible = select(8, UnitCastingInfo(unitTarget))
+                        if notInterruptible then
+                            Module:CFSetGrey(unitTarget)
+                        else
+                            Module:CFSetYellow(unitTarget)
+                        end
+                    end
+                end
+            end
+
+            function Module:CFStopChannelHandler(unitTarget)
+                if unitTarget == "target" then
+                    Module:CheckCastStatus("TargetChannel")
+                    if not isTargetCasting then
+                        if not ((GetTime()) > (targetCastEndTime - 0.1)) then
+                            Module:CFSetRed(unitTarget)
+                        end
+                    end
+                end
+
+                if unitTarget == "focus" then
+                    Module:CheckCastStatus("FocusChannel")
+                    if not isFocusCasting then
+                        if not ((GetTime()) > (focusCastEndTime - 0.1)) then
+                            Module:CFSetRed(unitTarget)
+                        end
+                    end
+                end
+            end
+
+            function Module:CFStartChannelHandler(unitTarget)
+                if unitTarget == "target" then
+                    Module:CheckCastStatus("TargetChannel")
+                    if isTargetCasting then
+                        local notInterruptible = select(7, UnitChannelInfo(unitTarget))
+                        if notInterruptible then
+                            Module:CFSetGrey(unitTarget)
+                        else
+                            Module:CFSetGreen(unitTarget)
+                        end
+                    end
+                end
+
+                if unitTarget == "focus" then
+                    Module:CheckCastStatus("FocusChannel")
+                    if isFocusCasting then
+                        local notInterruptible = select(7, UnitChannelInfo(unitTarget))
+                        if notInterruptible then
+                            Module:CFSetGrey(unitTarget)
+                        else
+                            Module:CFSetGreen(unitTarget)
+                        end
+                    end
+                end
+            end
+
+            function Module:CFStopEmpowerHandler(unitTarget)
+                if unitTarget == "target" then
+                    Module:CheckCastStatus("TargetEmpower")
+                    if not isTargetCasting then
+                        if (GetTime()) > (targetCastEndTime - 0.1) then
+                            Module:CFSetGreen(unitTarget)
+                        else
+                            targetCastEndTime = targetCastEndTime + 999999
+
+                            TargetFrameSpellBar.NewFlash:SetVertexColor(1, 0.8, 0, 1)
+                        end
+                    end
+                end
+
+                if unitTarget == "focus" then
+                    Module:CheckCastStatus("FocusEmpower")
+                    if not isFocusCasting then
+                        if (GetTime()) > (focusCastEndTime - 0.1) then
+                            Module:CFSetGreen(unitTarget)
+                        else
+                            targetCastEndTime = targetCastEndTime + 999999
+
+                            FocusFrameSpellBar.NewFlash:SetVertexColor(1, 0.8, 0, 1)
+                        end
+                    end
+                end
+            end
+
+            function Module:CFStartEmpowerHandler(unitTarget)
+                if unitTarget == "target" then
+                    Module:CheckCastStatus("TargetEmpower")
+                    if isTargetCasting then
+                        local notInterruptible = select(8, UnitCastingInfo(unitTarget))
+                        if notInterruptible then
+                            Module:CFSetGrey(unitTarget)
+                        else
+                            Module:CFSetYellow(unitTarget)
+                        end
+                    end
+                end
+                if unitTarget == "focus" then
+                    Module:CheckCastStatus("FocusEmpower")
+                    if isFocusCasting then
+                        local notInterruptible = select(8, UnitCastingInfo(unitTarget))
+                        if notInterruptible then
+                            Module:CFSetGrey(unitTarget)
+                        else
+                            Module:CFSetYellow(unitTarget)
+                        end
+                    end
+                end
+            end
+
+            function Module:CFSetGrey(unitTarget)
+                if unitTarget == "target" then
+                    TargetFrameSpellBar:SetStatusBarColor(grey.r, grey.g, grey.b, grey.a) --Grey
+                end
+
+                if unitTarget == "focus" then
+                    FocusFrameSpellBar:SetStatusBarColor(grey.r, grey.g, grey.b, grey.a) --Grey
+                end
+            end
+
+            function Module:CFSetRed(unitTarget)
+                if unitTarget == "target" then
+                    TargetFrameSpellBar:SetValue(select(2, TargetFrameSpellBar:GetMinMaxValues()) - 0.01)
+                    TargetFrameSpellBar:SetStatusBarColor(red.r, red.g, red.b, red.a) --Red
+
+                    TargetFrameSpellBar.NewFlash:SetVertexColor(red.r, red.g, red.b, red.a)
+
+                    successfulCastBufferTarget = true
+
+                    C_Timer.After(1.25, function() successfulCastBufferTarget = false end)
+                end
+
+                if unitTarget == "focus" then
+                    FocusFrameSpellBar:SetValue(select(2, FocusFrameSpellBar:GetMinMaxValues()) - 0.01)
+                    FocusFrameSpellBar:SetStatusBarColor(red.r, red.g, red.b, red.a) --Red
+
+                    FocusFrameSpellBar.NewFlash:SetVertexColor(red.r, red.g, red.b, red.a)
+
+                    successfulCastBufferFocus = true
+
+                    C_Timer.After(1.25, function() successfulCastBufferFocus = false end)
+                end
+            end
+
+            function Module:CFSetYellow(unitTarget)
+                if unitTarget == "target" then
+                    TargetFrameSpellBar:SetStatusBarColor(yellow.r, yellow.g, yellow.b, yellow.a) --Yellow
+                end
+
+                if unitTarget == "focus" then
+                    FocusFrameSpellBar:SetStatusBarColor(yellow.r, yellow.g, yellow.b, yellow.a) --Yellow
+                end
+            end
+
+            function Module:CFSetGreen(unitTarget)
+                if unitTarget == "target" then
+                    TargetFrameSpellBar:SetStatusBarColor(green.r, green.g, green.b, green.a) --Green
+                end
+
+                if unitTarget == "focus" then
+                    FocusFrameSpellBar:SetStatusBarColor(green.r, green.g, green.b, green.a) --Green
+                end
+            end
+
+            function Module:CFTargetChanged()
+                if UnitChannelInfo("target") then
+                    if select(10, UnitChannelInfo("target")) > 0 then
+                        self:CFStartEmpowerHandler("target")
+                    elseif UnitChannelInfo("target") then
+                        self:CFStartChannelHandler("target")
+                    end
+                elseif UnitCastingInfo("target") then
+                    self:CFStartCastHandler("target")
+                end
+            end
+
+            function Module:CFFocusChanged()
+                if UnitChannelInfo("focus") then
+                    if select(10, UnitChannelInfo("focus")) > 0 then
+                        self:CFStartEmpowerHandler("focus")
+                    elseif UnitChannelInfo("focus") then
+                        self:CFStartChannelHandler("focus")
+                    end
+                elseif UnitCastingInfo("focus") then
+                    self:CFStartCastHandler("focus")
+                end
+            end
+
+            if not eventHandlerFrame then
+                eventHandlerFrame = CreateFrame("Frame", "EventHandlerFrame")
+            end
+
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_EMPOWER_STOP")
+
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_START")
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_EMPOWER_START")
+
+            eventHandlerFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+            eventHandlerFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+            eventHandlerFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+            --this event sucks and its awful dont use it 'UNIT_SPELLCAST_FAILED'
+
+            local function EventHandlerGiga(self, event, unitTarget)
+                if (unitTarget == "target" or unitTarget == "focus") then
+                    if event == "UNIT_SPELLCAST_STOP" then
+                        Module:CFStopCastHandler(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+                        Module:CFStopChannelHandler(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_EMPOWER_STOP" then
+                        Module:CFStopEmpowerHandler(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_START" then
+                        Module:CFStartCastHandler(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
+                        Module:CFStartChannelHandler(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_EMPOWER_START" then
+                        Module:CFStartEmpowerHandler(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_INTERRUPTIBLE" then
+                        if UnitChannelInfo(unitTarget) then
+                            local numStages = select(10, UnitChannelInfo(unitTarget))
+                            if not (numStages > 0) then
+                                Module:CFSetGreen(unitTarget)
+                            else
+                            end
+                        else
+                            if UnitCastingInfo(unitTarget) then
+                                Module:CFSetYellow(unitTarget)
+                            end
+                        end
+                    elseif event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" then
+                        Module:CFSetGrey(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
+                        Module:CFSetRed(unitTarget)
+                    elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
+                        if not (UnitCastingInfo(unitTarget) and UnitChannelInfo(unitTarget)) then
+                            if
+                            unitTarget == "target" and (GetTime() > targetCastEndTime - 0.05) and
+                                    not successfulCastBufferTarget
+                            then
+                                Module:CFSetGreen(unitTarget)
+                            elseif
+                            unitTarget == "focus" and (GetTime() > focusCastEndTime - 0.05) and
+                                    not successfulCastBufferFocus
+                            then
+                                Module:CFSetGreen(unitTarget)
+                            end
+                        end
+                    end
+                else
+                    if event == "PLAYER_TARGET_CHANGED" then
+                        Module:CFTargetChanged()
+                    end
+                    if event == "PLAYER_FOCUS_CHANGED" then
+                        Module:CFFocusChanged()
+                    end
+                end
+            end
+            eventHandlerFrame:SetScript("OnEvent", EventHandlerGiga)
+
+            --the first function call of the session usually behaves odd. calling them like this fixes it somehow
+            Module:CFStopCastHandler()
+            Module:CFStopChannelHandler()
+            Module:CFStopEmpowerHandler()
+
+            Module:CFStartCastHandler()
+            Module:CFStartChannelHandler()
+            Module:CFStartEmpowerHandler()
+
+            Module:CFTargetChanged()
+            Module:CFFocusChanged()
+
+            Module:CFSetGrey()
+            Module:CFSetRed()
+            Module:CFSetYellow()
+            Module:CFSetGreen()
         else
+
             function Module:StopCastHandler(unitTarget)
                 if unitTarget == "target" then
                     Module:CheckCastStatus("TargetCast")
@@ -1027,6 +1247,7 @@ function Module:SetupCastBarColors()
             Module:SetRed()
             Module:SetYellow()
             Module:SetGreen()
+
         end
     end
 end

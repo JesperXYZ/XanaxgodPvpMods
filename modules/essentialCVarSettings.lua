@@ -24,7 +24,7 @@ end
 function Module:GetOptions(myOptionsTable, db)
     self.db = db
     local defaults = {
-        worldPreloadToggle = true,
+        worldPreloadToggle = false,
         softTargetInteractToggle = true,
         nameplateOpacityToggle = true,
         spellQueueWindowRange = tonumber(GetCVar("SpellQueueWindow"))
@@ -273,7 +273,10 @@ function Module:SetValueOnce(input)
         end
 
         if input == "spellQueueWindow" then
-            SetCVar("SpellQueueWindow", self.db.spellQueueWindowRange)
+            currentValue = GetCVar("SpellQueueWindow")
+            if currentValue ~= self.db.spellQueueWindowRange then
+                SetCVar("SpellQueueWindow", self.db.spellQueueWindowRange)
+            end
         end
 
         if input == "nameplateOpacity" then

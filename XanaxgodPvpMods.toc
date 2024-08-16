@@ -1,9 +1,9 @@
-## Interface: 110000
+## Interface: 110002
 ## Title: |cdf1fd288Xanaxgod PvP Mods|r
 ## Author: Xanaxgod
 ## IconTexture: Interface\Addons\XanaxgodPvpMods\media\icon
 ## Notes: Contains various mods/tweaks/improvements for PvP gameplay.
-## Version: v1.9
+## Version: v2.0
 ## SavedVariables: XPMDB
 
 libs\libs.xml
@@ -17,8 +17,8 @@ modules\UIFrameOpacity.lua
 modules\UIHideElements.lua
 modules\snowfallKeyPress.lua
 modules\muteArenaDialog.lua
-modules\nameplateSize.lua
 modules\essentialCVarSettings.lua
+modules\classicFramesMods.lua
 
 modules\unitFrameCastBarSize.lua
 modules\unitFrameCastBarColors.lua

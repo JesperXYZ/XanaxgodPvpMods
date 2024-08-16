@@ -139,6 +139,52 @@ function Module:SetupFrameDarkness()
                     end
                 end
             end
+        elseif C_AddOns.IsAddOnLoaded("ClassicFrames") then
+            for i, v in pairs(
+                    {
+                        PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.FrameTexture,
+                        PlayerFrame.PlayerFrameContainer.AlternatePowerFrameTexture,
+                        PlayerFrame.PlayerFrameContainer.FrameTexture,
+
+                        TargetFrame.TargetFrameContainer.FrameTexture,
+                        FocusFrame.TargetFrameContainer.FrameTexture,
+                        PetFrameTexture
+                    }
+            ) do
+                if self:IsEnabled() then
+                    if v then
+                        v:SetVertexColor(unitFrameTextureDarkness, unitFrameTextureDarkness, unitFrameTextureDarkness)
+                    end
+                else
+                    if v then
+                        v:SetVertexColor(1, 1, 1)
+                    end
+                end
+            end
+
+            for i, v in pairs(
+                    {
+                        TargetFrameSpellBar.Background,
+                        TargetFrameSpellBar.Border,
+                        TargetFrameSpellBar.TextBorder,
+                        TargetFrameSpellBar.BorderShield,
+                        FocusFrameSpellBar.Background,
+                        FocusFrameSpellBar.Border,
+                        FocusFrameSpellBar.TextBorder,
+                        FocusFrameSpellBar.BorderShield
+                    }
+            ) do
+                if self:IsEnabled() then
+                    if v then
+                        v:SetVertexColor(unitFrameCastBarDarkness, unitFrameCastBarDarkness, unitFrameCastBarDarkness)
+                    end
+                else
+                    if v then
+                        v:SetVertexColor(1, 1, 1)
+                    end
+                end
+            end
+
         else
             --normal retail ui
             for i, v in pairs(

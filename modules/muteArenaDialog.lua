@@ -59,10 +59,17 @@ function Module:SetupUI()
 end
 
 function Module:MuteDialog()
+    local currentValue
     if self:IsPlayerInPvPZone() then
-        SetCVar("Sound_EnableDialog", 0)
+        currentValue = GetCVar("Sound_EnableDialog")
+        if currentValue == "1" then
+            SetCVar("Sound_EnableDialog", 0)
+        end
     else
-        SetCVar("Sound_EnableDialog", 1)
+        currentValue = GetCVar("Sound_EnableDialog")
+        if currentValue == "0" then
+            SetCVar("Sound_EnableDialog", 1)
+        end
     end
 end
 
