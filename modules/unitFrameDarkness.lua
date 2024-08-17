@@ -143,11 +143,13 @@ function Module:SetupFrameDarkness()
             for i, v in pairs(
                     {
                         PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.FrameTexture,
-                        PlayerFrame.PlayerFrameContainer.AlternatePowerFrameTexture,
                         PlayerFrame.PlayerFrameContainer.FrameTexture,
 
                         TargetFrame.TargetFrameContainer.FrameTexture,
+                        TargetFrame.TargetFrameContent.TargetFrameContentMain.FrameTexture,
+
                         FocusFrame.TargetFrameContainer.FrameTexture,
+                        FocusFrame.TargetFrameContent.TargetFrameContentMain.FrameTexture,
                         PetFrameTexture
                     }
             ) do

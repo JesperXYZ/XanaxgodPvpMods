@@ -14,7 +14,7 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return 'This module disables the "your AddOns are experiencing a large number of errors..." popup that is so frequently occurring in Dragonflight.'
+    return 'This module disables the "your AddOns are experiencing a large number of errors" popup. You should probably still use BugGrabber and BugSack to identify and fix these errors.'
 end
 
 function Module:GetName()

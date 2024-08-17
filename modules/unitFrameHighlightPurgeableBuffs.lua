@@ -60,7 +60,7 @@ function Module:GetOptions(myOptionsTable, db)
     myOptionsTable.args.reloadExecute = {
         type = "execute",
         name = "/reload",
-        desc = "",
+        desc = "You should reload your UI after changing options for this module.",
         width = 0.45,
         func = function()
             ReloadUI()

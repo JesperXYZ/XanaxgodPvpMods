@@ -14,7 +14,7 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return "This module remakes the coloring of your unit frame cast bars and makes fake casts easier to spot (you should reload after altering this module)."
+    return "This module remakes the coloring of your unit frame cast bars and makes fake casts easier to spot."
 end
 
 function Module:GetName()
@@ -58,7 +58,7 @@ function Module:GetOptions(myOptionsTable, db)
     myOptionsTable.args.reloadExecute = {
         type = "execute",
         name = "/reload",
-        desc = "",
+        desc = "You should reload your UI after changing options for this module.",
         width = 0.45,
         func = function()
             ReloadUI()
@@ -590,6 +590,8 @@ function Module:SetupCastBarColors()
                             targetCastEndTime = targetCastEndTime + 999999
 
                             Module:CFSetRed(unitTarget)
+
+                            TargetFrameSpellBar.NewFlash:Show()
                         end
                     end
                 end
@@ -602,6 +604,8 @@ function Module:SetupCastBarColors()
                             focusCastEndTime = focusCastEndTime + 999999
 
                             Module:CFSetRed(unitTarget)
+
+                            FocusFrameSpellBar.NewFlash:Show()
                         end
                     end
                 end
@@ -617,6 +621,7 @@ function Module:SetupCastBarColors()
                         else
                             Module:CFSetYellow(unitTarget)
                         end
+                        TargetFrameSpellBar.NewFlash:Hide()
                     end
                 end
 
@@ -629,6 +634,7 @@ function Module:SetupCastBarColors()
                         else
                             Module:CFSetYellow(unitTarget)
                         end
+                        FocusFrameSpellBar.NewFlash:Hide()
                     end
                 end
             end
@@ -639,6 +645,7 @@ function Module:SetupCastBarColors()
                     if not isTargetCasting then
                         if not ((GetTime()) > (targetCastEndTime - 0.1)) then
                             Module:CFSetRed(unitTarget)
+                            TargetFrameSpellBar.NewFlash:Show()
                         end
                     end
                 end
@@ -648,6 +655,7 @@ function Module:SetupCastBarColors()
                     if not isFocusCasting then
                         if not ((GetTime()) > (focusCastEndTime - 0.1)) then
                             Module:CFSetRed(unitTarget)
+                            FocusFrameSpellBar.NewFlash:Show()
                         end
                     end
                 end
@@ -663,6 +671,7 @@ function Module:SetupCastBarColors()
                         else
                             Module:CFSetGreen(unitTarget)
                         end
+                        TargetFrameSpellBar.NewFlash:Hide()
                     end
                 end
 
@@ -675,6 +684,7 @@ function Module:SetupCastBarColors()
                         else
                             Module:CFSetGreen(unitTarget)
                         end
+                        FocusFrameSpellBar.NewFlash:Hide()
                     end
                 end
             end
@@ -796,6 +806,9 @@ function Module:SetupCastBarColors()
                 elseif UnitCastingInfo("target") then
                     self:CFStartCastHandler("target")
                 end
+                if TargetFrameSpellBar.NewFlash then
+                    TargetFrameSpellBar.NewFlash:Hide()
+                end
             end
 
             function Module:CFFocusChanged()
@@ -807,6 +820,9 @@ function Module:SetupCastBarColors()
                     end
                 elseif UnitCastingInfo("focus") then
                     self:CFStartCastHandler("focus")
+                end
+                if FocusFrameSpellBar.NewFlash then
+                    FocusFrameSpellBar.NewFlash:Hide()
                 end
             end
 
@@ -868,11 +884,13 @@ function Module:SetupCastBarColors()
                                     not successfulCastBufferTarget
                             then
                                 Module:CFSetGreen(unitTarget)
+                                TargetFrameSpellBar.NewFlash:Show()
                             elseif
                             unitTarget == "focus" and (GetTime() > focusCastEndTime - 0.05) and
                                     not successfulCastBufferFocus
                             then
                                 Module:CFSetGreen(unitTarget)
+                                FocusFrameSpellBar.NewFlash:Show()
                             end
                         end
                     end

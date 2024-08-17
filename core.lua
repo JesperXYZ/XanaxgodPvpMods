@@ -76,7 +76,7 @@ function XanaxgodPvpMods:InitializeConfig()
                     desc = {
                         order = increment(),
                         type = "description",
-                        name = "For requests and bug fixes, go harass via Twitter/Twitch at twitter.com/xanaxgod1337 or twitch.tv/xanaxgod1337."
+                        name = "For requests and bug fixes, go harass via Twitter/Twitch at twitter.com/xanaxgod1337 or twitch.tv/xanaxgod1337.",
                     }
                 }
             }

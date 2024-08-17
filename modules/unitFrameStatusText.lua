@@ -14,7 +14,7 @@ function Module:OnDisable()
 end
 
 function Module:GetDescription()
-    return "This module allows you to reformat the status text displayed on the health and mana bar of your unit frames (you should reload after altering this module)."
+    return "This module allows you to reformat the status text displayed on the health and mana bar of your unit frames."
 end
 
 function Module:GetName()
@@ -301,7 +301,7 @@ function Module:GetOptions(myOptionsTable, db)
                     reloadExecute = {
                         type = "execute",
                         name = "/reload",
-                        desc = "",
+                        desc = "You should reload your UI after changing options for this module.",
                         width = 0.45,
                         func = function()
                             ReloadUI()

@@ -25,6 +25,7 @@ function Module:GetOptions(myOptionsTable, db)
     self.db = db
     local defaults = {
         classicFramesHealthBarColor = true,
+        classicFramesColoredNameBackground = false,
         classicFramesHideNameBackground = true,
         classicFramesHidePvpIcon = true,
         classicFramesHidePlayerGroupNumber = true,
@@ -47,8 +48,13 @@ function Module:GetOptions(myOptionsTable, db)
         if setting == "classicFramesHealthBarColor" then
             self:RefreshUI()
         end
+        if setting == "classicFramesColoredNameBackground" then
+            self:RefreshUI()
+            self.db.classicFramesHideNameBackground = false
+        end
         if setting == "classicFramesHideNameBackground" then
             self:RefreshUI()
+            self.db.classicFramesColoredNameBackground = false
         end
         if setting == "classicFramesHidePvpIcon" then
             self:RefreshUI()
@@ -77,7 +83,7 @@ function Module:GetOptions(myOptionsTable, db)
             reloadExecute = {
                 type = "execute",
                 name = "/reload",
-                desc = "",
+                desc = "You should reload your UI after changing options for this module.",
                 width = 0.45,
                 func = function()
                     ReloadUI()
@@ -87,7 +93,16 @@ function Module:GetOptions(myOptionsTable, db)
             classicFramesHealthBarColor = {
                 type = "toggle",
                 name = "Class Colored Health Bar",
-                desc = "This changes the color of your unit frames health bar to match their respective class",
+                desc = "This changes the color of your unit frames health bar to match their respective class (including target of target)",
+                order = counter(),
+                width = "full",
+                get = get,
+                set = set
+            },
+            classicFramesColoredNameBackground = {
+                type = "toggle",
+                name = "Class Colored Name Background",
+                desc = "This changes the color of your unit frames name background to match their respective class",
                 order = counter(),
                 width = "full",
                 get = get,
@@ -154,6 +169,8 @@ function Module:ClassicFramesHealthBarColor()
     local playerHealthBar = CfPlayerFrameHealthBar
     local targetFrameHealthBar = CfTargetFrameHealthBar
     local focusFrameHealthBar = CfFocusFrameHealthBar
+    local targetTargetFrameHealthBar = TargetFrameToT.HealthBar
+    local focusTargetFrameHealthBar = FocusFrameToT.HealthBar
 
     local function eventHandler(self, event, ...)
         if enabled then
@@ -185,6 +202,22 @@ function Module:ClassicFramesHealthBarColor()
             end
         end
     end
+    local function eventHandlerTargetOfTarget()
+        if enabled then
+            local unitTarget, englishClassTarget = UnitClass("targettarget")
+
+            local targetColor = {r = 0, g = 1, b = 0, a = 1}
+            if unitTarget then
+                if UnitIsPlayer("targettarget") then
+                    targetColor.r, targetColor.g, targetColor.b = GetClassColor(englishClassTarget)
+                end
+
+                if targetTargetFrameHealthBar:GetStatusBarColor() ~= targetColor then
+                    targetTargetFrameHealthBar:SetStatusBarColor(targetColor.r, targetColor.g, targetColor.b)
+                end
+            end
+        end
+    end
     local function eventHandlerFocus()
         if enabled then
             local unitFocus, englishClassFocus = UnitClass("focus")
@@ -201,61 +234,154 @@ function Module:ClassicFramesHealthBarColor()
             end
         end
     end
+    local function eventHandlerTargetOfFocus()
+        if enabled then
+            local unitFocus, englishClassFocus = UnitClass("focustarget")
+
+            local focusColor = {r = 0, g = 1, b = 0, a = 1}
+            if unitFocus then
+                if UnitIsPlayer("focustarget") then
+                    focusColor.r, focusColor.g, focusColor.b = GetClassColor(englishClassFocus)
+                end
+
+                if focusTargetFrameHealthBar:GetStatusBarColor() ~= focusColor then
+                    focusTargetFrameHealthBar:SetStatusBarColor(focusColor.r, focusColor.g, focusColor.b)
+                end
+            end
+        end
+    end
 
     PlayerFrame:HookScript("OnUpdate", function(self)
         eventHandler()
     end)
 
+    local ToTEnabled
+
+    if GetCVar("showTargetOfTarget") == "1" then
+        ToTEnabled = true
+    else
+        ToTEnabled = false
+    end
+
     self:SecureHook(TargetFrame, "OnUpdate", function()
         eventHandlerTarget()
+        if ToTEnabled then
+            eventHandlerTargetOfTarget()
+        end
     end)
 
     self:SecureHook(FocusFrame, "OnUpdate", function()
         eventHandlerFocus()
-    end)
-
-    --[[
-    hooksecurefunc("HealthBar_OnValueChanged", function (self)
-        if self.unit == "player" then
-            eventHandler()
+        if ToTEnabled then
+            eventHandlerTargetOfFocus()
         end
     end)
+end
 
-    hooksecurefunc("UnitFrameHealthBar_Update", function (self)
-        if self.unit == "player" then
-            eventHandler()
+function Module:ClassicFramesColoredNameBackground()
+    local function enabled()
+        if self:IsEnabled() then
+            return self.db.classicFramesColoredNameBackground
+        else
+            return false
         end
-    end)
+    end
 
-    hooksecurefunc("UnitFrameHealthBar_OnUpdate", function (self)
-        if self.unit == "player" then
-            eventHandler()
+
+    if enabled() then
+        local unitPlayer, englishClassPlayer = UnitClass("player")
+
+        local playerColor = {r = 0, g = 1, b = 0, a = 1}
+        if unitPlayer then
+            playerColor.r, playerColor.g, playerColor.b = GetClassColor(englishClassPlayer)
+
+            local BackgroundTexture = UIParent:CreateTexture(nil, "BACKGROUND", "TextStatusBar", -8)
+
+            BackgroundTexture:SetParent(PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual)
+
+            BackgroundTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-LevelBackground")
+
+            BackgroundTexture:ClearAllPoints()
+            BackgroundTexture:SetPoint("TOPRIGHT", -26, -26)
+            BackgroundTexture:SetSize(119, 19)
+
+            BackgroundTexture:SetVertexColor(playerColor.r, playerColor.g, playerColor.b, playerColor.a)
+
+            local PlayerName = UIParent:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+
+            PlayerName:SetParent(PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual)
+
+
+            PlayerName:SetFontObject(GameFontNormalSmall)
+            PlayerName:ClearAllPoints()
+            PlayerName:SetPoint("TOPRIGHT", -26, -27.5)
+            PlayerName:SetSize(119, 19)
+
+            PlayerName:SetText(UnitName("player"))
+
+            if (not self.db.classicFramesSilverDragon) and (not self.db.classicFramesGoldenDragon) then
+                local Texture = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual:CreateTexture(nil, "BACKGROUND", nil, 0)
+
+                PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.FrameTexture = Texture
+
+                PlayerFrame.PlayerFrameContainer.FrameTexture:SetAlpha(0)
+
+                Texture:SetSize(232, 100)
+
+                Texture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame")
+                Texture:SetTexCoord(1, 0.09375, 0, 0.78125)
+                Texture:SetDesaturated(true)
+                Texture:ClearAllPoints()
+                Texture:SetPoint("TOPLEFT", -19, -4)
+
+                self:TextureHelper()
+            end
         end
-    end)
+    end
 
-    hooksecurefunc("PlayerFrame_OnUpdate", function (self)
-        eventHandler()
-    end)
-
-    hooksecurefunc("PlayerFrame_OnEvent", function (self)
-        eventHandler()
-        C_Timer.After(1, function() eventHandler() end)
-    end)
-    ]]--
-
-    --[[
     local frame = CreateFrame("FRAME")
-    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    frame:RegisterEvent("UNIT_MAX_HEALTH_MODIFIERS_CHANGED")
-    frame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
+    local function eventHandler(self, event, ...)
+
+        local targetNameBackground = TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor
+        if targetNameBackground and enabled() then
+            local unitPlayer, englishClassPlayer = UnitClass("target")
+
+            local targetColor = {r = 0, g = 1, b = 0, a = 1}
+            if unitPlayer then
+                if UnitIsPlayer("target") then
+                    targetColor.r, targetColor.g, targetColor.b = GetClassColor(englishClassPlayer)
+                end
+
+                if targetNameBackground:GetVertexColor() ~= targetColor then
+                    targetNameBackground:SetVertexColor(targetColor.r, targetColor.g, targetColor.b, 1)
+                end
+            end
+        end
+
+        local focusNameBackground = FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor
+        if focusNameBackground and enabled() then
+            local unitPlayer, englishClassPlayer = UnitClass("focus")
+
+            local focusColor = {r = 0, g = 1, b = 0, a = 1}
+            if unitPlayer then
+                if UnitIsPlayer("focus") then
+                    focusColor.r, focusColor.g, focusColor.b = GetClassColor(englishClassPlayer)
+                end
+
+                if focusNameBackground:GetVertexColor() ~= focusColor then
+                    focusNameBackground:SetVertexColor(focusColor.r, focusColor.g, focusColor.b, 1)
+                end
+            end
+        end
+    end
+
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    frame:RegisterEvent("UNIT_FACTION")
     frame:RegisterEvent("PLAYER_TARGET_CHANGED")
     frame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+    frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    frame:RegisterEvent("UNIT_FACTION")
 
     frame:SetScript("OnEvent", eventHandler)
-    ]]--
 end
 
 function Module:ClassicFramesHideNameBackground()
@@ -299,7 +425,7 @@ function Module:ClassicFramesHidePvpIcon()
 
     local playerPvpIcon = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PrestigePortrait
     local playerPvpIcon2 = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PrestigeBadge
-    local playerPvpIcon3 = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PvpIcon
+    local playerPvpIcon3 = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PVPIcon
     local targetPvpIcon = TargetFrame.TargetFrameContent.TargetFrameContentContextual.PrestigePortrait
     local targetPvpIcon2 = TargetFrame.TargetFrameContent.TargetFrameContentContextual.PrestigeBadge
     local targetPvpIcon3 = TargetFrame.TargetFrameContent.TargetFrameContentContextual.PvpIcon
@@ -392,6 +518,8 @@ function Module:ClassicFramesSilverDragon()
 
         PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.FrameTexture = SilverDragonTexture
 
+        PlayerFrame.PlayerFrameContainer.FrameTexture:SetAlpha(0)
+
         SilverDragonTexture:SetSize(232, 100)
 
         SilverDragonTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare-Elite")
@@ -399,6 +527,8 @@ function Module:ClassicFramesSilverDragon()
         SilverDragonTexture:SetDesaturated(true)
         SilverDragonTexture:ClearAllPoints()
         SilverDragonTexture:SetPoint("TOPLEFT", -19, -4)
+
+        self:TextureHelper()
     end
 end
 
@@ -415,18 +545,50 @@ function Module:ClassicFramesGoldenDragon()
 
         PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.FrameTexture = GoldenDragonTexture
 
+        PlayerFrame.PlayerFrameContainer.FrameTexture:SetAlpha(0)
+
         GoldenDragonTexture:SetSize(232, 100)
 
         GoldenDragonTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Elite")
         GoldenDragonTexture:SetTexCoord(1, 0.09375, 0, 0.78125)
         GoldenDragonTexture:ClearAllPoints()
         GoldenDragonTexture:SetPoint("TOPLEFT", -19, -4)
+
+        self:TextureHelper()
     end
+end
+
+function Module:TextureHelper()
+    local Texture2 = TargetFrame.TargetFrameContent.TargetFrameContentMain:CreateTexture(nil, "BACKGROUND", nil, 0)
+
+    TargetFrame.TargetFrameContent.TargetFrameContentMain.FrameTexture = Texture2
+
+    Texture2:SetSize(232, 100)
+
+    Texture2:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame")
+    Texture2:SetTexCoord(0.09375, 1, 0, 0.78125)
+    Texture2:SetDesaturated(true)
+    Texture2:ClearAllPoints()
+    Texture2:SetPoint("TOPLEFT", 20, -4)
+
+
+    local Texture3 = FocusFrame.TargetFrameContent.TargetFrameContentMain:CreateTexture(nil, "BACKGROUND", nil, 0)
+
+    FocusFrame.TargetFrameContent.TargetFrameContentMain.FrameTexture = Texture3
+
+    Texture3:SetSize(232, 100)
+
+    Texture3:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame")
+    Texture3:SetTexCoord(0.09375, 1, 0, 0.78125)
+    Texture3:SetDesaturated(true)
+    Texture3:ClearAllPoints()
+    Texture3:SetPoint("TOPLEFT", 20, -4)
 end
 
 function Module:SetupUI()
     if self:IsEnabled() then
         self:ClassicFramesHealthBarColor()
+        self:ClassicFramesColoredNameBackground()
         self:ClassicFramesHideNameBackground()
         self:ClassicFramesHidePvpIcon()
         self:ClassicFramesHidePlayerGroupNumber()
