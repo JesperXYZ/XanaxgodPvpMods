@@ -27,3 +27,4 @@ modules\unitFrameDarkness.lua
 modules\unitFrameCombatTracker.lua
 modules\unitFrameHighlightPurgeableBuffs.lua
 modules\unitFrameRangeTracker.lua
+modules\unitFrameMoveElements.lua

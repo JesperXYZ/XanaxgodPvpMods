@@ -34,8 +34,17 @@ function Module:GetOptions(myOptionsTable, db)
         partyLabel2 = true,
         realmName2 = true,
         entireName2 = false,
+
         statusTrackingBarManager = true,
         statusTrackingBarManager2 = true,
+
+        lossOfControlFrameRedGlow = true,
+        lossOfControlFrameRedGlow2 = true,
+        lossOfControlFrameBackground = false,
+        lossOfControlFrameBackground2 = false,
+
+
+
         classicFramesPvpIcon = true,
         classicFramesPlayerGroupNumber = true,
         classicFramesNameBackground = true,
@@ -87,6 +96,27 @@ function Module:GetOptions(myOptionsTable, db)
             self:RefreshUI()
         end
 
+        if setting == "statusTrackingBarManager" then
+            self:RefreshUI()
+        end
+        if setting == "statusTrackingBarManager2" then
+            self:RefreshUI()
+        end
+
+        if setting == "lossOfControlFrameRedGlow" then
+            self:RefreshUI()
+        end
+        if setting == "lossOfControlFrameRedGlow2" then
+            self:RefreshUI()
+        end
+        if setting == "lossOfControlFrameBackground" then
+            self:RefreshUI()
+        end
+        if setting == "lossOfControlFrameBackground2" then
+            self:RefreshUI()
+        end
+
+
         if setting == "classicFramesPvpIcon" then
             self:RefreshUI()
         end
@@ -108,8 +138,6 @@ function Module:GetOptions(myOptionsTable, db)
 
     end
     local counter = CreateCounter(5)
-
-    --local UIHideElementsImage = "|TInterface\\Addons\\XanaxgodPvpMods\\media\\moduleImages\\UIHideElements:160:321:82:0|t"
 
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         myOptionsTable.args.outsideInstance = {
@@ -164,6 +192,32 @@ function Module:GetOptions(myOptionsTable, db)
                             desc = "This hides the StatusTrackingBarManager",
                             order = counter(),
                             width = "full",
+                            get = get,
+                            set = set
+                        }
+                    }
+                },
+                lossOfControlFrameGroup = {
+                    order = counter(),
+                    name = "Hide LossOfControlFrame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        lossOfControlFrameRedGlow = {
+                            type = "toggle",
+                            name = "Hide Red Glow",
+                            desc = "This hides the red glow on the LossOfControlFrame",
+                            order = counter(),
+                            width = 0.75,
+                            get = get,
+                            set = set
+                        },
+                        lossOfControlFrameBackground = {
+                            type = "toggle",
+                            name = "Hide Background",
+                            desc = "This hides the dark background texture on the LossOfControlFrame",
+                            order = counter(),
+                            width = 0.9,
                             get = get,
                             set = set
                         }
@@ -223,6 +277,32 @@ function Module:GetOptions(myOptionsTable, db)
                             desc = "This hides the StatusTrackingBarManager",
                             order = counter(),
                             width = "full",
+                            get = get,
+                            set = set
+                        }
+                    }
+                },
+                lossOfControlFrameGroup2 = {
+                    order = counter(),
+                    name = "Hide LossOfControlFrame Elements",
+                    type = "group",
+                    inline = true, --inline makes it a normal group. else it is a tab group (myOptionsTable in core.lua)
+                    args = {
+                        lossOfControlFrameRedGlow2 = {
+                            type = "toggle",
+                            name = "Hide Red Glow",
+                            desc = "This hides the red glow on the LossOfControlFrame",
+                            order = counter(),
+                            width = 0.75,
+                            get = get,
+                            set = set
+                        },
+                        lossOfControlFrameBackground2 = {
+                            type = "toggle",
+                            name = "Hide Background",
+                            desc = "This hides the dark background texture on the LossOfControlFrame",
+                            order = counter(),
+                            width = 0.9,
                             get = get,
                             set = set
                         }
@@ -578,6 +658,46 @@ function Module:HideStatusTrackingBarManager()
     end
 end
 
+function Module:HideLossOfControlFrameRedGlow()
+    local enabled
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.lossOfControlFrameRedGlow2
+        else
+            enabled = self.db.lossOfControlFrameRedGlow
+        end
+    else
+        enabled = false
+    end
+
+    if enabled then
+        LossOfControlFrame.RedLineTop:Hide()
+        LossOfControlFrame.RedLineBottom:Hide()
+    else
+        LossOfControlFrame.RedLineTop:Show()
+        LossOfControlFrame.RedLineBottom:Show()
+    end
+end
+
+function Module:HideLossOfControlFrameBackground()
+    local enabled
+    if self:IsEnabled() then
+        if self.IsPlayerInPvPZone() then
+            enabled = self.db.lossOfControlFrameBackground2
+        else
+            enabled = self.db.lossOfControlFrameBackground
+        end
+    else
+        enabled = false
+    end
+
+    if enabled then
+        LossOfControlFrame.blackBg:Hide()
+    else
+        LossOfControlFrame.blackBg:Show()
+    end
+end
+
 function Module:HideClassicFramesPvpIcon()
     local enabled
     if self:IsEnabled() then
@@ -672,6 +792,8 @@ function Module:SetupUI()
     self:HideRealmName()
     self:HideEntireName()
     self:HideStatusTrackingBarManager()
+    self:HideLossOfControlFrameRedGlow()
+    self:HideLossOfControlFrameBackground()
 end
 
 function Module:SetupUIClassic()
