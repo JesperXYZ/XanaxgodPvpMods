@@ -517,50 +517,54 @@ end
 
 function Module:Hooks()
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+
         self:SecureHook(TargetFrame, "OnUpdate", function()
             if self.db.outOfCombatTrackerToggle then
                 self:TargetOutOfCombat()
-                self:FocusOutOfCombat()
+                --self:FocusOutOfCombat()
             end
             if self.db.inCombatTrackerToggle then
                 self:TargetInCombat()
-                self:FocusInCombat()
+                --self:FocusInCombat()
             end
         end)
         self:SecureHook(FocusFrame, "OnUpdate", function()
             if self.db.outOfCombatTrackerToggle then
-                self:TargetOutOfCombat()
+                --self:TargetOutOfCombat()
                 self:FocusOutOfCombat()
             end
             if self.db.inCombatTrackerToggle then
-                self:TargetInCombat()
+                --self:TargetInCombat()
                 self:FocusInCombat()
             end
         end)
 
+
         local eventFrame = CreateFrame("Frame")
 
-        local function OnEvent()
-            if self.db.outOfCombatTrackerToggle then
-                self:TargetOutOfCombat()
-                self:FocusOutOfCombat()
-                C_Timer.After(0.1, function() self:TargetOutOfCombat() end)
-                C_Timer.After(0.1, function() self:FocusOutOfCombat() end)
-            end
-            if self.db.inCombatTrackerToggle then
-                self:TargetInCombat()
-                self:FocusInCombat()
-                C_Timer.After(0.1, function() self:TargetInCombat() end)
-                C_Timer.After(0.1, function() self:FocusInCombat() end)
+        local function OnEvent(_, _, unitTarget)
+            if unitTarget == "target" or unitTarget == "focus" then
+                if self.db.outOfCombatTrackerToggle then
+                    self:TargetOutOfCombat()
+                    self:FocusOutOfCombat()
+                    C_Timer.After(0.1, function() self:TargetOutOfCombat() end)
+                    C_Timer.After(0.1, function() self:FocusOutOfCombat() end)
+                end
+                if self.db.inCombatTrackerToggle then
+                    self:TargetInCombat()
+                    self:FocusInCombat()
+                    C_Timer.After(0.1, function() self:TargetInCombat() end)
+                    C_Timer.After(0.1, function() self:FocusInCombat() end)
+                end
             end
         end
 
         eventFrame:RegisterEvent("UNIT_COMBAT")
-        eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-        eventFrame:RegisterEvent("UNIT_TARGET")
-        eventFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-        eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+        --eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+        --eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        --eventFrame:RegisterEvent("UNIT_TARGET")
+        --eventFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+        --eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 
         eventFrame:SetScript("OnEvent", OnEvent)
     end

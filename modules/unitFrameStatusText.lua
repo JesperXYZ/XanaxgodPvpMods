@@ -698,6 +698,10 @@ function Module:SetupStatusText()
 
         if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
             if C_AddOns.IsAddOnLoaded("ClassicFrames") then
+                if self:IsHooked(TargetFrame, "OnUpdate") or self:IsHooked(FocusFrame, "OnUpdate") then
+                    return
+                end
+
                 PlayerFrame:HookScript("OnUpdate", function(self)
                     NumericUpdater()
                 end)
@@ -768,6 +772,10 @@ function Module:SetupStatusText()
 
         if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
             if C_AddOns.IsAddOnLoaded("ClassicFrames") then
+                if self:IsHooked(TargetFrame, "OnUpdate") or self:IsHooked(FocusFrame, "OnUpdate") then
+                    return
+                end
+
                 PlayerFrame:HookScript("OnUpdate", function(self)
                     NumericUpdater()
                 end)

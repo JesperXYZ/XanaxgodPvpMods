@@ -134,12 +134,46 @@ function Module:SetupUI()
                 self:UpdateAurasRetailJcf("focus", scaleFactor, alphaFactor)
             end)
         else
-            TargetFrame:HookScript("OnUpdate", function()
-                self:UpdateAurasRetail("target", scaleFactor, alphaFactor)
-            end)
-            FocusFrame:HookScript("OnUpdate", function()
-                self:UpdateAurasRetail("focus", scaleFactor, alphaFactor)
-            end)
+
+            if self.db.enableForEveryone then
+                --[[
+                TargetFrame:HookScript("OnUpdate", function()
+                    self:UpdateAurasRetailEveryone("target", scaleFactor, alphaFactor)
+                end)
+                FocusFrame:HookScript("OnUpdate", function()
+                    self:UpdateAurasRetailEveryone("focus", scaleFactor, alphaFactor)
+                end)
+                ]]--
+                if self:IsHooked(TargetFrame, "UpdateAuras") or self:IsHooked(FocusFrame, "UpdateAuras") then
+                    return
+                end
+                self:SecureHook(TargetFrame, "UpdateAuras", function()
+                    self:UpdateAurasRetailEveryone("target", scaleFactor, alphaFactor)
+                end)
+
+                self:SecureHook(FocusFrame, "UpdateAuras", function()
+                    self:UpdateAurasRetailEveryone("focus", scaleFactor, alphaFactor)
+                end)
+            else
+                --[[
+                TargetFrame:HookScript("OnUpdate", function()
+                    self:UpdateAurasRetail("target", scaleFactor, alphaFactor)
+                end)
+                FocusFrame:HookScript("OnUpdate", function()
+                    self:UpdateAurasRetail("focus", scaleFactor, alphaFactor)
+                end)
+                ]]--
+                if self:IsHooked(TargetFrame, "UpdateAuras") or self:IsHooked(FocusFrame, "UpdateAuras") then
+                    return
+                end
+                self:SecureHook(TargetFrame, "UpdateAuras", function()
+                    self:UpdateAurasRetail("target", scaleFactor, alphaFactor)
+                end)
+
+                self:SecureHook(FocusFrame, "UpdateAuras", function()
+                    self:UpdateAurasRetail("focus", scaleFactor, alphaFactor)
+                end)
+            end
         end
     elseif (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) then
         TargetFrame:HookScript("OnUpdate", function()
@@ -196,53 +230,65 @@ function Module:UpdateAurasRetailJcf(unit, scaleFactor, alphaFactor)
     end
 end
 
+local function UpdateStealableTexture(buff, data, scaleFactor, alphaFactor)
+    if not buff.Stealable then
+        buff.Stealable = buff:CreateTexture(nil, "OVERLAY")
+        buff.Stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+        buff.Stealable:SetBlendMode("ADD")
+        buff.Stealable:SetPoint("CENTER", buff, "CENTER")
+    end
+
+    local buffWidth = buff:GetWidth()
+    local buffHeight = buff:GetHeight()
+
+    buff.Stealable:SetAlpha(alphaFactor)
+    buff.Stealable:SetSize(buffWidth * scaleFactor, buffHeight * scaleFactor)
+
+    -- Update only if data is provided
+    if data then
+        local shouldShow = data.isStealable or data.dispelName == "Magic"
+        -- Only update visibility if it needs to change
+        if buff.Stealable:IsShown() ~= shouldShow then
+            buff.Stealable:SetShown(shouldShow)
+        end
+    end
+end
+
 function Module:UpdateAurasRetail(unit, scaleFactor, alphaFactor)
-    -- Function to update the Stealable texture for auras
-    local function UpdateStealableTexture(buff, data)
-        if not buff.Stealable then
-            buff.Stealable = buff:CreateTexture(nil, "OVERLAY")
-            buff.Stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
-            buff.Stealable:SetBlendMode("ADD")
-            buff.Stealable:SetPoint("CENTER", buff, "CENTER")
-        end
-        buff.Stealable:SetAlpha(alphaFactor)
-        buff.Stealable:SetSize(buff:GetWidth() * scaleFactor, buff:GetHeight() * scaleFactor)
-        if data ~= nil then
-            buff.Stealable:SetShown(data.isStealable or data.dispelName == "Magic")
-        end
+    if UnitIsFriend("player", unit) then
+        return
     end
 
-    -- Update auras for the target
+    local frame = nil
     if unit == "target" then
-        for buff in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-            local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
-            UpdateStealableTexture(buff, data)
-        end
+        frame = TargetFrame
+    elseif unit == "focus" then
+        frame = FocusFrame
+    else
+        return
     end
 
-    -- Update auras for the focus
-    if unit == "focus" then
-        for buff in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-            local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
-            UpdateStealableTexture(buff, data)
-        end
+    -- Update auras for the determined frame
+    for buff in frame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+        local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
+        UpdateStealableTexture(buff, data, scaleFactor, alphaFactor)
+    end
+end
+
+function Module:UpdateAurasRetailEveryone(unit, scaleFactor, alphaFactor)
+    local frame = nil
+    if unit == "target" then
+        frame = TargetFrame
+    elseif unit == "focus" then
+        frame = FocusFrame
+    else
+        return
     end
 
-    -- Hide the Stealable texture for friendly targets if enableForEveryone is false
-    if (not self.db.enableForEveryone) and (UnitIsFriend("player", unit)) then
-        if unit == "target" then
-            for buff in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                if buff.Stealable then
-                    buff.Stealable:Hide()
-                end
-            end
-        elseif unit == "focus" then
-            for buff in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                if buff.Stealable then
-                    buff.Stealable:Hide()
-                end
-            end
-        end
+    -- Update auras for the determined frame
+    for buff in frame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+        local data = C_UnitAuras.GetAuraDataByAuraInstanceID(buff.unit, buff.auraInstanceID)
+        UpdateStealableTexture(buff, data, scaleFactor, alphaFactor)
     end
 end
 
