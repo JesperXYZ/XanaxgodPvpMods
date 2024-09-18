@@ -127,12 +127,25 @@ function Module:SetupUI()
 
     if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
         if C_AddOns.IsAddOnLoaded("JaxClassicFrames") then
-            JcfTargetFrame:HookScript("OnUpdate", function()
-                self:UpdateAurasRetailJcf("target", scaleFactor, alphaFactor)
-            end)
-            JcfFocusFrame:HookScript("OnUpdate", function()
-                self:UpdateAurasRetailJcf("focus", scaleFactor, alphaFactor)
-            end)
+            if self.db.enableForEveryone then
+                --[[
+                JcfTargetFrame:HookScript("OnUpdate", function()
+                    --self:UpdateAurasRetailJcfEveryone("target", scaleFactor, alphaFactor)
+                end)
+                JcfFocusFrame:HookScript("OnUpdate", function()
+                    --self:UpdateAurasRetailJcfEveryone("focus", scaleFactor, alphaFactor)
+                end)
+                ]]--
+                self:SecureHook("JcfTargetFrame_UpdateAuras", function()
+                    self:UpdateAurasRetailJcfEveryone("target", scaleFactor, alphaFactor)
+                    self:UpdateAurasRetailJcfEveryone("focus", scaleFactor, alphaFactor)
+                end)
+            else
+                self:SecureHook("JcfTargetFrame_UpdateAuras", function()
+                    self:UpdateAurasRetailJcf("target", scaleFactor, alphaFactor)
+                    self:UpdateAurasRetailJcf("focus", scaleFactor, alphaFactor)
+                end)
+            end
         else
 
             if self.db.enableForEveryone then
@@ -189,6 +202,58 @@ function Module:SetupUI()
 end
 
 function Module:UpdateAurasRetailJcf(unit, scaleFactor, alphaFactor)
+    if not UnitIsFriend("player", unit) then
+        local prefix
+        if unit == "target" then
+            prefix = "JcfTargetFrameBuff"
+        elseif unit == "focus" then
+            prefix = "JcfFocusFrameBuff"
+        end
+
+        for i = 1, 40 do
+
+            local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, "HELPFUL")
+            if not auraData then
+                break -- Exit early if no aura is present
+            end
+
+            local debuffType = auraData.dispelName
+
+            if debuffType == "Magic" then
+                local buffFrameName = prefix .. i
+                local buffFrame = _G[buffFrameName]
+                if not buffFrame or not buffFrame:IsShown() then
+                    break -- Exit early if no frame or it's not shown
+                end
+
+                local buffFrameStealable = _G[buffFrameName .. "Stealable"]
+
+                -- Initialize buffFrameStealable if it doesn't exist
+                if not buffFrameStealable then
+                    buffFrameStealable = buffFrame:CreateTexture(buffFrameName .. "Stealable", "OVERLAY")
+                    buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+                    buffFrameStealable:SetBlendMode("ADD")
+                    buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
+                end
+
+                local frameWidth = buffFrame:GetWidth() * scaleFactor
+                local frameHeight = buffFrame:GetHeight() * scaleFactor
+
+                if buffFrameStealable:GetWidth() ~= frameWidth or buffFrameStealable:GetHeight() ~= frameHeight then
+                    buffFrameStealable:SetSize(frameWidth, frameHeight)
+                end
+
+                if buffFrameStealable:GetAlpha() ~= alphaFactor then
+                    buffFrameStealable:SetAlpha(alphaFactor)
+                end
+
+                buffFrameStealable:Show()
+            end
+        end
+    end
+end
+
+function Module:UpdateAurasRetailJcfEveryone(unit, scaleFactor, alphaFactor)
     local prefix
     if unit == "target" then
         prefix = "JcfTargetFrameBuff"
@@ -196,36 +261,45 @@ function Module:UpdateAurasRetailJcf(unit, scaleFactor, alphaFactor)
         prefix = "JcfFocusFrameBuff"
     end
 
+
     for i = 1, 40 do
-        local buffFrameName = prefix .. i
-        local buffFrame = _G[buffFrameName]
-        local buffFrameStealable = _G[buffFrameName .. "Stealable"]
-        local name, _, icon, debuffType = UnitAura(unit, i, "HELPFUL")
 
-        if not buffFrame or not buffFrame:IsShown() then break end
-
-        if buffFrameStealable then
-            buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
-            buffFrameStealable:SetBlendMode("ADD")
-            buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
-
-            buffFrameStealable:SetSize(buffFrame:GetWidth() * scaleFactor, buffFrame:GetHeight() * scaleFactor)
-            buffFrameStealable:SetAlpha(alphaFactor)
-            buffFrameStealable:SetShown(debuffType == "Magic")
-        else
-            buffFrameStealable = buffFrame:CreateTexture(nil, "OVERLAY")
-            buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
-            buffFrameStealable:SetBlendMode("ADD")
-            buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
-
-            buffFrameStealable:SetSize(buffFrame:GetWidth() * scaleFactor, buffFrame:GetHeight() * scaleFactor)
-            buffFrameStealable:SetAlpha(alphaFactor)
-            buffFrameStealable:SetShown(debuffType == "Magic")
+        local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, "HELPFUL")
+        if not auraData then
+            break -- Exit early if no aura is present
         end
 
-        -- Hide the Stealable texture for friendly targets if enableForEveryone is false
-        if (not self.db.enableForEveryone) and (UnitIsFriend("player", unit)) then
-            buffFrameStealable:Hide()
+        local debuffType = auraData.dispelName
+
+        if debuffType == "Magic" then
+            local buffFrameName = prefix .. i
+            local buffFrame = _G[buffFrameName]
+            if not buffFrame or not buffFrame:IsShown() then
+                break -- Exit early if no frame or it's not shown
+            end
+
+            local buffFrameStealable = _G[buffFrameName .. "Stealable"]
+
+            -- Initialize buffFrameStealable if it doesn't exist
+            if not buffFrameStealable then
+                buffFrameStealable = buffFrame:CreateTexture(buffFrameName .. "Stealable", "OVERLAY")
+                buffFrameStealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+                buffFrameStealable:SetBlendMode("ADD")
+                buffFrameStealable:SetPoint("CENTER", buffFrame, "CENTER")
+            end
+
+            local frameWidth = buffFrame:GetWidth() * scaleFactor
+            local frameHeight = buffFrame:GetHeight() * scaleFactor
+
+            if buffFrameStealable:GetWidth() ~= frameWidth or buffFrameStealable:GetHeight() ~= frameHeight then
+                buffFrameStealable:SetSize(frameWidth, frameHeight)
+            end
+
+            if buffFrameStealable:GetAlpha() ~= alphaFactor then
+                buffFrameStealable:SetAlpha(alphaFactor)
+            end
+
+            buffFrameStealable:Show()
         end
     end
 end
@@ -332,17 +406,6 @@ function Module:UpdateAurasClassic(unit, scaleFactor, alphaFactor)
             buffFrameStealable:Hide()
         end
     end
-end
-
-function Module:RefreshUI()
-    if self:IsEnabled() then
-        self:Disable()
-        self:Enable()
-    end
-end
-
-function Module:CheckConditions()
-    self:SetupUI()
 end
 
 function Module:RefreshUI()
