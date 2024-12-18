@@ -489,14 +489,14 @@ function Module:ClassicFramesHidePlayerGroupNumber()
 
     local playerGroupIndicator1, playerGroupIndicator2, playerGroupIndicator3, playerGroupIndicator4 = PlayerFrameGroupIndicatorText, PlayerFrameGroupIndicatorLeft, PlayerFrameGroupIndicatorMiddle, PlayerFrameGroupIndicatorRight
     if enabled then
-        if playerGroupIndicator1 then
+        if playerGroupIndicator1 and playerGroupIndicator2 and playerGroupIndicator3 and playerGroupIndicator4 then
             playerGroupIndicator1:SetAlpha(0)
             playerGroupIndicator2:SetAlpha(0)
             playerGroupIndicator3:SetAlpha(0)
             playerGroupIndicator4:SetAlpha(0)
         end
     else
-        if playerGroupIndicator1 then
+        if playerGroupIndicator1 and playerGroupIndicator2 and playerGroupIndicator3 and playerGroupIndicator4 then
             playerGroupIndicator1:SetAlpha(1)
             playerGroupIndicator2:SetAlpha(1)
             playerGroupIndicator3:SetAlpha(1)
